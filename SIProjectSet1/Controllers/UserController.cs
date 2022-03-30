@@ -55,13 +55,17 @@ namespace SIProjectSet1.Controllers
             try
             {
                 if (!ModelState.IsValid) return BadRequest();
+
+                var userAalreadyExists = await _userService.GetUserID(user);
+                if (userAalreadyExists != -1000) return BadRequest();
+
                 var successfulAdd = await _userService.AddUser(user);
                 if (!successfulAdd) return new StatusCodeResult(StatusCodes.Status500InternalServerError);
 
                 var id = await _userService.GetUserID(user);
                 await _userService.MakeUser(id);
                 _logger.LogWarning("Dodan novi korisnik s id: " + id);
-                return Ok();
+                return Created(new Uri("/User/AddUser", UriKind.Relative), new {  email = user.Email, name = user.Name, surname = user.Surname, password = user.Password, deletedStatus = user.DeletedStatus });
 
             }
             catch (Exception ex)
@@ -79,14 +83,17 @@ namespace SIProjectSet1.Controllers
             try
             {
                 if (!ModelState.IsValid) return BadRequest();
-                var successfulAdd = await _userService.AddUser(user);
 
+                var userAalreadyExists = await _userService.GetUserID(user);
+                if (userAalreadyExists != -1000) return BadRequest();
+
+                var successfulAdd = await _userService.AddUser(user);
                 if (!successfulAdd) return new StatusCodeResult(StatusCodes.Status500InternalServerError);
 
                 var id = await _userService.GetUserID(user);
                 await _userService.MakeAdmin(id);
                 _logger.LogWarning("Dodan novi admin korisnik s id: " + id);
-                return Ok();
+                return Created(new Uri("/User/AddUser", UriKind.Relative), new {  email = user.Email, name = user.Name, surname = user.Surname, password = user.Password, deletedStatus = user.DeletedStatus });
 
             }
             catch (Exception ex)
