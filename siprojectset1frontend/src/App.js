@@ -4,6 +4,7 @@ import jwt from 'jwt-decode';
 import Login from './components/Login'
 import NavigationHeader from './components/NavigationHeader'
 import Home from './components/Home'
+import AddUser from './components/AddUser'
 
 import './App.css';
 
@@ -121,7 +122,8 @@ function App() {
             <NavigationHeader />
             <Routes>
                 <Route exact path="/Home" element={<Home />} />
-                    <Route exact path='/AddUser' element={<HomeWrapper />} />
+                <Route exact path='/' element={<HomeWrapper />} />
+                <Route exact path='/AddUser' element={<AddUser />} />
                 </Routes>
             </AuthProvider>
         </Router>)
