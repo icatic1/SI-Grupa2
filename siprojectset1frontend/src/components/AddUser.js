@@ -12,12 +12,39 @@ function AddUser() {
     const [deletedStatus, setDeletedStatus] = useState(false);
     const [checked, setChecked] = useState(false)
 
+    const handleSubmit = async (event) => {
+        const form = event.currentTarget;
+        if (form.checkValidity() === false) {
+            event.preventDefault();
+        }
+
+        setValidated(true);
+        event.preventDefault();
+        const user = { email, name, surname, password, deletedStatus };
+        try {
+            const headers = { 'content-type': 'application/json' }
+            if (checked === false) {
+                fetch('user/adduser',
+                    {
+                        method: 'POST',
+                        mode: 'cors',
+                        body: JSON.stringify(user),
+                        headers: headers
+                    }).catch(console.error)
+            }
+        } catch (e) {
+            console.log(e);
+        };
+    }
    
     return (
 
+        
+            
+
         <Container className="mx-auto">
             <Form id="form" >
-                <Form.Group className="mb-3" controlId="formBasicEmail">
+                <Form.Group className="mb-3" controlId="formBasicEmail" onSubmit={handleSubmit}>
                     <Form.Label>Email address</Form.Label>
                     <Form.Control required type="email" placeholder="Enter email" onChange={(e) => setEmail(e.target.value)} />
                     <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
