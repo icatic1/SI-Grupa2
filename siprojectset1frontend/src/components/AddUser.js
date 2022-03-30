@@ -32,7 +32,8 @@ function AddUser() {
         event.preventDefault();
         const user = { email, name, surname, password, deletedStatus };
         try {
-            const headers = { 'content-type': 'application/json' }
+            let token = 'Bearer ' + localStorage.getItem('token')
+            const headers = { 'content-type': 'application/json', 'Authorization': token}
             if (checked === false) {
                 fetch('user/adduser',
                     {

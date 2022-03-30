@@ -7,7 +7,8 @@ const UserCard = ({ user }) => {
 
     const deleteUser = async (user) => {
         try {
-            const headers = { 'content-type': 'application/json' }
+            let token = 'Bearer ' + localStorage.getItem('token')
+            const headers = { 'content-type': 'application/json', 'Authorization': token }
             fetch('/user/deleteuser',
                 {
                     method: 'PUT',

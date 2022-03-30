@@ -38,11 +38,12 @@ function UpdateUser() {
                 id: state.id, email: email, name: name, surname: surname, password: password, deletedStatus: false
             };
             try {
-                const headers = { 'Accept': 'application/json', ' content-type': 'application/json' }
+                let token = 'Bearer ' + localStorage.getItem('token')
+                const headers = { 'content-type': 'application/json', 'Authorization': token, 'Accept': 'application/json' }
                 const a = JSON.stringify(userSend)
                 const options = {
                     method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: headers,
                     body: a
                 }
                 fetch('/user/updateuserinfo', options).then(() => { navigate("/GetAll"); window.location.reload(false); })
