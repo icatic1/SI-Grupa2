@@ -29,7 +29,7 @@ function Login() {
                 </Form.Group>
                 <Link to={'/'} className="nav-link">Forgot your password?</Link>
                 <p style={{ 'display': 'none', 'color': 'red' }} id="error">Your email or password is incorrect.</p>
-                <Button variant="primary" type="submit">
+                <Button id="sub_btn" variant="primary" type="submit">
                     Submit
                 </Button>
             </Form>
