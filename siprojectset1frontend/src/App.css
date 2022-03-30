@@ -36,3 +36,49 @@
     transform: rotate(360deg);
   }
 }
+form {
+    display: block;
+    background: #F0F3F3;
+    border: 1px solid;
+    border-radius: 2px;
+    padding: 3rem;
+    text-align: left;
+    width: 500px;
+    margin: 0 auto;
+}
+
+    form label {
+        float: left;
+        font-size: .9rem;
+        margin: 0;
+        padding: 0
+    }
+
+.right-label {
+    float: right;
+    cursor: pointer;
+}
+
+input {
+    width: 15rem;
+    padding: .3rem;
+    border-radius: 5px;
+    outline: none;
+    border: none
+}
+
+#sub_btn {
+    display: block;
+    width: 100%;
+    border: none;
+    padding: .4rem;
+    background: #365353;
+    color: #F0F3F3;
+    border-radius: 3px;
+}
+
+
+#sub_btn:hover {
+    background: #426767;
+    transition: all .4s
+}

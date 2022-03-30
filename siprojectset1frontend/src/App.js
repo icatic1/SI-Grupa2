@@ -1,59 +1,130 @@
-import React, { Component } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate, useNavigate } from 'react-router-dom'
+import jwt from 'jwt-decode';
+import Login from './components/Login'
+import NavigationHeader from './components/NavigationHeader'
+import Home from './components/Home'
 
-export default class App extends Component {
-    static displayName = App.name;
+import './App.css';
 
-    constructor(props) {
-        super(props);
-        this.state = { forecasts: [], loading: true };
+export const AuthContext = createContext(null)
+
+const AuthProvider = ({ children }) => {
+    const [token, setToken] = useState(localStorage.getItem('token'))
+    const location = useLocation()
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        
+        if (localStorage.getItem('token') != undefined) {
+
+            setToken(localStorage.getItem('token'))
+
+        }
+    }, [])
+
+    useEffect(() => {
+
+        if (token) {
+
+            if (token.exp * 1000 < Date.now()) {
+                setToken(null)
+                localStorage.clear('token')
+                navigate('/')
+            }
+
+        }
+    }, [location])
+
+    const handleLogin = async (data) => {
+        var formBody = [];
+        for (var property in data) {
+            var encodedKey = encodeURIComponent(property);
+            var encodedValue = encodeURIComponent(data[property]);
+            formBody.push(encodedKey + "=" + encodedValue);
+        }
+        formBody = formBody.join("&");
+
+
+        await fetch('/user/login?' + formBody, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+            },
+            body: formBody
+        }).then(response => {
+            if (response.status != 200) {
+                return false
+            }
+            return response.body
+        }).
+            then(body => { if (body) { return body.getReader().read() }; return false }).
+            then(d => {
+                if (!d) {
+                    return false
+                }
+                var result = String.fromCharCode.apply(null, d.value);
+
+                localStorage.setItem('token', result);
+                setToken(localStorage.getItem('token'))
+
+                return true
+            }).catch((err) => {
+                return false
+            })
+
     }
 
-    componentDidMount() {
-        this.populateWeatherData();
+    const handleLogout = () => {
+        //treba implementirati
     }
 
-    static renderForecastsTable(forecasts) {
-        return (
-            <table className='table table-striped' aria-labelledby="tabelLabel">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Temp. (C)</th>
-                        <th>Temp. (F)</th>
-                        <th>Summary</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {forecasts.map(forecast =>
-                        <tr key={forecast.date}>
-                            <td>{forecast.date}</td>
-                            <td>{forecast.temperatureC}</td>
-                            <td>{forecast.temperatureF}</td>
-                            <td>{forecast.summary}</td>
-                        </tr>
-                    )}
-                </tbody>
-            </table>
-        );
+    const value = {
+        token: token,
+        onLogin: handleLogin,
+        onLogout: handleLogout,
     }
 
-    render() {
-        let contents = this.state.loading
-            ? <p><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationreact">https://aka.ms/jspsintegrationreact</a> for more details.</em></p>
-            : App.renderForecastsTable(this.state.forecasts);
+    return (
+        <AuthContext.Provider value={value}>
+            {children}
+        </AuthContext.Provider>
+    )
 
-        return (
-            <div>
-                <h1 id="tabelLabel" >Weather forecast</h1>
-                <p>This component demonstrates fetching data from the server.</p>
-                {contents}
-            </div>
-        );
-    }
-
-    async populateWeatherData() {
-        const response = await fetch('weatherforecast');
-        const data = await response.json();
-        this.setState({ forecasts: data, loading: false });
-    }
 }
+
+const ProtectedRoute = ({ children }) => {
+    const { token } = useContext(AuthContext)
+
+    if (token === null) {
+        return <Navigate to="/" replace />
+
+    }
+
+    return (children)
+}
+
+const HomeWrapper = ({ children }) => {
+    const { token } = useContext(AuthContext)
+
+    if (token === null) {
+        return <Login />
+
+    }
+
+    return <Home />
+}
+function App() {
+    return (
+        <Router>
+            <AuthProvider>
+            <NavigationHeader />
+            <Routes>
+                <Route exact path="/Home" element={<Home />} />
+                <Route exact path='/' element={<HomeWrapper />} />
+                </Routes>
+            </AuthProvider>
+        </Router>)
+}
+
+export default App
