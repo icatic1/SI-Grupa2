@@ -121,7 +121,7 @@ function App() {
             <NavigationHeader />
             <Routes>
                 <Route exact path="/Home" element={<Home />} />
-                <Route exact path='/' element={<HomeWrapper />} />
+                    <Route exact path='/AddUser' element={<HomeWrapper />} />
                 </Routes>
             </AuthProvider>
         </Router>)
