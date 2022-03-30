@@ -1,16 +1,36 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Container, Form, Button } from "react-bootstrap";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { AuthContext } from "../App"
 
 function Login() {
-
+    const { onLogin } = useContext(AuthContext);
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
     const [validated, setValidated] = useState(false);
+    const navigate = useNavigate()
+    async function handleSubmit(event) {
 
-    function handleSubmit() {
-        //treba implementirati
-    }
+        event.preventDefault();
+        const form = event.currentTarget;
+        if (form.checkValidity() === false) {
+            event.preventDefault();
+            event.stopPropagation();
+            return
+        }
+
+        setValidated(true);
+
+        await onLogin({ "email": email, "password": password })
+
+        if (localStorage.getItem('token') != null) {
+
+            navigate('/Home')
+        }
+        else {
+            document.getElementById('error').style.display = "block"
+        }
+    };
 
     return (
 
