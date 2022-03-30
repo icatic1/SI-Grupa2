@@ -45,7 +45,7 @@ function AddUser() {
                             return res;
                         } else {
                             setmodal("User not added!")
-                            // throw Error(`Request rejected with status ${res.status}`);
+                    
                         }
                     })
                         .catch(console.error)
@@ -61,7 +61,7 @@ function AddUser() {
                             return res;
                         } else {
                             setmodal("User not added!")
-                            // throw Error(`Request rejected with status ${res.status}`);
+                           
                         }
                     })
                     .catch(console.error)

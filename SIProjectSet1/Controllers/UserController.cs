@@ -65,7 +65,7 @@ namespace SIProjectSet1.Controllers
                 var id = await _userService.GetUserID(user);
                 await _userService.MakeUser(id);
                 _logger.LogWarning("Dodan novi korisnik s id: " + id);
-                return Ok();
+                return Created(new Uri("/User/AddUser", UriKind.Relative), new {  email = user.Email, name = user.Name, surname = user.Surname, password = user.Password, deletedStatus = user.DeletedStatus });
 
             }
             catch (Exception ex)
@@ -93,7 +93,7 @@ namespace SIProjectSet1.Controllers
                 var id = await _userService.GetUserID(user);
                 await _userService.MakeAdmin(id);
                 _logger.LogWarning("Dodan novi admin korisnik s id: " + id);
-                return Ok();
+                return Created(new Uri("/User/AddUser", UriKind.Relative), new {  email = user.Email, name = user.Name, surname = user.Surname, password = user.Password, deletedStatus = user.DeletedStatus });
 
             }
             catch (Exception ex)
