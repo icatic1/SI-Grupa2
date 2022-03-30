@@ -85,6 +85,7 @@ namespace SIProjectSet1.Controllers
 
                 var id = await _userService.GetUserID(user);
                 await _userService.MakeAdmin(id);
+                _logger.LogWarning("Dodan novi admin korisnik s id: " + id);
                 return Ok();
 
             }
@@ -112,6 +113,7 @@ namespace SIProjectSet1.Controllers
             {
                 var user = await _userService.LogInUser(email, password, tok, exp);
                 if (!user) return Unauthorized();
+                _logger.LogWarning("Korisnik sa email " + email + " je logovan.");
                 return Ok(tok);
             }
             catch (Exception ex)
@@ -130,6 +132,7 @@ namespace SIProjectSet1.Controllers
             {
                 if (!ModelState.IsValid) return BadRequest();
                 await _userService.UpdateUserInfo(user);
+                _logger.LogWarning("Korisnik s id: " + user.Id + " je izmijenjen.");
                 return NoContent();
             }
             catch (Exception ex)
@@ -146,6 +149,7 @@ namespace SIProjectSet1.Controllers
             {
                 if (!ModelState.IsValid) return BadRequest();
                 await _userService.DeleteUser(user.Id);
+                _logger.LogWarning("Korisnik s id: " + user.Id + " je obrisan.");
                 return NoContent();
             }
             catch (Exception ex)
@@ -179,6 +183,7 @@ namespace SIProjectSet1.Controllers
             {
                 if (!ModelState.IsValid) return BadRequest();
                 await _userService.ChangeUserPassword(email, password);
+                _logger.LogWarning("Korisnik s email: " + email + " je promijenio lozinku.");
                 return NoContent();
             }
             catch (Exception ex)
