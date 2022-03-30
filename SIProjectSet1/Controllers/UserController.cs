@@ -55,6 +55,10 @@ namespace SIProjectSet1.Controllers
             try
             {
                 if (!ModelState.IsValid) return BadRequest();
+
+                var userAalreadyExists = await _userService.GetUserID(user);
+                if (userAalreadyExists != -1000) return BadRequest();
+
                 var successfulAdd = await _userService.AddUser(user);
                 if (!successfulAdd) return new StatusCodeResult(StatusCodes.Status500InternalServerError);
 
@@ -79,8 +83,11 @@ namespace SIProjectSet1.Controllers
             try
             {
                 if (!ModelState.IsValid) return BadRequest();
-                var successfulAdd = await _userService.AddUser(user);
 
+                var userAalreadyExists = await _userService.GetUserID(user);
+                if (userAalreadyExists != -1000) return BadRequest();
+
+                var successfulAdd = await _userService.AddUser(user);
                 if (!successfulAdd) return new StatusCodeResult(StatusCodes.Status500InternalServerError);
 
                 var id = await _userService.GetUserID(user);
