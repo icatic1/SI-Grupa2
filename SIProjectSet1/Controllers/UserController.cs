@@ -8,6 +8,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SIProjectSet1.Controllers
 {
@@ -19,6 +26,20 @@ namespace SIProjectSet1.Controllers
         private readonly ILogger<UserController> _logger;
         private readonly SIProjectSet1Context _context;
         private readonly IUserService _userService;
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly IConfiguration _configuration;
+
+        public UserController(ILogger<UserController> logger, SIProjectSet1Context context, IUserService userService,
+            UserManager<IdentityUser> userManager,
+            RoleManager<IdentityRole> roleManager,
+            IConfiguration configuration)
+        {
+            _logger = logger;
+            _context = context;
+            _userService = userService;
+            _userManager = userManager;
+            _configuration = configuration;
+        }
 
         public UserController(ILogger<UserController> logger, SIProjectSet1Context context, IUserService userService)
         {
@@ -36,6 +57,9 @@ namespace SIProjectSet1.Controllers
                 if (!ModelState.IsValid) return BadRequest();
                 var successfulAdd = await _userService.AddUser(user);
                 if (!successfulAdd) return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+
+                var id = await _userService.GetUserID(user);
+                await _userService.MakeUser(id);
                 return Ok();
 
             }
@@ -45,26 +69,82 @@ namespace SIProjectSet1.Controllers
             }
 
         }
+
+        [HttpPost]
+        [Route("AddUserAdmin")]
+        public async Task<ActionResult<UserViewModel>> AddUserAdmin(UserViewModel user)
+        {
+
+            try
+            {
+                if (!ModelState.IsValid) return BadRequest();
+                var successfulAdd = await _userService.AddUser(user);
+
+                if (!successfulAdd) return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+
+                var id = await _userService.GetUserID(user);
+                await _userService.MakeAdmin(id);
+                return Ok();
+
+            }
+            catch (Exception ex)
+            {
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+
+        }
+
+
+
+
+
+        [HttpPost]
+        [Route("login")]
+        public async Task<IActionResult> Login(string email, string password)
+        {
+            var role = await _userService.GetUserRole(email);
+
+            var token = GetToken(email, role);
+            var tok = new JwtSecurityTokenHandler().WriteToken(token); var exp = token.ValidTo.ToString();
+
+            try
+            {
+                var user = await _userService.LogInUser(email, password, tok, exp);
+                if (!user) return Unauthorized();
+                return Ok(tok);
+            }
+            catch (Exception ex)
+            {
+                return Ok("");
+            }
+
+        }
+
+
         [HttpPut]
         [Route("UpdateUserInfo")]
-        public async Task<ActionResult<User>> UpdateUserInfo(UserViewModel user) {
-            try { 
-                if(!ModelState.IsValid) return BadRequest();
+        public async Task<ActionResult<User>> UpdateUserInfo(UserViewModel user)
+        {
+            try
+            {
+                if (!ModelState.IsValid) return BadRequest();
                 await _userService.UpdateUserInfo(user);
-                return NoContent(); 
-            }catch (Exception ex) {
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
 
         [HttpPut]
         [Route("DeleteUser")]
-        public async Task<ActionResult<User>> DeleteUser(string email)
+        public async Task<ActionResult<User>> DeleteUser(UserViewModel user)
         {
             try
             {
                 if (!ModelState.IsValid) return BadRequest();
-                await _userService.DeleteUser(email);
+                await _userService.DeleteUser(user.Id);
                 return NoContent();
             }
             catch (Exception ex)
@@ -72,34 +152,58 @@ namespace SIProjectSet1.Controllers
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
+
+        [Authorize(Roles = "Administrator")]
         [HttpGet]
         [Route("GetAllUsers")]
         public async Task<ActionResult<List<UserViewModel>>> GetAllUsers()
         {
-            try {
+            try
+            {
 
                 var users = await _userService.GetAllUsers();
                 return Ok(users);
 
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 return new List<UserViewModel>();
             }
         }
         [HttpPut]
         [Route("ChangeUserPassword")]
-        public async Task<ActionResult<User>> ChangeUserPassword(string email,string password)
+        public async Task<ActionResult<User>> ChangeUserPassword(string email, string password)
         {
             try
             {
                 if (!ModelState.IsValid) return BadRequest();
-                await _userService.ChangeUserPassword(email,password);
+                await _userService.ChangeUserPassword(email, password);
                 return NoContent();
             }
             catch (Exception ex)
             {
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
+        }
+
+        private JwtSecurityToken GetToken(string mail, string role)
+        {
+            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
+
+
+
+            var token = new JwtSecurityToken(
+                issuer: _configuration["JWT:ValidIssuer"],
+                audience: _configuration["JWT:ValidAudience"],
+                expires: DateTime.Now.AddMinutes(1),
+                //claims: authClaims,
+                signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
+                );
+
+            token.Payload["Roles"] = role;
+            token.Payload["email"] = mail;
+
+            return token;
         }
     }
 }

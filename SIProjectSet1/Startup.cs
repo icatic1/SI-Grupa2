@@ -2,6 +2,9 @@
 using SIProjectSet1;
 using Microsoft.EntityFrameworkCore;
 using SIProjectSet1.UserService;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace SIProjectSet1
 {
@@ -21,7 +24,7 @@ namespace SIProjectSet1
         {
             // I am literally registering this DB Context here, just so I can use EF Core Identity
             services.AddDbContext<SIProjectSet1Context>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-           
+
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddControllers()
@@ -37,11 +40,51 @@ namespace SIProjectSet1
             //    // To get our property names serialized in the first letter lowercased
             //    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
             //});
+
+            services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<SIProjectSet1Context>()
+                .AddDefaultTokenProviders();
+
+            // Adding Authentication  
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+
+            // Adding Jwt Bearer  
+            .AddJwtBearer(options =>
+            {
+                options.SaveToken = true;
+                options.RequireHttpsMetadata = false;
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidAudience = Configuration["JWT:ValidAudience"],
+                    ValidIssuer = Configuration["JWT:ValidIssuer"],
+                    ClockSkew = TimeSpan.Zero,
+                    NameClaimType = "Roles",
+                    RoleClaimType = "Roles",
+                    IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
+                };
+            });
+
+
             if (HostingEnvironment.IsDevelopment())
             {
                 services.AddSwaggerGen();
                 // SwaggerHelper.ConfigureService(services);
             }
+
+            services.AddCors(options =>
+                options.AddPolicy("MyPolicy",
+                    builder => {
+                        builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                    }
+                )
+            );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -59,6 +102,8 @@ namespace SIProjectSet1
             app.UseAuthentication();
 
             app.UseAuthorization();
+
+            app.UseCors("MyPolicy");
 
             #region Swagger
 
