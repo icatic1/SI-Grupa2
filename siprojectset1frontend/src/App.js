@@ -7,6 +7,8 @@ import Home from './components/Home'
 import AddUser from './components/AddUser'
 import UserList from './components/UserList'
 import UpdateUser from './components/UpdateUser'
+import ChangePassword from "./components/ChangePassword";
+import ChangePasswordM from "./components/ChangePasswordM";
 
 
 import './App.css';
@@ -130,6 +132,8 @@ function App() {
                     <Route exact path='/AddUser' element={<AddUser />} />
                     <Route exact path='/GetAll' element={<UserList />} />
                     <Route exact path='/UpdateUser' element={<UpdateUser />} />
+                    <Route exact path='/ChangePassword' element={<ChangePassword />} />
+                    <Route exact path='/ChangePasswordM' element={<ChangePasswordM />} />
                 </Routes>
             </AuthProvider>
         </Router>)
