@@ -47,6 +47,8 @@ namespace SIProjectSet1.Controllers
             _context = context;
             _userService = userService;
         }
+
+        [Authorize(Roles = "Administrator")]
         [HttpPost]
         [Route("AddUser")]
         public async Task<ActionResult<UserViewModel>> AddUser(UserViewModel user)
@@ -75,6 +77,7 @@ namespace SIProjectSet1.Controllers
 
         }
 
+        [Authorize(Roles = "Administrator")]
         [HttpPost]
         [Route("AddUserAdmin")]
         public async Task<ActionResult<UserViewModel>> AddUserAdmin(UserViewModel user)
@@ -130,7 +133,7 @@ namespace SIProjectSet1.Controllers
 
         }
 
-
+        [Authorize(Roles = "Administrator")]
         [HttpPut]
         [Route("UpdateUserInfo")]
         public async Task<ActionResult<User>> UpdateUserInfo(UserViewModel user)
@@ -148,6 +151,7 @@ namespace SIProjectSet1.Controllers
             }
         }
 
+        [Authorize(Roles = "Administrator")]
         [HttpPut]
         [Route("DeleteUser")]
         public async Task<ActionResult<User>> DeleteUser(UserViewModel user)

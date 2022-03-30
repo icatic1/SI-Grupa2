@@ -14,11 +14,8 @@ const UsersList = ({ editUser }) => {
     useEffect(() => {
         const fetchMain = async () => {
             try {
-
-                console.log(localStorage.getItem('token'))
                 let token = 'Bearer ' + localStorage.getItem('token')
-              
-                const headers = { "Authorization": token }
+                const headers = { 'content-type': 'application/json', 'Authorization': token }
 
                 const response1 = await fetch("/user/getallusers",
                     {
