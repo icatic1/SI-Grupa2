@@ -47,7 +47,7 @@ function Login() {
                     <Form.Control required type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
                     <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                 </Form.Group>
-                <Link to={'/'} className="nav-link">Forgot your password?</Link>
+                <Link to={'/ChangePassword'} className="nav-link">Forgot your password?</Link>
                 <p style={{ 'display': 'none', 'color': 'red' }} id="error">Your email or password is incorrect.</p>
                 <Button id="sub_btn" variant="primary" type="submit">
                     Submit
