@@ -60,6 +60,7 @@ namespace SIProjectSet1.Controllers
 
                 var id = await _userService.GetUserID(user);
                 await _userService.MakeUser(id);
+                _logger.LogWarning("Dodan novi korisnik s id: " + id);
                 return Ok();
 
             }
