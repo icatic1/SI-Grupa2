@@ -112,6 +112,25 @@ const ProtectedRoute = ({ children }) => {
     return (children)
 }
 
+const ProtectedAdminRoute = ({ children }) => {
+    const { token } = useContext(AuthContext)
+
+    if (token === null || token === undefined) {
+        return <Navigate to="/" replace />
+
+    }
+
+
+
+    if (jwt(token).Roles != "Administrator") {
+
+        return <Navigate to="/Home" />
+    }
+
+
+    return (children)
+}
+
 const HomeWrapper = ({ children }) => {
     const { token } = useContext(AuthContext)
 
@@ -127,12 +146,12 @@ function App() {
         <Router>
             <AuthProvider>
             <NavigationHeader />
-            <Routes>
-                <Route exact path="/Home" element={<Home />} />
+                <Routes>
+                    <Route exact path="/Home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
                 <Route exact path='/' element={<HomeWrapper />} />
-                    <Route exact path='/AddUser' element={<AddUser />} />
-                    <Route exact path='/GetAll' element={<UserList />} />
-                    <Route exact path='/UpdateUser' element={<UpdateUser />} />
+                    <Route exact path='/AddUser' element={<ProtectedAdminRoute><AddUser /></ProtectedAdminRoute>} />
+                        <Route exact path='/GetAll' element={<ProtectedAdminRoute><UserList /></ProtectedAdminRoute>} />
+                            <Route exact path='/UpdateUser' element={<ProtectedAdminRoute><UpdateUser /></ProtectedAdminRoute>} />
                     <Route exact path='/ChangePassword' element={<ChangePassword />} />
                     <Route exact path='/ChangePasswordM' element={<ChangePasswordM />} />
                     <Route exact path='/ChangePasswordQ' element={<ChangePasswordQ />} />
