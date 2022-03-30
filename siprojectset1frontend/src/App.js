@@ -8,6 +8,7 @@ import AddUser from './components/AddUser'
 
 import './App.css';
 
+
 export const AuthContext = createContext(null)
 
 const AuthProvider = ({ children }) => {
@@ -123,7 +124,8 @@ function App() {
             <Routes>
                 <Route exact path="/Home" element={<Home />} />
                 <Route exact path='/' element={<HomeWrapper />} />
-                <Route exact path='/AddUser' element={<AddUser />} />
+                    <Route exact path='/AddUser' element={<AddUser />} />
+                    <Route exact path='/GetAll' element={<AddUser />} />
                 </Routes>
             </AuthProvider>
         </Router>)
