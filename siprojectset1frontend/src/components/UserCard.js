@@ -1,13 +1,10 @@
 import React from "react";
-import { Container,  Row, Col,} from "react-bootstrap";
-
-
-
-
+import { Container,  Row,Button, Col} from "react-bootstrap";
+import { useNavigate } from 'react-router-dom';
 
 
 const UserCard = ({ user }) => {
-
+    const navigate = useNavigate();
 
     return (
 
@@ -20,6 +17,9 @@ const UserCard = ({ user }) => {
             <Row>
                 <Col sm={9}>Surname: {user.surname}</Col>
                 <Col sm={2}>
+                    <Container className="my-2">
+                        <Button sm={2} variant="primary" onClick={() => { navigate("/UpdateUser", { state: user }) }}> Update</Button>
+                    </Container>
                 </Col>
             </Row>
             <Row>

@@ -6,6 +6,8 @@ import NavigationHeader from './components/NavigationHeader'
 import Home from './components/Home'
 import AddUser from './components/AddUser'
 import UserList from './components/UserList'
+import UpdateUser from './components/UpdateUser'
+
 
 import './App.css';
 
@@ -127,6 +129,7 @@ function App() {
                 <Route exact path='/' element={<HomeWrapper />} />
                     <Route exact path='/AddUser' element={<AddUser />} />
                     <Route exact path='/GetAll' element={<UserList />} />
+                    <Route exact path='/UpdateUser' element={<UpdateUser />} />
                 </Routes>
             </AuthProvider>
         </Router>)

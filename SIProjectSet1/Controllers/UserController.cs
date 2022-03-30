@@ -165,7 +165,7 @@ namespace SIProjectSet1.Controllers
             }
         }
 
-        [Authorize(Roles = "Administrator")]
+        //[Authorize(Roles = "Administrator")]
         [HttpGet]
         [Route("GetAllUsers")]
         public async Task<ActionResult<List<UserViewModel>>> GetAllUsers()
