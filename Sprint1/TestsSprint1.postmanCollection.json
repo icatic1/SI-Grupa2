@@ -1,0 +1,577 @@
+{
+	"info": {
+		"_postman_id": "aef54e7b-0d84-4b09-a5a8-dedb82e0cb95",
+		"name": "Tests for Sprint 1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "User story 3",
+			"item": [
+				{
+					"name": "Get all users -valid token for admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 and ok\", () => {\r",
+									"\tpm.response.to.be.ok;\r",
+									"\tpm.response.to.be.withBody;\r",
+									"\tpm.response.to.be.json;\r",
+									"\tpm.response.to.have.status(200);\r",
+									"})\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{baseUrl}}/api/User/GetAllUsers"
+					},
+					"response": []
+				},
+				{
+					"name": "Get all users -expired token for admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401 and unauthorized\", () => {\r",
+									"\tpm.response.to.be.unauthorized;\r",
+									"\tpm.response.to.have.status(401);\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{baseUrl}}/api/User/GetAllUsers"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User story 4",
+			"item": [
+				{
+					"name": "Admin adds a new user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 201\",() =>  {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is present\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is JSON\", function () {\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response must have a body\", function () {\r",
+									"     pm.response.to.be.withBody;\r",
+									"     pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The response has all properties with the expected type\", () => {\r",
+									"    for(var i = 0; i < response.length; i++){\r",
+									"        pm.expect(response[i].id).to.be.an(\"number\");\r",
+									"        pm.expect(response[i].email).to.be.a(\"string\");\r",
+									"        pm.expect(response[i].name).to.be.a(\"string\");\r",
+									"        pm.expect(response[i].surname).to.be.an(\"string\");\r",
+									"        pm.expect(response[i].password).to.be.an(\"object\");\r",
+									"        pm.expect(response[i].deletedStatus).to.be.an(\"boolean\");\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 0,\r\n  \"email\": \"user1@example.com\",\r\n  \"name\": \"string\",\r\n  \"surname\": \"string\",\r\n  \"password\": \"string\",\r\n  \"deletedStatus\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseUrl}}/api/User/AddUser"
+					},
+					"response": []
+				},
+				{
+					"name": "Admin adds a new user without name",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 400\",() =>  {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is present\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is JSON\", function () {\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response must have a body\", function () {\r",
+									"     pm.response.to.be.withBody;\r",
+									"     pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The response has error message\", () => {\r",
+									"   pm.expect(response.errors.Name.toString()).to.be.equals(\"The Name field is required.\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 0,\r\n  \"email\": \"user125@example.com\",\r\n  \"name\": \"\",\r\n  \"surname\": \"string\",\r\n  \"password\": \"string\",\r\n  \"deletedStatus\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseUrl}}/api/User/AddUser"
+					},
+					"response": []
+				},
+				{
+					"name": "Admin adds a new admin without password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 400\",() =>  {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is present\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is JSON\", function () {\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response must have a body\", function () {\r",
+									"     pm.response.to.be.withBody;\r",
+									"     pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The response has error message\", () => {\r",
+									"   pm.expect(response.errors.Password.toString()).to.be.equal(\"The Password field is required.\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 0,\r\n  \"email\": \"userAdmin@example.com\",\r\n  \"name\": \"Admin\",\r\n  \"surname\": \"string\",\r\n  \"password\": \"\",\r\n  \"deletedStatus\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseUrl}}/api/User/AddUser"
+					},
+					"response": []
+				},
+				{
+					"name": "Admin adds a new user with administrator privileges",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 201\",() =>  {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is present\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is JSON\", function () {\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The response has all properties with the expected type\", () => {\r",
+									"        pm.expect(response.email).to.be.a(\"string\");\r",
+									"        pm.expect(response.name).to.be.a(\"string\");\r",
+									"        pm.expect(response.surname).to.be.an(\"string\");\r",
+									"        pm.expect(response.password).to.be.an(\"string\");\r",
+									"        pm.expect(response.deletedStatus).to.be.an(\"boolean\");\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 0,\r\n  \"email\": \"admin9@example.com\",\r\n  \"name\": \"string\",\r\n  \"surname\": \"string\",\r\n  \"password\": \"string\",\r\n  \"deletedStatus\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseUrl}}/api/User/AddUserAdmin"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User story 5",
+			"item": [
+				{
+					"name": "Get all users - with admin privileges",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 201\",() =>  {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is present\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is JSON\", function () {\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The response has all properties with the expected type\", () => {\r",
+									"    for(var i = 0; i < response.length; i++){\r",
+									"        pm.expect(response[i].id).to.be.an(\"number\");\r",
+									"        pm.expect(response[i].email).to.be.an(\"string\");\r",
+									"        pm.expect(response[i].name).to.be.an(\"string\");\r",
+									"        pm.expect(response[i].surname).to.be.an(\"string\");\r",
+									"        pm.expect(response[i].password).to.be.an(\"string\");\r",
+									"        pm.expect(response[i].deletedStatus).to.be.an(\"boolean\");\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{baseUrl}}/api/User/GetAllUsers"
+					},
+					"response": []
+				},
+				{
+					"name": "Admin updates user's name",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 200\",() =>  {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is present\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is JSON\", function () {\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The response has all properties with the expected type\", () => {\r",
+									"        pm.expect(response.email).to.be.an(\"string\");\r",
+									"        pm.expect(response.name).to.be.an(\"string\");\r",
+									"        pm.expect(response.surname).to.be.an(\"string\");\r",
+									"        pm.expect(response.password).to.be.an(\"string\");\r",
+									"        pm.expect(response.deletedStatus).to.be.an(\"boolean\");\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"id\": 1,\r\n        \"email\": \"admin@admin.com\",\r\n        \"name\": \"new\",\r\n        \"surname\": \"string\",\r\n        \"password\": \"123123\",\r\n        \"deletedStatus\": false\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseUrl}}/api/User/UpdateUserInfo"
+					},
+					"response": []
+				},
+				{
+					"name": "Get all users with admin privileges Copy 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 400\",() =>  {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is present\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is JSON\", function () {\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The response has error message\", () => {\r",
+									"   pm.expect(response.errors.Password.toString()).to.be.equal(\"The Password field is required.\");\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"id\": 1,\r\n        \"email\": \"admin@admin.com\",\r\n        \"name\": \"new\",\r\n        \"surname\": \"string\",\r\n        \"password\": \"\",\r\n        \"deletedStatus\": false\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseUrl}}/api/User/UpdateUserInfo"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User story 7",
+			"item": [
+				{
+					"name": "Admin deletes user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\",() =>  {\r",
+									"    pm.response.to.have.status(204);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"id\": 5,\r\n        \"email\": \"user@example.com\",\r\n        \"name\": \"string\",\r\n        \"surname\": \"novi\",\r\n        \"password\": \"string\",\r\n        \"deletedStatus\": false\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseUrl}}/api/User/DeleteUser"
+					},
+					"response": []
+				},
+				{
+					"name": "Admin deletes user without name",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 400\",() =>  {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is present\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is JSON\", function () {\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response must have a body\", function () {\r",
+									"     pm.response.to.be.withBody;\r",
+									"     pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The response has error message\", () => {\r",
+									"   pm.expect(response.errors.Name.toString()).to.be.equals(\"The Name field is required.\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"id\": 5,\r\n        \"email\": \"user@example.com\",\r\n        \"name\": \"\",\r\n        \"surname\": \"novi\",\r\n        \"password\": \"string\",\r\n        \"deletedStatus\": false\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseUrl}}/api/User/DeleteUser"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
