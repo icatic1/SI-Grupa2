@@ -36,6 +36,12 @@ namespace SIProjectSet1.UserService
         Task<PasswordRequest> setToken(string email);
 
         Task<List<String>> GetAllTokens();
+
+        Task<String> getTFAToken(long userID);
+        Task<bool> InsertTwoFactorToken(long userID, string token);
+        Task<bool> ActivateTwoFactorToken(long userID);
+        Task<Boolean> getTFAStatus(long userID);
+
     }
 
     public class UserService : IUserService
@@ -363,6 +369,76 @@ namespace SIProjectSet1.UserService
             catch (Exception ex)
             {
                 return new List<String>();
+            }
+        }
+
+
+        public async Task<bool> InsertTwoFactorToken(long userID, string token)
+        {
+            try
+            {
+                var newToken = new Entities.TFA();
+                newToken.UserId = userID;
+                newToken.token = token;
+                newToken.isActivated = false;
+                var addedToken = await _context.FTAs.AddAsync(newToken);
+                await _context.SaveChangesAsync();
+                if (addedToken == null) return false;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+
+
+        public async Task<String> getTFAToken(long userID)
+        {
+            try
+            {
+                var tokenList = await _context.FTAs.Where(o => o.UserId == userID).ToListAsync();
+                if (tokenList == null || tokenList.Count() == 0) return null;
+                var token = tokenList.FirstOrDefault().token;
+
+                return token;
+            }
+            catch (Exception ex)
+            {
+                return "";
+            }
+        }
+
+        public async Task<Boolean> getTFAStatus(long userID)
+        {
+            try
+            {
+                var tokenList = await _context.FTAs.Where(o => o.UserId == userID).ToListAsync();
+                if (tokenList == null || tokenList.Count() == 0) return false;
+                var activated = tokenList.FirstOrDefault().isActivated;
+
+                return activated;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> ActivateTwoFactorToken(long userID)
+        {
+            try
+            {
+                var tokenList = await _context.FTAs.Where(o => o.UserId == userID).ToListAsync();
+                if (tokenList == null || tokenList.Count() == 0) return false;
+                tokenList.FirstOrDefault().isActivated = true;
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
             }
         }
 

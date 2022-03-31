@@ -21,15 +21,16 @@ function Login() {
 
         setValidated(true);
 
-        await onLogin({ "email": email, "password": password })
+        await onLogin({ "email": email, "password": password }).then(res => {
+            if (res != null) {
 
-        if (localStorage.getItem('token') != null) {
+                navigate('/TFA', { state: { "email": email, "token": res } });
+            }
+            else {
+                document.getElementById('error').style.display = "block"
+            }
+        })
 
-            navigate('/Home')
-        }
-        else {
-            document.getElementById('error').style.display = "block"
-        }
     };
 
     return (
