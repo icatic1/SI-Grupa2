@@ -29,6 +29,8 @@ namespace SIProjectSet1.Controllers
         private readonly IUserService _userService;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IConfiguration _configuration;
+        private TotpController _totpController = null;
+
 
         public UserController(ILogger<UserController> logger, SIProjectSet1Context context, IUserService userService,
             UserManager<IdentityUser> userManager,
@@ -40,6 +42,7 @@ namespace SIProjectSet1.Controllers
             _userService = userService;
             _userManager = userManager;
             _configuration = configuration;
+            _totpController = new TotpController();
         }
 
         public UserController(ILogger<UserController> logger, SIProjectSet1Context context, IUserService userService)
@@ -47,6 +50,7 @@ namespace SIProjectSet1.Controllers
             _logger = logger;
             _context = context;
             _userService = userService;
+            _totpController = new TotpController();
         }
 
         [Authorize(Roles = "Administrator")]
@@ -282,6 +286,95 @@ namespace SIProjectSet1.Controllers
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
+
+        #region TFA
+
+        [HttpPost]
+        [Route("tfalogin")]
+        public async Task<IActionResult> TFALogin(string email)
+        {
+
+
+            try
+            {
+                Console.WriteLine(email);
+                var users = await _userService.GetAllUsers();
+                var user = users.Find((u) => email == u.Email);
+                if (user != null)
+                {
+                    long userID = user.Id;
+                    //long userID = await _userService.GetIDByEmail(email);
+                    //if (userID > 0)
+                    //{
+
+                    String tfaToken = await _userService.getTFAToken(userID);
+                    if (tfaToken != null)
+                    {
+                        _totpController = new TotpController(userID, tfaToken);
+                        Console.WriteLine("Okej je");
+                        return Ok("true");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Nije okej");
+                        String uniqueUserKey = Guid.NewGuid().ToString();
+                        _totpController = new TotpController(userID, uniqueUserKey);
+                        await _userService.InsertTwoFactorToken(userID, uniqueUserKey);
+
+                        return _totpController.GetQr();
+                    }
+                }
+                Console.WriteLine("Potpuni promasaj");
+                return Ok("");
+            }
+            catch (Exception ex)
+            {
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+
+        }
+
+
+
+
+        [HttpPost]
+        [Route("tfasendcode")]
+        public async Task<IActionResult> TFASendCode(int code, String email)
+        {
+
+            try
+            {
+                Console.WriteLine("Code: " + code);
+                long userID = await _userService.GetUserID(email);
+                String tfaToken = await _userService.getTFAToken(userID);
+                TotpController totpController2 = new TotpController(userID, tfaToken);
+                bool uspjeh = totpController2.Validate(code);
+                if (uspjeh)
+                {
+                    Boolean tfaStatus = await _userService.getTFAStatus(userID);
+                    if (tfaStatus)
+                    {
+                        return Ok(uspjeh);
+                    }
+                    else
+                    {
+                        return Ok(await _userService.ActivateTwoFactorToken(userID));
+                        //return await _userService.InsertTwoFactorToken(userID)
+                    }
+                }
+                return BadRequest("Nije uspjesno");
+
+            }
+            catch (Exception ex)
+            {
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+
+
+        #endregion
+
 
     }
 }

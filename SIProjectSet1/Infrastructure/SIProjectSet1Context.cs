@@ -19,6 +19,7 @@ namespace SIProjectSet1.Infrastructure
 
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<PassToken> PassTokens { get; set; }
+        public DbSet<TFA> FTAs { get; set; }
 
     }
 }

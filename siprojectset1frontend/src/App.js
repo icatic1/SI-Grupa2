@@ -11,6 +11,7 @@ import ChangePassword from "./components/ChangePassword";
 import ChangePasswordM from "./components/ChangePasswordM";
 import ChangePasswordQ from "./components/ChangePasswordQ";
 import ChangePass from "./components/ChangePass";
+import TFA from "./components/TFA";
 
 
 import './App.css';
@@ -55,32 +56,48 @@ const AuthProvider = ({ children }) => {
         formBody = formBody.join("&");
 
 
-        await fetch('/api/user/login?' + formBody, {
+        const response1 = await fetch('/api/user/login?' + formBody, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
             },
             body: formBody
-        }).then(response => {
-            if (response.status != 200) {
-                return false
-            }
-            return response.body
-        }).
-            then(body => { if (body) { return body.getReader().read() }; return false }).
-            then(d => {
-                if (!d) {
-                    return false
-                }
-                var result = String.fromCharCode.apply(null, d.value);
+        });
+        const resp = await response1;
+        const resp2 = await response1.body;
+        const resp3 = await resp2.getReader().read();
+        var result = String.fromCharCode.apply(null, resp3.value);
+        return result;
 
-                localStorage.setItem('token', result);
-                setToken(localStorage.getItem('token'))
+    }
 
-                return true
-            }).catch((err) => {
-                return false
-            })
+    const ftasendcode = async (data) => {
+
+        var formBody = [];
+        for (var property in data) {
+            var encodedKey = encodeURIComponent(property);
+            var encodedValue = encodeURIComponent(data[property]);
+            formBody.push(encodedKey + "=" + encodedValue);
+        }
+        formBody = formBody.join("&");
+
+
+        console.log(formBody)
+        const response1 = await fetch('/api/user/tfasendcode?' + formBody, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+            },
+            body: formBody
+        });
+
+        const resp = await response1;
+        const resp2 = await response1.body;
+        const resp3 = await resp2.getReader().read();
+        var result = String.fromCharCode.apply(null, resp3.value);
+        localStorage.setItem('token', data.token);
+        setToken(localStorage.getItem('token'))
+        return result;
 
     }
 
@@ -93,6 +110,7 @@ const AuthProvider = ({ children }) => {
         token: token,
         onLogin: handleLogin,
         onLogout: handleLogout,
+        ftasendcode: ftasendcode
     }
 
     return (
@@ -158,6 +176,7 @@ function App() {
                     <Route exact path='/ChangePasswordM' element={<ChangePasswordM />} />
                     <Route exact path='/ChangePasswordQ' element={<ChangePasswordQ />} />
                     <Route exact path='/ChangePass/:passtoken' element={<ChangePass />} />
+                    <Route exact path='/TFA' element={<TFA />} />
                 </Routes>
             </AuthProvider>
         </Router>)
