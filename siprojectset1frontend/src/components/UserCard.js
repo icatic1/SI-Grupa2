@@ -9,14 +9,14 @@ const UserCard = ({ user }) => {
         try {
             let token = 'Bearer ' + localStorage.getItem('token')
             const headers = { 'content-type': 'application/json', 'Authorization': token }
-            fetch('/user/deleteuser',
+            fetch('api/user/deleteuser',
                 {
                     method: 'PUT',
                     body: JSON.stringify(user),
                     headers: headers
                 }).then(() => { window.location.reload(false); })
 
-            console.log(response);
+
         } catch (e) {
             console.log(e);
         }

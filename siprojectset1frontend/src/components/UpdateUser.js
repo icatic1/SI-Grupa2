@@ -46,7 +46,7 @@ function UpdateUser() {
                     headers: headers,
                     body: a
                 }
-                fetch('/user/updateuserinfo', options).then(() => { navigate("/GetAll"); window.location.reload(false); })
+                fetch('/api/user/updateuserinfo', options).then(() => { navigate("/GetAll"); window.location.reload(false); })
             } catch (e) {
                 console.log(e);
             }
