@@ -266,7 +266,6 @@ namespace SIProjectSet1.UserService
         }
 
 
-        //--------------------------------------------------------------
 
         public async Task<String> getToken(string emailToken)
         {
@@ -276,7 +275,7 @@ namespace SIProjectSet1.UserService
                 var deletedToken = await _context.PassTokens.Where(o => o.ResetToken == emailToken).SingleOrDefaultAsync();
                 if (deletedToken == null) return null;
                 emailFound = deletedToken.Email;
-                //_context.PassTokens.Remove(deletedToken); ne smije ostat komentarisano
+                _context.PassTokens.Remove(deletedToken); 
 
                 //obrisat ovaj token !!!!! da se ne bi mogao iskoristiti isti link
                 //var obrisan = await _context.PassTokens.Where(o => o.ResetToken == emailToken).SingleOrDefaultAsync();
@@ -332,7 +331,6 @@ namespace SIProjectSet1.UserService
                 request.ToEmail = email;
                 request.Token = t;
 
-                //"NekaKatastrofa"; // ovo je samo primjer trebalo bi stavit neki generator random karaktera
 
                 newToken.ResetToken = t;
                 var addedToken = await _context.PassTokens.AddAsync(newToken);

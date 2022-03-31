@@ -8,14 +8,14 @@ function ChangePass() {
     const { passtoken } = useParams()
 
     useEffect(async () => {
-        event.preventDefault();
+        
 
         var formBody = [];
         var encodedKey = encodeURIComponent("emailToken");
         var encodedValue = encodeURIComponent(passtoken);
         formBody.push(encodedKey + "=" + encodedValue);
         //formBody = formBody.join("&");
-        console.log(formBody)
+        
 
         const response = await fetch('/api/user/getpasstoken?' + formBody, {
             method: 'GET',
@@ -25,22 +25,12 @@ function ChangePass() {
         })
 
 
-        /*const response = await fetch("user/getpasstoken",
-            {
-                method: "GET",
-                body: {
-                    emailToken: passtoken
-                },
-                headers: {
-                    'content-type': 'application/json'
-                }
-            })*/
 
         const data = await response.json() //ovo bi trebao biti vraceni objekat
 
         //Sad ovdje provjeris da li je vracen user, ako jeste onda pozoves setUser(taj user iz data),
         //ako nije, onda mozes setUnauthorized(true)
-        console.log(data)
+        
         setUser(data)
 
 
@@ -52,7 +42,7 @@ function ChangePass() {
     const navigate = useNavigate()
 
     async function submitPassword() {
-        event.preventDefault();
+       
         let newPassword = password //ovo moze i pametnije, ali ne da mi se sad
         if (newPassword.length === 0)
             return //mozda da ispises poruku kako se mora unijeti password, logicno ne moze biti prazno polje
@@ -75,16 +65,7 @@ function ChangePass() {
                 },
             })
 
-            /*await fetch('user/ChangeUserPassword', {
-                method: 'PUT',
-                body: {
-                    email: user.email,
-                    password: newPassword
-                },
-                headers: {
-                    'content-type': 'application/json'
-                }
-            })*/
+            
 
             //e sad smo valjda promijenili password, mozes redirekciju uraditi na pocetnu stranicu, koja
             //bi trebala biti login
