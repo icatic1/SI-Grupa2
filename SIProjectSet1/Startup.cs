@@ -5,6 +5,7 @@ using SIProjectSet1.UserService;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using SIProjectSet1.Settings;
 
 namespace SIProjectSet1
 {
@@ -85,6 +86,8 @@ namespace SIProjectSet1
                     }
                 )
             );
+            services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
+            services.AddTransient<IMailService, UserService.MailService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

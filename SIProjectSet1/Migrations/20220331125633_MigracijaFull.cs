@@ -4,10 +4,24 @@
 
 namespace SIProjectSet1.Migrations
 {
-    public partial class InitialMigration : Migration
+    public partial class MigracijaFull : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "PassTokens",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Email = table.Column<string>(type: "varchar(250)", nullable: false),
+                    ResetToken = table.Column<string>(type: "varchar(250)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PassTokens", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Roles",
                 columns: table => new
@@ -77,6 +91,9 @@ namespace SIProjectSet1.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "PassTokens");
+
             migrationBuilder.DropTable(
                 name: "UserRoles");
 

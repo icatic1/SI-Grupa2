@@ -15,6 +15,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
+using SIProjectSet1.Models;
 
 namespace SIProjectSet1.Controllers
 {
@@ -222,5 +223,65 @@ namespace SIProjectSet1.Controllers
 
             return token;
         }
+
+
+        [HttpGet]
+        [Route("GetPassToken")]
+        public async Task<ActionResult<User>> GetPassToken(string emailToken)
+        {
+            try
+            {
+                String existsMail = null;
+                if (!ModelState.IsValid) return BadRequest();
+                existsMail = await _userService.getToken(emailToken);
+                if (existsMail == null) throw new Exception();
+                //treba vratiti usera sada za email
+
+                var ret = await _userService.getOneUser(existsMail);
+
+                return Ok(ret);
+            }
+            catch (Exception ex)
+            {
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+
+        [HttpGet]
+        [Route("GetAllTokens")]
+        public async Task<ActionResult<List<String>>> GetAllTokens()
+        {
+            try
+            {
+                var toks = await _userService.GetAllTokens();
+                return Ok(toks);
+
+            }
+            catch (Exception ex)
+            {
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpPost]
+        [Route("PostToken")]
+        public async Task<ActionResult<PasswordRequest>> PostToken(string targetEmail)
+        {
+            try
+            {
+                PasswordRequest newT = null;
+                if (!ModelState.IsValid) return BadRequest();
+                newT = await _userService.setToken(targetEmail);
+                if (newT == null) throw new Exception();
+
+                return Ok(newT);
+            }
+            catch (Exception ex)
+            {
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+        }
+
     }
 }
