@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using SIProjectSet1.Entities;
 using SIProjectSet1.Infrastructure;
+using SIProjectSet1.Models;
 using SIProjectSet1.ViewModels;
 
 namespace SIProjectSet1.UserService
@@ -27,6 +28,14 @@ namespace SIProjectSet1.UserService
         Task<long> GetUserID(string email);
 
         Task<string> GetUserRole(string email);
+
+        Task<String> getToken(string emailToken);
+
+        Task<User> getOneUser(string email);
+
+        Task<PasswordRequest> setToken(string email);
+
+        Task<List<String>> GetAllTokens();
     }
 
     public class UserService : IUserService
@@ -253,6 +262,109 @@ namespace SIProjectSet1.UserService
             catch (Exception ex)
             {
                 return "";
+            }
+        }
+
+
+        //--------------------------------------------------------------
+
+        public async Task<String> getToken(string emailToken)
+        {
+            try
+            {
+                String emailFound = null;
+                var deletedToken = await _context.PassTokens.Where(o => o.ResetToken == emailToken).SingleOrDefaultAsync();
+                if (deletedToken == null) return null;
+                emailFound = deletedToken.Email;
+                //_context.PassTokens.Remove(deletedToken); ne smije ostat komentarisano
+
+                //obrisat ovaj token !!!!! da se ne bi mogao iskoristiti isti link
+                //var obrisan = await _context.PassTokens.Where(o => o.ResetToken == emailToken).SingleOrDefaultAsync();
+                await _context.SaveChangesAsync();
+                return emailFound;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public async Task<User> getOneUser(string email)
+        {
+            try
+            {
+
+                var user = await _context.Users.Where(o => o.Email == email).SingleOrDefaultAsync();
+
+                if (user == null) return null;
+                await _context.SaveChangesAsync();
+
+                return user;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+
+        public async Task<PasswordRequest> setToken(string email)
+        {
+            try
+            {
+
+                var newToken = new Entities.PassToken();
+                newToken.Email = email;
+                const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+                var stringChars = new char[10];
+                var random = new Random();
+
+                for (int i = 0; i < stringChars.Length; i++)
+                {
+                    stringChars[i] = chars[random.Next(chars.Length)];
+                }
+
+                String t = new String(stringChars);
+
+                PasswordRequest request = new PasswordRequest();
+                request.UserName = email;
+                request.ToEmail = email;
+                request.Token = t;
+
+                //"NekaKatastrofa"; // ovo je samo primjer trebalo bi stavit neki generator random karaktera
+
+                newToken.ResetToken = t;
+                var addedToken = await _context.PassTokens.AddAsync(newToken);
+                await _context.SaveChangesAsync();
+
+                return request;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+
+        public async Task<List<String>> GetAllTokens()
+        {
+            try
+            {
+                var tokList = await _context.PassTokens.ToListAsync();
+
+                var listToks = new List<String>();
+
+                foreach (var t in tokList)
+                {
+                    var model = t.ResetToken + " " + t.Email;
+                    listToks.Add(model);
+                }
+                return listToks;
+            }
+            catch (Exception ex)
+            {
+                return new List<String>();
             }
         }
 
