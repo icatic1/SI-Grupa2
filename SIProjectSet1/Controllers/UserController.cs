@@ -78,7 +78,7 @@ namespace SIProjectSet1.Controllers
 
         }
 
-        //[Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator")]
         [HttpPost]
         [Route("AddUserAdmin")]
         public async Task<ActionResult<UserViewModel>> AddUserAdmin(UserViewModel user)

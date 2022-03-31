@@ -1,10 +1,12 @@
 ﻿using Microsoft.Extensions.Options;
+using System.Web;
 
 using MimeKit;
 using MailKit.Security;
 using MailKit.Net.Smtp;
 using SIProjectSet1.Models;
 using SIProjectSet1.Settings;
+using System.Net;
 
 namespace SIProjectSet1.UserService
 {
@@ -27,9 +29,11 @@ namespace SIProjectSet1.UserService
             StreamReader str = new StreamReader(FilePath);
             string MailText = str.ReadToEnd();
             str.Close();
-            //string currentURL = HttpContext.Current.Request.Url.Host;
+
+            string currentURL = Dns.GetHostName();
+            
             //MailText = MailText.Replace("[username]", request.UserName).Replace("[email]", request.ToEmail).Replace("[token]", "https://localhost:3000/ChangePass/" + request.Token);
-            MailText = MailText.Replace("[username]", request.UserName).Replace("[email]", request.ToEmail).Replace("[token]", "http://sigrupa4-001-site1.ctempurl.com/ChangePass/" + request.Token);
+            MailText = MailText.Replace("[username]", request.UserName).Replace("[email]", request.ToEmail).Replace("[token]", currentURL+"/ChangePass/" + request.Token);
             var email = new MimeMessage();
             
             email.Sender = MailboxAddress.Parse(_mailSettings.Mail);
