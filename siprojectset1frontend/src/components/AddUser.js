@@ -35,7 +35,7 @@ function AddUser() {
             let token = 'Bearer ' + localStorage.getItem('token')
             const headers = { 'content-type': 'application/json', 'Authorization': token}
             if (checked === false) {
-                fetch('user/adduser',
+                fetch('api/user/adduser',
                     {
                         method: 'POST',
                         mode: 'cors',
@@ -52,7 +52,7 @@ function AddUser() {
                         .catch(console.error)
             }
             else {
-                fetch('user/adduseradmin',
+                fetch('api/user/adduseradmin',
                     {
                         method: 'POST',
                         body: JSON.stringify(user),

@@ -97,6 +97,9 @@ namespace SIProjectSet1
 
             app.UseHttpsRedirection();
 
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+
             app.UseRouting();
 
             app.UseAuthentication();
@@ -126,7 +129,7 @@ namespace SIProjectSet1
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-            });
+            }); 
 
         }
     }

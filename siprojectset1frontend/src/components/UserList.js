@@ -17,7 +17,7 @@ const UsersList = ({ editUser }) => {
                 let token = 'Bearer ' + localStorage.getItem('token')
                 const headers = { 'content-type': 'application/json', 'Authorization': token }
 
-                const response1 = await fetch("/user/getallusers",
+                const response1 = await fetch("/api/user/getallusers",
                     {
                         method: 'GET',
                         headers: headers
