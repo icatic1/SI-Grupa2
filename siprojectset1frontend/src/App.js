@@ -84,7 +84,8 @@ const AuthProvider = ({ children }) => {
     }
 
     const handleLogout = () => {
-        //treba implementirati
+        setToken(null)
+        localStorage.removeItem('token');
     }
 
     const value = {
