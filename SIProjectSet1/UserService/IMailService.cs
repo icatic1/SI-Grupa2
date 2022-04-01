@@ -56,16 +56,18 @@ namespace SIProjectSet1.UserService
             Message.Subject = "SnapShot - Reset password";
             //Message.Body = "This is a sample message using SMTP authentication";
             //Message.IsBodyHtml = false;
-            string FilePath = Directory.GetCurrentDirectory() + "\\MailAddOn\\front.html";
-            var msgBody = new StringBuilder(File.ReadAllText(FilePath));
-           
-            string currentURL = "http://sigrupa4-001-site1.ctempurl.com";
-            msgBody.Replace("[username]", request.UserName);
-            msgBody.Replace("[email]", request.ToEmail);
-            msgBody.Replace("[token]", currentURL + "/ChangePass/" + request.Token);
+            /* string FilePath = Directory.GetCurrentDirectory() + "\\MailAddOn\\front.html";
+             var msgBody = new StringBuilder(File.ReadAllText(FilePath));
 
-            Message.IsBodyHtml = true;
-            Message.Body = msgBody.ToString();
+             string currentURL = "http://sigrupa4-001-site1.ctempurl.com";
+             msgBody.Replace("[username]", request.UserName);
+             msgBody.Replace("[email]", request.ToEmail);
+             msgBody.Replace("[token]", currentURL + "/ChangePass/" + request.Token);
+
+             Message.IsBodyHtml = true;
+             Message.Body = msgBody.ToString();*/
+            string currentURL = "http://sigrupa4-001-site1.ctempurl.com";
+            Message.Body = "Reset Password link:  " + currentURL + "/ChangePass/" + request.Token;
 
             SmtpClient smtp = new SmtpClient("smtp.gmail.com");
                 
