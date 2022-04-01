@@ -53,9 +53,19 @@ namespace SIProjectSet1.UserService
 
             MailMessage Message = new MailMessage("snapshotagent@gmail.com", request.ToEmail);
             
-            Message.Subject = "Password reset request";
-            Message.Body = "This is a sample message using SMTP authentication";
-            Message.IsBodyHtml = false;
+            Message.Subject = "SnapShot - Reset password";
+            //Message.Body = "This is a sample message using SMTP authentication";
+            //Message.IsBodyHtml = false;
+            string FilePath = Directory.GetCurrentDirectory() + "\\MailAddOn\\front.html";
+            var msgBody = new StringBuilder(File.ReadAllText(FilePath));
+           
+            string currentURL = "http://sigrupa4-001-site1.ctempurl.com";
+            msgBody.Replace("[username]", request.UserName);
+            msgBody.Replace("[email]", request.ToEmail);
+            msgBody.Replace("[token]", currentURL + "/ChangePass/" + request.Token);
+
+            Message.IsBodyHtml = true;
+            Message.Body = msgBody.ToString();
 
             SmtpClient smtp = new SmtpClient("smtp.gmail.com");
                 
