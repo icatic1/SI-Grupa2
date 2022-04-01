@@ -25,9 +25,6 @@ namespace SIProjectSet1.UserService
 
         public async Task SendNewMail(PasswordRequest request)
         {
-            try
-            {
-
             
                 MailMessage mes = new MailMessage(_mailSettings.Mail,request.ToEmail);
                 mes.Subject = "SnapShot - Reset password";
@@ -36,7 +33,8 @@ namespace SIProjectSet1.UserService
                 
                 string FilePath = Directory.GetCurrentDirectory() + "\\MailAddOn\\front.html";
                 var msgBody = new StringBuilder(File.ReadAllText(FilePath));
-                string currentURL = Dns.GetHostName();
+                //string currentURL = Dns.GetHostName();
+                string currentURL = "http://sigrupa4-001-site1.ctempurl.com";
                 msgBody.Replace("[username]", request.UserName);
                 msgBody.Replace("[email]", request.ToEmail);
                 msgBody.Replace("[token]", currentURL + "/ChangePass/" + request.Token);
@@ -51,10 +49,6 @@ namespace SIProjectSet1.UserService
                 sc.EnableSsl = true;
                 sc.Send(mes);
                
-            }catch (Exception ex)
-            {
-                Console.Error.WriteLine(ex);
-            }
         }
     }
 
