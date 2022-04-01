@@ -287,6 +287,34 @@ namespace SIProjectSet1.Controllers
             }
         }
 
+        #region SecurityQuestion
+        [HttpGet]
+        [Route("GetSecurityQuestion")]
+        public async Task<ActionResult<SecurityQuestion>> GetSecurityQuestion(string email)
+        {
+            try
+            {
+                var user = await _userService.getOneUser(email);
+
+                if (user == null) return BadRequest();
+
+                var securityQuestion = await _userService.GetSecurityQuestion(user.Id);
+
+                if(securityQuestion == null) return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+
+                return Ok(securityQuestion);
+            } catch(Exception ex)
+            {
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+
+
+        }
+
+
+
+        #endregion
+
         #region TFA
 
         [HttpPost]
@@ -308,6 +336,7 @@ namespace SIProjectSet1.Controllers
                     //{
 
                     String tfaToken = await _userService.getTFAToken(userID);
+                    bool tfastatus = await _userService.getTFAStatus(userID);
                     if (tfaToken != null)
                     {
                         _totpController = new TotpController(userID, tfaToken);

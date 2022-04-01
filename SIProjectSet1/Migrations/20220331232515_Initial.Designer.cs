@@ -11,8 +11,8 @@ using SIProjectSet1.Infrastructure;
 namespace SIProjectSet1.Migrations
 {
     [DbContext(typeof(SIProjectSet1Context))]
-    [Migration("20220331192251_TFAAdd")]
-    partial class TFAAdd
+    [Migration("20220331232515_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -59,6 +59,30 @@ namespace SIProjectSet1.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
+                });
+
+            modelBuilder.Entity("SIProjectSet1.Entities.SecurityQuestion", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<string>("Answer")
+                        .IsRequired()
+                        .HasColumnType("varchar(250)");
+
+                    b.Property<string>("Question")
+                        .IsRequired()
+                        .HasColumnType("varchar(250)");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SecurityQuestions");
                 });
 
             modelBuilder.Entity("SIProjectSet1.Entities.TFA", b =>

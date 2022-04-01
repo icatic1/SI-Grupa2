@@ -30,6 +30,7 @@ async function tfaActivate(email) {
     const resp2 = await response1.body;
     const resp3 = await resp2.getReader().read();
     var result = String.fromCharCode.apply(null, resp3.value);
+    
     console.log("Response u async je: ");
     console.log(result);
     return result;
@@ -58,7 +59,7 @@ function TFA() {
                 setJWTToken(state.token);
 
             })
-        }
+        } 
     }, []);
 
 

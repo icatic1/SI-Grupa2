@@ -21,5 +21,7 @@ namespace SIProjectSet1.Infrastructure
         public DbSet<PassToken> PassTokens { get; set; }
         public DbSet<TFA> FTAs { get; set; }
 
+        public DbSet<SecurityQuestion> SecurityQuestions { get; set; }
+
     }
 }

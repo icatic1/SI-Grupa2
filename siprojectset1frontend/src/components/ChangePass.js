@@ -2,20 +2,21 @@ import { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { Container, Segment, Form, Button } from "react-bootstrap";
 
+import NotFound from './NotFound'
 
 
 function ChangePass() {
     const { passtoken } = useParams()
 
     useEffect(async () => {
-        
+
 
         var formBody = [];
         var encodedKey = encodeURIComponent("emailToken");
         var encodedValue = encodeURIComponent(passtoken);
         formBody.push(encodedKey + "=" + encodedValue);
-        //formBody = formBody.join("&");
         
+
 
         const response = await fetch('/api/user/getpasstoken?' + formBody, {
             method: 'GET',
@@ -26,12 +27,12 @@ function ChangePass() {
 
 
 
-        const data = await response.json() //ovo bi trebao biti vraceni objekat
+        const data = await response.json() 
 
-        //Sad ovdje provjeris da li je vracen user, ako jeste onda pozoves setUser(taj user iz data),
-        //ako nije, onda mozes setUnauthorized(true)
-        
-        setUser(data)
+        if (data.id === undefined)
+            setUnauthorized(true)
+        else
+            setUser(data)
 
 
     }, [])
@@ -41,11 +42,11 @@ function ChangePass() {
     const [unauthorized, setUnauthorized] = useState(false)
     const navigate = useNavigate()
 
-    async function submitPassword() {
-       
-        let newPassword = password //ovo moze i pametnije, ali ne da mi se sad
+    async function submitPassword(e) {
+        e.preventDefault()
+        let newPassword = password 
         if (newPassword.length === 0)
-            return //mozda da ispises poruku kako se mora unijeti password, logicno ne moze biti prazno polje
+            return 
         else {
 
             var formBody = [];
@@ -66,21 +67,18 @@ function ChangePass() {
             })
 
             
-
-            //e sad smo valjda promijenili password, mozes redirekciju uraditi na pocetnu stranicu, koja
-            //bi trebala biti login
-            navigate('/')
+           navigate('/')
         }
     }
 
     return (
         <>
             {user === null ? <div></div> :
-                <Container className="mx-auto">
+                <Container className="mx-auto" style={{ margin:"15px" }}>
                     <Form >
                         <Form.Group className="mb-3" controlId="formBasicEmail">
                             <Form.Label>Email address</Form.Label>
-                            <Form.Control readOnly required type="email" value={user.email} />
+                            <Form.Control style={{ width: "50%" }} readOnly required type="email" value={user.email} />
                             <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                         </Form.Group>
 
@@ -88,7 +86,7 @@ function ChangePass() {
 
                         <Form.Group className="mb-3" controlId="formBasicPassword">
                             <Form.Label>Password</Form.Label>
-                            <Form.Control required type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
+                            <Form.Control style={{ width: "50%" }} required type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
                             <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                         </Form.Group>
 
@@ -100,7 +98,7 @@ function ChangePass() {
 
                     </Form>
                 </Container>}
-            {unauthorized === true ? <div>Sorry, this page doesn't exist...</div> : <></>}
+            {unauthorized === true ? <NotFound/> : <></>}
         </>
 
     )

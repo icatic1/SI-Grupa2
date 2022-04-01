@@ -72,13 +72,13 @@ function ChangePasswordM() {
 
     return (
         <div id="">
-            <Container className="mx-auto">
+            <Container className="mx-auto" style={{ margin:"15px" }}>
                 <Link to={'/ChangePassword'} className="nav-link" id="withoutPad"> Change password home page</Link>
                 <h1 className="headingPass">Change password with email</h1>
                 <Form onSubmit={handleUserEmail}>
                     <Form.Group className="mb-3" controlId="">
                         <Form.Label>Enter email:</Form.Label>
-                        <Form.Control type="email" placeholder="Enter email" onChange={(e) => setEmail(e.target.value)}/>
+                        <Form.Control type="email" style={{ width: "50%" }} placeholder="Enter email" onChange={(e) => setEmail(e.target.value)}/>
                         <Form.Text className="text-muted">
 
                         </Form.Text>
