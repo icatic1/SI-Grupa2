@@ -36,7 +36,7 @@ function NavigationHeader() {
                             {checkAdmin() === true ? <li><Link to={'/GetAll'} className="nav-link" style={{ color: "white", fontSize: "24px" }}>Users</Link></li> : <></>}
                         </ul>
                         <ul className="nav navbar-nav ml-auto">
-                            <li class="nav navbar-nav"><Link to={'/'} onClick={onLogout} className="nav-link" style={{ color: "white", fontSize: "24px" }}>Logout</Link></li>
+                            <li className="nav navbar-nav"><Link to={'/'} onClick={onLogout} className="nav-link" style={{ color: "white", fontSize: "24px" }}>Logout</Link></li>
                         </ul>
 
                     </Container >

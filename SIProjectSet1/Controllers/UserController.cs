@@ -341,7 +341,14 @@ namespace SIProjectSet1.Controllers
                     {
                         _totpController = new TotpController(userID, tfaToken);
                         Console.WriteLine("Okej je");
-                        return Ok("true");
+                        if (tfastatus)
+                        {  
+                            return Ok("true");
+                        } else
+                        {
+                            return _totpController.GetQr();
+                        }
+                        
                     }
                     else
                     {

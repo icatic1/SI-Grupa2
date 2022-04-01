@@ -98,8 +98,10 @@ const AuthProvider = ({ children }) => {
         const resp2 = await response1.body;
         const resp3 = await resp2.getReader().read();
         var result = String.fromCharCode.apply(null, resp3.value);
-        localStorage.setItem('token', data.token);
-        setToken(localStorage.getItem('token'))
+        if (result == "true") {
+            localStorage.setItem('token', data.token);
+            setToken(localStorage.getItem('token'))
+        }
         return result;
 
     }
