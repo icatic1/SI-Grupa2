@@ -25,14 +25,19 @@ function NavigationHeader() {
     return (
         <>
             {token === null ? <></> :
-                <Navbar className="fluid navbar navbar-expand-lg navbar-light bg-light mx-auto">
+                <Navbar className="fluid navbar navbar-expand-lg mx-auto bg-primary" style={{ marginBottom: "1px" }}>
+                    <div className="navbar-header">
+                       <a className="navbar-brand" style={{ color: "white", fontSize: "28px", fontWeight: "bold" }}>Snapshot</a> 
+                    </div>
                     <Container className="mx-auto">
-                        <ListGroup className="navbar-nav mr-auto">
-                            <ListGroup.Item><Link to={'/Home'} className="nav-link"> Home </Link></ListGroup.Item>
-                            {checkAdmin() === true ? <ListGroup.Item><Link to={'/AddUser'} className="nav-link"> Add user </Link></ListGroup.Item> : <></>}
-                            {checkAdmin() === true ? <ListGroup.Item><Link to={'/GetAll'} className="nav-link">Users</Link></ListGroup.Item> : <></>}
-                            <ListGroup.Item><Link to={'/'} onClick={onLogout} className="nav-link">Logout</Link></ListGroup.Item>
-                        </ListGroup>
+                        <ul className="nav navbar-nav">
+                            <li><Link to={'/Home'} className="nav-link" style={{ color: "white", fontSize: "24px" }}> Home </Link></li>
+                            {checkAdmin() === true ? <li><Link to={'/AddUser'} className="nav-link" style={{ color: "white", fontSize: "24px" }}> Add user </Link></li> : <></>}
+                            {checkAdmin() === true ? <li><Link to={'/GetAll'} className="nav-link" style={{ color: "white", fontSize: "24px" }}>Users</Link></li> : <></>}
+                        </ul>
+                        <ul className="nav navbar-nav ml-auto">
+                            <li class="nav navbar-nav"><Link to={'/'} onClick={onLogout} className="nav-link" style={{ color: "white", fontSize: "24px" }}>Logout</Link></li>
+                        </ul>
 
                     </Container >
                 </Navbar >

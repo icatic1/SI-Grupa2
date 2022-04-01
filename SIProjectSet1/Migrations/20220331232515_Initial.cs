@@ -4,10 +4,25 @@
 
 namespace SIProjectSet1.Migrations
 {
-    public partial class MigracijaFull : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "FTAs",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<long>(type: "bigint", nullable: false),
+                    token = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    isActivated = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FTAs", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "PassTokens",
                 columns: table => new
@@ -33,6 +48,21 @@ namespace SIProjectSet1.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Roles", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SecurityQuestions",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<long>(type: "bigint", nullable: false),
+                    Question = table.Column<string>(type: "varchar(250)", nullable: false),
+                    Answer = table.Column<string>(type: "varchar(250)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SecurityQuestions", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -92,7 +122,13 @@ namespace SIProjectSet1.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "FTAs");
+
+            migrationBuilder.DropTable(
                 name: "PassTokens");
+
+            migrationBuilder.DropTable(
+                name: "SecurityQuestions");
 
             migrationBuilder.DropTable(
                 name: "UserRoles");

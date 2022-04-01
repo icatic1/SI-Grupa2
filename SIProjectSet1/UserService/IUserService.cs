@@ -41,6 +41,7 @@ namespace SIProjectSet1.UserService
         Task<bool> InsertTwoFactorToken(long userID, string token);
         Task<bool> ActivateTwoFactorToken(long userID);
         Task<Boolean> getTFAStatus(long userID);
+        Task<SecurityQuestion> GetSecurityQuestion(long userID);
 
     }
 
@@ -439,6 +440,21 @@ namespace SIProjectSet1.UserService
             catch (Exception ex)
             {
                 return false;
+            }
+        }
+
+        public async Task<SecurityQuestion> GetSecurityQuestion(long userID)
+        {
+            try
+            {
+                var securityQuestion = await _context.SecurityQuestions.Where(o => o.UserId == userID).SingleOrDefaultAsync();
+
+                if (securityQuestion == null) return null;
+                return securityQuestion;
+
+            } catch (Exception ex)
+            {
+                return null;
             }
         }
 
