@@ -1,5 +1,5 @@
 ﻿import React, { useEffect, useState, useContext } from "react";
-import { Container, Segment, Form, Button } from "react-bootstrap";
+import { Container, Segment, Form, Button, Spinner } from "react-bootstrap";
 
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from "../App"
@@ -57,11 +57,14 @@ function TFA() {
             tfaActivate(state.email).then(data => setTFAActive(data)).then(() => {
                 setEmail(state.email);
                 setJWTToken(state.token);
-
+                hideSpinner();
             })
         } 
     }, []);
 
+    function hideSpinner() {
+        if (document.getElementById('spinner')) document.getElementById('spinner').style.display = 'none';
+    }
 
     async function handleGoodSubmit(event) {
 
@@ -108,6 +111,7 @@ function TFA() {
         return (
             <div>
                 <Container className="mx-auto">
+                    <Spinner id="spinner" animation="border" variant="primary" />
                     <img src={tfaActive} />
                     <br />
                     <Form noValidate validated={validated} onSubmit={handleGoodSubmit}>
