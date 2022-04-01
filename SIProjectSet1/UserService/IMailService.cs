@@ -45,9 +45,11 @@ namespace SIProjectSet1.UserService
                 
                 sc.Host = _mailSettings.Host;
                 sc.Port = 587;
+                sc.UseDefaultCredentials = false;
                 sc.Credentials = new System.Net.NetworkCredential(_mailSettings.Mail,_mailSettings.Password);
                 sc.EnableSsl = true;
                 sc.Send(mes);
+                //string newStuf = "";
                
         }
     }

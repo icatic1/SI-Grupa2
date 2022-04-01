@@ -17,15 +17,15 @@ namespace SIProjectSet1.Controllers
         [Route("pass")]
         public async Task<IActionResult> SendWelcomeMail(PasswordRequest request)
         {
-            try
-            {
+            //try
+            //{
                 await mailService.SendNewMail(request);
                 return Ok();
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            //}
+            //catch (Exception ex)
+            //{
+              //  throw;
+            //}
         }
     }
 }
