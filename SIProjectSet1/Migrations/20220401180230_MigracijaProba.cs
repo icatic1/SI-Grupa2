@@ -4,7 +4,7 @@
 
 namespace SIProjectSet1.Migrations
 {
-    public partial class Initial : Migration
+    public partial class MigracijaProba : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

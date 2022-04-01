@@ -11,8 +11,8 @@ using SIProjectSet1.Infrastructure;
 namespace SIProjectSet1.Migrations
 {
     [DbContext(typeof(SIProjectSet1Context))]
-    [Migration("20220331232515_Initial")]
-    partial class Initial
+    [Migration("20220401180230_MigracijaProba")]
+    partial class MigracijaProba
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
