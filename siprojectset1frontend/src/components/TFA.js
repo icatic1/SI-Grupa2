@@ -1,5 +1,5 @@
 ﻿import React, { useEffect, useState, useContext } from "react";
-import { Container, Segment, Form, Button } from "react-bootstrap";
+import { Container, Segment, Form, Button, Spinner } from "react-bootstrap";
 
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from "../App"
@@ -57,11 +57,14 @@ function TFA() {
             tfaActivate(state.email).then(data => setTFAActive(data)).then(() => {
                 setEmail(state.email);
                 setJWTToken(state.token);
-
+                hideSpinner();
             })
         } 
     }, []);
 
+    function hideSpinner() {
+        if (document.getElementById('spinner')) document.getElementById('spinner').style.display = 'none';
+    }
 
     async function handleGoodSubmit(event) {
 
@@ -79,7 +82,7 @@ function TFA() {
             if (res == "true") {
                 navigate('/Home');
             } else {
-                console.log("Error");
+                if(document.getElementById('error')) document.getElementById('error').style.display = "block";
             }
         })
             .catch(console.error);
@@ -107,7 +110,8 @@ function TFA() {
     } else {
         return (
             <div>
-                <Container className="my-2">
+                <Container className="mx-auto">
+                    <Spinner id="spinner" animation="border" variant="primary" />
                     <img src={tfaActive} />
                     <br />
                     <Form noValidate validated={validated} onSubmit={handleGoodSubmit}>
@@ -116,7 +120,7 @@ function TFA() {
                             <Form.Control required type="number" placeholder="Enter code" onChange={(e) => setCode(e.target.value)} />
                             <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                         </Form.Group>
-
+                        <p style={{ 'display': 'none', 'color': 'red' }} id="error">Your code is incorrect.</p>
                         <Button variant="primary" type="submit">
                             Submit
                         </Button>
