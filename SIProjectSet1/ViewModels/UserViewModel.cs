@@ -27,6 +27,8 @@ namespace SIProjectSet1.ViewModels
 
         [Required]
         public bool DeletedStatus { get; set; }
+        public long RoleId { get; set; }
+
 
 
     }
