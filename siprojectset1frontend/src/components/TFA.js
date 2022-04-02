@@ -100,7 +100,7 @@ function TFA() {
                         <Form.Control required type="number" placeholder="Enter code" onChange={(e) => setCode(e.target.value)} />
                         <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                     </Form.Group>
-
+                    <p style={{ 'display': 'none', 'color': 'red' }} id="error">Your code is incorrect.</p>
                     <Button variant="primary" type="submit">
                         Submit
                     </Button>
