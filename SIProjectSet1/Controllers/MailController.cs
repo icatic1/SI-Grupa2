@@ -14,12 +14,13 @@ namespace SIProjectSet1.Controllers
             this.mailService = mailService;
         }
 
-        [HttpPost("pass")]
+        [HttpPost]
+        [Route("pass")]
         public async Task<IActionResult> SendWelcomeMail(PasswordRequest request)
         {
             try
             {
-                await mailService.SendWelcomeEmailAsync(request);
+                await mailService.SendNewMail(request);
                 return Ok();
             }
             catch (Exception ex)

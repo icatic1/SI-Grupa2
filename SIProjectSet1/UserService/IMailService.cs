@@ -1,18 +1,17 @@
 ﻿using Microsoft.Extensions.Options;
 using System.Web;
 
-using MimeKit;
-using MailKit.Security;
-using MailKit.Net.Smtp;
+
 using SIProjectSet1.Models;
 using SIProjectSet1.Settings;
 using System.Net;
+using System.Net.Mail;
 
 namespace SIProjectSet1.UserService
 {
     public interface IMailService
     {
-        Task SendWelcomeEmailAsync(PasswordRequest request);
+        Task SendNewMail(PasswordRequest request);
     }
 
     public class MailService : IMailService
@@ -23,32 +22,26 @@ namespace SIProjectSet1.UserService
             _mailSettings = mailSettings.Value;
         }
 
-        public async Task SendWelcomeEmailAsync(PasswordRequest request)
-        {
-            string FilePath = Directory.GetCurrentDirectory() + "\\MailAddOn\\front.html";
-            StreamReader str = new StreamReader(FilePath);
-            string MailText = str.ReadToEnd();
-            str.Close();
+        
 
-            string currentURL = Dns.GetHostName();
-            
-            //MailText = MailText.Replace("[username]", request.UserName).Replace("[email]", request.ToEmail).Replace("[token]", "https://localhost:3000/ChangePass/" + request.Token);
-            MailText = MailText.Replace("[username]", request.UserName).Replace("[email]", request.ToEmail).Replace("[token]", currentURL+"/ChangePass/" + request.Token);
-            var email = new MimeMessage();
-            
-            email.Sender = MailboxAddress.Parse(_mailSettings.Mail);
-            
-            
-            email.To.Add(MailboxAddress.Parse(request.ToEmail));
-            email.Subject = $"Welcome {request.UserName}";
-            var builder = new BodyBuilder();
-            builder.HtmlBody = MailText;
-            email.Body = builder.ToMessageBody();
-            using var smtp = new SmtpClient();
-            smtp.Connect(_mailSettings.Host, _mailSettings.Port, SecureSocketOptions.StartTls);
-            smtp.Authenticate(_mailSettings.Mail, _mailSettings.Password);
-            await smtp.SendAsync(email);
-            smtp.Disconnect(true);
+        public async Task SendNewMail(PasswordRequest request)
+        {
+            MailMessage Message = new MailMessage(_mailSettings.Mail, request.ToEmail);
+
+            Message.Subject = "SnapShot - Reset password";
+
+            string currentURL = "http://sigrupa4-001-site1.ctempurl.com";
+            Message.Body = "\nReset Password link: " + currentURL + "/ChangePass/" + request.Token;
+
+            SmtpClient smtp = new SmtpClient(_mailSettings.Host);
+
+            smtp.EnableSsl = true;
+
+            NetworkCredential cred = new NetworkCredential(_mailSettings.Mail, _mailSettings.Password);
+            smtp.UseDefaultCredentials = false;
+            smtp.Credentials = cred;
+            smtp.Port = 587;
+            smtp.Send(Message);
         }
     }
 
