@@ -15,7 +15,7 @@ namespace SIProjectSet1.Entities
         public long Id { get; set; }
 
         [Required]
-        [Column(TypeName ="varchar(250)")]
+        [Column(TypeName = "varchar(250)")]
         public string Email { get; set; }
 
         [Required]
@@ -32,7 +32,11 @@ namespace SIProjectSet1.Entities
         public bool DeletedStatus { get; set; }
 
         [Required]
-        public IEnumerable<UserRole> Roles { get; set; }
+        [ForeignKey("Role")]
+        public long RoleId { get; set; }
+
+        [Required]
+        public Role Role { get; set; }
 
     }
 }

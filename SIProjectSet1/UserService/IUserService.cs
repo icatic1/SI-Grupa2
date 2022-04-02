@@ -13,21 +13,22 @@ namespace SIProjectSet1.UserService
         Task<UserViewModel> UpdateUserInfo(UserViewModel user);
         Task<bool> DeleteUser(long Id);
 
+        Task<bool> RestoreUser(long Id);
+
+        Task<UserViewModel> GetUserByID(long id);
+
         Task<List<UserViewModel>> GetAllUsers();
 
         Task<bool> ChangeUserPassword(string email, string password);
 
         Task<bool> LogInUser(string email, string pass, string jwt, string expiration);
 
-        Task<bool> MakeAdmin(long id);
-
-        Task<bool> MakeUser(long id);
 
         Task<long> GetUserID(UserViewModel user);
 
         Task<long> GetUserID(string email);
 
-        Task<string> GetUserRole(string email);
+        Task<Role> GetUserRole(string email);
 
         Task<String> getToken(string emailToken);
 
@@ -42,6 +43,9 @@ namespace SIProjectSet1.UserService
         Task<bool> ActivateTwoFactorToken(long userID);
         Task<Boolean> getTFAStatus(long userID);
         Task<SecurityQuestion> GetSecurityQuestion(long userID);
+        Task<bool> AddRole(long id, long roleId);
+
+        Task<List<RoleViewModel>> GetRoles();
 
     }
 
@@ -64,6 +68,7 @@ namespace SIProjectSet1.UserService
                 newUser.Surname = user.Surname;
                 newUser.Name = user.Name;
                 newUser.Password = user.Password;
+                newUser.RoleId = 1;
                 var addedUser = await _context.Users.AddAsync(newUser);
                 await _context.SaveChangesAsync();
                 if (addedUser == null) return false;
@@ -109,6 +114,53 @@ namespace SIProjectSet1.UserService
             }
         }
 
+
+
+        public async Task<bool> RestoreUser(long Id)
+        {
+            try
+            {
+                var tempUser = await _context.Users.Where(o => o.Id == Id).SingleOrDefaultAsync();
+                if (tempUser == null) return false;
+
+                tempUser.DeletedStatus = false;
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+
+        public async Task<UserViewModel> GetUserByID(long id)
+        {
+            try
+            {
+                var user = await _context.Users.Where(o => o.Id == id).SingleOrDefaultAsync();
+
+                if (user == null) return null;
+
+                var returnUser = new UserViewModel();
+                returnUser.Id = user.Id;
+                returnUser.RoleId = user.RoleId;
+                returnUser.Name = user.Name;
+                returnUser.Surname = user.Surname;
+                returnUser.Email = user.Email;
+                returnUser.Password = user.Password;
+                returnUser.DeletedStatus = user.DeletedStatus;
+                return returnUser;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+
+        }
+
+
+
         public async Task<List<UserViewModel>> GetAllUsers()
         {
             try
@@ -126,6 +178,7 @@ namespace SIProjectSet1.UserService
                     model.Id = user.Id;
                     model.Email = user.Email;
                     model.Password = user.Password;
+                    model.RoleId = user.RoleId;
                     listModels.Add(model);
                 }
                 return listModels;
@@ -146,6 +199,7 @@ namespace SIProjectSet1.UserService
                 tempUser.Name = user.Name;
                 tempUser.Password = user.Password;
                 tempUser.Email = user.Email;
+                tempUser.RoleId = user.RoleId;
                 await _context.SaveChangesAsync();
                 return user;
             }
@@ -180,63 +234,14 @@ namespace SIProjectSet1.UserService
             try
             {
                 var userFound = await _context.Users.Where(o => o.Email == user.Email).SingleOrDefaultAsync();
+                Console.WriteLine("userFound vratio:  " + userFound);
                 if (userFound == null) return -1000;
 
-                await _context.SaveChangesAsync();
                 return userFound.Id;
             }
             catch (Exception ex)
             {
                 return -1000;
-            }
-        }
-
-        public async Task<bool> MakeAdmin(long id)
-        {
-            try
-            {
-                var roleObject = new Entities.UserRole();
-                roleObject.UserId = id;
-
-                var role = await _context.Roles.Where(o => o.Name == "Administrator").FirstOrDefaultAsync();
-                if (role == null) return false;
-                roleObject.RoleId = role.Id;
-
-
-
-                await _context.UserRoles.AddAsync(roleObject);
-                await _context.SaveChangesAsync();
-
-                return true;
-
-            }
-            catch (Exception e)
-            {
-                return false;
-            }
-        }
-
-        public async Task<bool> MakeUser(long id)
-        {
-            try
-            {
-                var roleObject = new Entities.UserRole();
-                roleObject.UserId = id;
-
-                var role = await _context.Roles.Where(o => o.Name == "User").FirstOrDefaultAsync();
-                if (role == null) return false;
-                roleObject.RoleId = role.Id;
-
-
-                await _context.UserRoles.AddAsync(roleObject);
-                await _context.SaveChangesAsync();
-
-                return true;
-
-            }
-            catch (Exception e)
-            {
-                return false;
             }
         }
 
@@ -256,19 +261,42 @@ namespace SIProjectSet1.UserService
             }
         }
 
-        public async Task<string> GetUserRole(string email)
+        public async Task<bool> AddRole(long id, long roleId)
         {
             try
             {
-                var id = await GetUserID(email);
-                var role = await _context.UserRoles.Where(o => o.UserId == id).FirstOrDefaultAsync();
-                var roleob = await _context.Roles.Where(o => o.Id == role.RoleId).FirstOrDefaultAsync();
 
-                return roleob.Name;
+                var role = await _context.Roles.Where(o => o.Id == roleId).FirstOrDefaultAsync();
+                if (role == null) return false;
+
+                var user = await _context.Users.Where(o => o.Id == id).FirstOrDefaultAsync();
+                if (user == null) return false;
+
+                user.RoleId = role.Id;
+                await _context.SaveChangesAsync();
+
+                return true;
+
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+
+        public async Task<Role> GetUserRole(string email)
+        {
+            try
+            {
+                var user = await _context.Users.Where(o => o.Email == email).FirstOrDefaultAsync();
+                if (user == null) return null;
+                var role = await _context.Roles.Where(o => o.Id == user.RoleId).FirstOrDefaultAsync();
+                if (role == null) return null;
+                return role;
             }
             catch (Exception ex)
             {
-                return "";
+                return null;
             }
         }
 
@@ -458,5 +486,30 @@ namespace SIProjectSet1.UserService
             }
         }
 
+        public async Task<List<RoleViewModel>> GetRoles()
+        {
+
+            try
+            {
+                var roleList = await _context.Roles.ToListAsync();
+
+                var returnList = new List<RoleViewModel>();
+
+                foreach (var role in roleList)
+                {
+                    var model = new RoleViewModel();
+                    model.Id = role.Id;
+                    model.Name = role.Name;
+                    returnList.Add(model);
+                }
+
+                return returnList;
+            }
+            catch (Exception ex)
+            {
+                return new List<RoleViewModel>();
+            }
+        }
     }
+
 }

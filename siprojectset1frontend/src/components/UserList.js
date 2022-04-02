@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Segment, Form, Button,Row,Col} from "react-bootstrap";
+import { Container, Row, Col, Spinner } from "react-bootstrap";
 
 import UserCard from "./UserCard";
 
@@ -14,46 +14,57 @@ const UsersList = ({ editUser }) => {
     useEffect(() => {
         const fetchMain = async () => {
             try {
-                let token = 'Bearer ' + localStorage.getItem('token')
-                const headers = { 'content-type': 'application/json', 'Authorization': token }
 
-                const response1 = await fetch("/api/user/getallusers",
+                console.log(localStorage.getItem('token'))
+                let token = 'Bearer ' + localStorage.getItem('token')
+                //const response = await addUser();
+                const headers = { "Authorization": token }
+
+                const response1 = await fetch("api/user/getallusers",
                     {
                         method: 'GET',
                         headers: headers
                     });
+
                 console.log(response1);
                 const data = await response1.json();
                 setUsers(data);
+                hideSpinner();
+                // setSpinner(false);
+                // console.log("Fetchali smo useres " + JSON.stringify(data));
+
+
+
+
             } catch (e) {
                 console.log(e)
+                // setError("Unable to fetch users");
             }
         };
 
         fetchMain();
     }, []);
 
-    const [email, setEmail] = useState();
-    const [password, setPassword] = useState();
-    const [name, setName] = useState();
-    const [surname, setSurname] = useState();
-    const [deletedStatus, setDeletedStatus] = useState(false);
 
-    const navigate = useNavigate();
-    const { state } = useLocation()
-
+    function hideSpinner() {
+        document.getElementById('spinner').style.display = 'none';
+    }
 
     return (
-
-        <Row>
-            <Col>
-                <Container className="my-2">
-                    {users?.map((u) => (
-                        <UserCard key={u.id} user={u} editUser={editUser} />
-                    ))}
-                </Container>
-            </Col>
-        </Row>
+        <Container>
+            <Container fluid className="d-flex justify-content-center">
+                <Spinner id="spinner" animation="border" variant="primary" />
+            </Container>
+            <Row>
+                <Col>
+                    <Container className="my-2">
+                        {users?.map((u) => (
+                            <UserCard key={u.id} user={u} editUser={editUser} />
+                        ))}
+                    </Container>
+                </Col>
+            </Row>
+        </Container>
     );
 };
 

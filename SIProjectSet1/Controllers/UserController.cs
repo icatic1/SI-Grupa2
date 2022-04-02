@@ -61,59 +61,50 @@ namespace SIProjectSet1.Controllers
 
             try
             {
+                Console.Write(ModelState);
                 if (!ModelState.IsValid) return BadRequest();
 
-                var userAalreadyExists = await _userService.GetUserID(user);
-                if (userAalreadyExists != -1000) return BadRequest();
+                var userAlreadyExists = await _userService.GetUserID(user);
 
-                var successfulAdd = await _userService.AddUser(user);
-                if (!successfulAdd) return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+                var userCheck = await _userService.GetUserByID(userAlreadyExists);
 
-                var id = await _userService.GetUserID(user);
-                await _userService.MakeUser(id);
-                _logger.LogWarning("Dodan novi korisnik s id: " + id);
-                return Created(new Uri("/User/AddUser", UriKind.Relative), new {  email = user.Email, name = user.Name, surname = user.Surname, password = user.Password, deletedStatus = user.DeletedStatus });
 
+                if (userAlreadyExists != -1000 && userCheck.DeletedStatus == false) return BadRequest("User with the given email already exists");
+                Console.Write("User exists: " + userAlreadyExists);
+                if (userAlreadyExists != -1000)
+                {
+
+                    await _userService.RestoreUser(userAlreadyExists);
+                    var id = await _userService.GetUserID(user);
+                    user.Id = id;
+                    await _userService.UpdateUserInfo(user);
+
+                    _logger.LogWarning("Dodan novi korisnik s id: " + id);
+                    await _userService.AddRole(id, user.RoleId);
+                    return Created(new Uri("/User/AddUser", UriKind.Relative), new { id = id, email = user.Email, name = user.Name, surname = user.Surname, password = user.Password, deletedStatus = user.DeletedStatus, roleId = user.RoleId });
+                }
+                else
+                {
+
+                    var successfulAdd = await _userService.AddUser(user);
+                    if (!successfulAdd) return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+
+
+                 
+                    var id = await _userService.GetUserID(user);
+                    _logger.LogWarning("Dodan novi korisnik s id: " + id);
+                    await _userService.AddRole(id, user.RoleId);
+                    return Created(new Uri("/User/AddUser", UriKind.Relative), new { id = id, email = user.Email, name = user.Name, surname = user.Surname, password = user.Password, deletedStatus = user.DeletedStatus, roleId = user.RoleId });
+
+                }
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex);
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
 
         }
-
-        [Authorize(Roles = "Administrator")]
-        [HttpPost]
-        [Route("AddUserAdmin")]
-        public async Task<ActionResult<UserViewModel>> AddUserAdmin(UserViewModel user)
-        {
-
-            try
-            {
-                if (!ModelState.IsValid) return BadRequest();
-
-                var userAalreadyExists = await _userService.GetUserID(user);
-                if (userAalreadyExists != -1000) return BadRequest();
-
-                var successfulAdd = await _userService.AddUser(user);
-                if (!successfulAdd) return new StatusCodeResult(StatusCodes.Status500InternalServerError);
-
-                var id = await _userService.GetUserID(user);
-                await _userService.MakeAdmin(id);
-                _logger.LogWarning("Dodan novi admin korisnik s id: " + id);
-                return Created(new Uri("/User/AddUser", UriKind.Relative), new {  email = user.Email, name = user.Name, surname = user.Surname, password = user.Password, deletedStatus = user.DeletedStatus });
-
-            }
-            catch (Exception ex)
-            {
-                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
-            }
-
-        }
-
-
-
-
 
         [HttpPost]
         [Route("login")]
@@ -121,7 +112,7 @@ namespace SIProjectSet1.Controllers
         {
             var role = await _userService.GetUserRole(email);
 
-            var token = GetToken(email, role);
+            var token = GetToken(email, role.Name);
             var tok = new JwtSecurityTokenHandler().WriteToken(token); var exp = token.ValidTo.ToString();
 
             try
@@ -148,13 +139,15 @@ namespace SIProjectSet1.Controllers
                 if (!ModelState.IsValid) return BadRequest();
                 await _userService.UpdateUserInfo(user);
                 _logger.LogWarning("Korisnik s id: " + user.Id + " je izmijenjen.");
-                return NoContent();
+                return Ok(user);
+
             }
             catch (Exception ex)
             {
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
+
 
         [Authorize(Roles = "Administrator")]
         [HttpPut]
@@ -287,8 +280,25 @@ namespace SIProjectSet1.Controllers
             }
         }
 
-        #region SecurityQuestion
         [HttpGet]
+        [Route("GetAllRoles")]
+        public async Task<ActionResult<List<RoleViewModel>>> GetAllRoles()
+        {
+            try
+            {
+                var roles = await _userService.GetRoles();
+                return roles;
+            }
+            catch
+            {
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+        }
+    
+
+
+    #region SecurityQuestion
+    [HttpGet]
         [Route("GetSecurityQuestion")]
         public async Task<ActionResult<SecurityQuestion>> GetSecurityQuestion(string email)
         {

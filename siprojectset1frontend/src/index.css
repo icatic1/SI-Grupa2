@@ -12,3 +12,14 @@ code {
     monospace;
 }
 
+.btn-big {
+    width: 5rem;
+    text-align: center;
+    padding: 0px;
+}
+
+.btn-small {
+    width: 3rem;
+    text-align: center;
+    padding: 0px;
+}

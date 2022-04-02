@@ -11,8 +11,6 @@ namespace SIProjectSet1.Entities
     public class Role
     {
 
-
-
         [Required]
         public long Id { get; set; }
 
@@ -23,6 +21,6 @@ namespace SIProjectSet1.Entities
         //[Required]
         //public User User { get; set; }
         [Required]
-        public IEnumerable<UserRole> Users { get; set; }
+        public ICollection<User> Users { get; set; }
     }
 }

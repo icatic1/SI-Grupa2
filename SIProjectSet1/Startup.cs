@@ -110,7 +110,6 @@ namespace SIProjectSet1
             app.UseAuthorization();
 
             app.UseCors("MyPolicy");
-
             #region Swagger
 
             if (HostingEnvironment.IsDevelopment())
@@ -132,7 +131,7 @@ namespace SIProjectSet1
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-            }); 
+            });
 
         }
     }
