@@ -10,7 +10,7 @@ function ChangePasswordM() {
     const [email, setEmail] = useState();
 
     const handleUserEmail = async (event) => {
-        event.preventDefault();
+        event.preventDefault();// ne dirati
 
         try {
 
@@ -51,7 +51,7 @@ function ChangePasswordM() {
                 headers: { 'Content-Type': 'application/json' },
                 body: a
             }
-            event.preventDefault();
+            //event.preventDefault(); //dodati u slucaju debagiranja
             fetch('/api/mail/pass', options).then(res => {
                 if (res.ok) {
                     return res;
