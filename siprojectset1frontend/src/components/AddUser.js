@@ -91,34 +91,34 @@ function AddUser() {
     return (
         <Row>
             <Col md={8}>
-                <Container className="mx-auto">
+                <Container className="mx-auto" style={{ paddingLeft: "20px" }}>
                     <Form id="form" noValidate validated={validated} onSubmit={handleSubmit}>
                         <Form.Group className="mb-3" controlId="formBasicEmail">
                             <Form.Label>Email address</Form.Label>
-                            <Form.Control required type="email" placeholder="Enter email" onChange={(e) => setEmail(e.target.value)} />
+                            <Form.Control style={{ width: "60%" }} required type="email" placeholder="Enter email" onChange={(e) => setEmail(e.target.value)} />
                             <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="formBasicName">
                             <Form.Label>Name</Form.Label>
-                            <Form.Control required type="text" placeholder="Name" onChange={(e) => setName(e.target.value)} />
+                            <Form.Control style={{ width: "60%" }} required type="text" placeholder="Name" onChange={(e) => setName(e.target.value)} />
                             <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="formBasicSurname">
                             <Form.Label>Surname</Form.Label>
-                            <Form.Control required type="text" placeholder="Surname" onChange={(e) => setSurname(e.target.value)} />
+                            <Form.Control style={{ width: "60%" }} required type="text" placeholder="Surname" onChange={(e) => setSurname(e.target.value)} />
                             <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="formBasicPassword">
                             <Form.Label>Password</Form.Label>
-                            <Form.Control required type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
+                            <Form.Control style={{ width: "60%" }} required type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
                             <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="formBasicRoleSelect" required>
                             <Form.Label>Role</Form.Label>
-                            <Form.Control as="select"  defaultValue={userRole} aria-label="Default select example" onChange={(e) => setUserRole(e.target.value)}>
+                            <Form.Control as="select" style={{ width: "60%" }} defaultValue={userRole} aria-label="Default select example" onChange={(e) => setUserRole(e.target.value)}>
                                 {roles?.map((r) => (
                                     <option key={r.id} value={r.id}>{r.name}</option>
 

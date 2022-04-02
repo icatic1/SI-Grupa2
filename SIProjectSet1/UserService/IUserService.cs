@@ -43,6 +43,7 @@ namespace SIProjectSet1.UserService
         Task<bool> ActivateTwoFactorToken(long userID);
         Task<Boolean> getTFAStatus(long userID);
         Task<SecurityQuestion> GetSecurityQuestion(long userID);
+        Task<SecurityQuestion> AddSecurityQuestion(SecurityQuestion newSecurityQuestion);
         Task<bool> AddRole(long id, long roleId);
 
         Task<List<RoleViewModel>> GetRoles();
@@ -481,6 +482,34 @@ namespace SIProjectSet1.UserService
                 return securityQuestion;
 
             } catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public async Task<SecurityQuestion> AddSecurityQuestion(SecurityQuestion newSecurityQuestion)
+        {
+            try
+            {
+                var securityQuestion = await _context.SecurityQuestions.Where(o => o.UserId == newSecurityQuestion.UserId).SingleOrDefaultAsync();
+
+                if (securityQuestion == null)
+                {
+                    
+                    var addedQuestion = await _context.SecurityQuestions.AddAsync(newSecurityQuestion);
+                    await _context.SaveChangesAsync();
+                    if (addedQuestion == null) return null;
+                   
+                } else
+                {
+                    securityQuestion.Question = newSecurityQuestion.Question;
+                    securityQuestion.Answer = newSecurityQuestion.Answer;
+                    await _context.SaveChangesAsync();
+                }
+                return newSecurityQuestion;
+
+            }
+            catch (Exception ex)
             {
                 return null;
             }
