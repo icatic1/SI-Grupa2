@@ -151,7 +151,7 @@ function EditProfile() {
 
                         <Form.Group className="mb-3" controlId="formBasicPassword">
                             <Form.Label>Password</Form.Label>
-                            <Form.Control defaultValue={user.password} required type="text" placeholder="Password" style={{ width: "60%" }} onChange={(e) => setPassword(e.target.value)} />
+                            <Form.Control defaultValue={user.password} required type="password" placeholder="Password" style={{ width: "60%" }} onChange={(e) => setPassword(e.target.value)} />
                             <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                         </Form.Group>
 
