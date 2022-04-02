@@ -93,7 +93,7 @@ function TFA() {
     console.log(tfaActive);
     if (tfaActive != null && tfaActive == "true") {
         return (
-            <Container className="mx-auto">
+            <Container className="mx-auto customContainer">
                 <Form noValidate validated={validated} onSubmit={handleGoodSubmit}>
                     <Form.Group className="mb-3" controlId="formCode">
                         <Form.Label>Enter your code</Form.Label>
@@ -110,7 +110,7 @@ function TFA() {
     } else {
         return (
             <div>
-                <Container className="mx-auto">
+                <Container className="mx-auto customContainer">
                     <Spinner id="spinner" animation="border" variant="primary" />
                     <img src={tfaActive} />
                     <br />

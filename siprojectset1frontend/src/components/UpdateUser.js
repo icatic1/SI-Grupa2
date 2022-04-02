@@ -124,7 +124,7 @@ function UpdateUser() {
 
                         <Form.Group className="mb-3" controlId="formBasicPassword">
                             <Form.Label>Password</Form.Label>
-                            <Form.Control defaultValue={state.password} required type="text" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
+                            <Form.Control defaultValue={state.password} required type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
                             <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                         </Form.Group>
 

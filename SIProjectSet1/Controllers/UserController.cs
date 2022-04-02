@@ -16,6 +16,8 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using SIProjectSet1.Models;
+using Microsoft.Net.Http.Headers;
+using System.Net.Http.Headers;
 
 namespace SIProjectSet1.Controllers
 {
@@ -294,11 +296,101 @@ namespace SIProjectSet1.Controllers
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
-    
+
+        [Authorize]
+        [HttpGet]
+        [Route("GetUser")]
+        public async Task<ActionResult<User>> GetUser(string email)
+        {
+            try
+            {
+                var authorization = Request.Headers[HeaderNames.Authorization];
+
+                if (AuthenticationHeaderValue.TryParse(authorization, out var headerValue))
+                {
+                    var scheme = headerValue.Scheme;
+                    var token = headerValue.Parameter;
+                    var handler = new JwtSecurityTokenHandler();
+                    var jwtSecurityToken = handler.ReadJwtToken(token);
+
+                    if (email != (string)jwtSecurityToken.Payload["email"])
+                        return Unauthorized();
 
 
-    #region SecurityQuestion
-    [HttpGet]
+                }
+                else
+                {
+                    return Unauthorized();
+                }
+
+               
+                var user = await _userService.getOneUser(email);
+
+      
+                if (user == null) return BadRequest();
+
+                
+                return Ok(user);
+
+            }
+            catch (Exception ex)
+            {
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+
+        [Authorize]
+        [HttpPut]
+        [Route("EditProfile")]
+        public async Task<ActionResult<User>> EditProfile(UserViewModel user)
+        {
+            try
+            {
+                if (!ModelState.IsValid) return BadRequest();
+                await _userService.UpdateUserInfo(user);
+
+
+                _logger.LogWarning("Korisnik s id: " + user.Id + " je izmijenjen.");
+                return Ok(user);
+
+            }
+            catch (Exception ex)
+            {
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+
+
+        #region SecurityQuestion
+        [Authorize]
+        [HttpPut]
+        [Route("UpdateSecurityQuestion")]
+        public async Task<ActionResult<SecurityQuestion>> UpdateSecurityQuestion(SecurityQuestion securityQuestion)
+        {
+            try
+            {
+                if (!ModelState.IsValid) return BadRequest();
+
+                var res = await _userService.AddSecurityQuestion(securityQuestion);
+
+                if (res == null) return BadRequest();
+
+                _logger.LogWarning("Korisnik s id: " + securityQuestion.UserId + " je promijenio sigurnosno pitanje.");
+
+                return Ok();
+
+            }
+            catch (Exception ex)
+            {
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+
+
+        [HttpGet]
         [Route("GetSecurityQuestion")]
         public async Task<ActionResult<SecurityQuestion>> GetSecurityQuestion(string email)
         {

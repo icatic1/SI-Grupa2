@@ -74,7 +74,7 @@ function ChangePass() {
     return (
         <>
             {user === null ? <div></div> :
-                <Container className="mx-auto" style={{ margin:"15px" }}>
+                <Container className="mx-auto " style={{ margin:"15px" }}>
                     <Form >
                         <Form.Group className="mb-3" controlId="formBasicEmail">
                             <Form.Label>Email address</Form.Label>

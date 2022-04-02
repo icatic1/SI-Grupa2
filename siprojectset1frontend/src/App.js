@@ -13,6 +13,7 @@ import ChangePasswordQ from "./components/ChangePasswordQ";
 import ChangePass from "./components/ChangePass";
 import TFA from "./components/TFA";
 import NotFound from "./components/NotFound"
+import EditProfile from "./components/EditProfile"
 
 import './App.css';
 
@@ -173,6 +174,7 @@ function App() {
             <NavigationHeader />
                 <Routes>
                     <Route exact path="/Home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+                    <Route exact path="/EditProfile" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
                     <Route exact path='/' element={<HomeWrapper />} />
                     <Route exact path='/AddUser' element={<ProtectedAdminRoute><AddUser /></ProtectedAdminRoute>} />
                     <Route exact path='/GetAll' element={<ProtectedAdminRoute><UserList /></ProtectedAdminRoute>} />

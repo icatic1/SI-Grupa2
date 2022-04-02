@@ -35,7 +35,7 @@ function Login() {
 
     return (
 
-        <Container className="mx-auto">
+        <Container className="mx-auto customContainer">
             <Form noValidate validated={validated} onSubmit={handleSubmit}>
                 <Form.Group className="mb-3" controlId="formBasicEmail">
                     <Form.Label>Email address</Form.Label>
