@@ -108,7 +108,69 @@ describe('Tests for sprint1', () => {
 
   });
 
-  // Nejra
+  
+  it('Check change password option with security question', async () => {
+
+    await browser.driver.sleep(2000);
+    await browser.goToPage(rootURL);
+    await browser.driver.sleep(2000);
+    await browser.loginToPage('user@user.com', 'new');
+    await browser.driver.sleep(2000);
+    await browser.enterDataAndClick(pageLocators.getLoginPage().formCode, '776448', pageLocators.getLoginPage().submitCodeBtn);
+    await browser.driver.sleep(2000);
+    await browser.click(pageLocators.getUserPage().editBtn);
+    await browser.driver.sleep(2000);
+    await browser.enterDataAndClick(pageLocators.getUserPage().securityFld, 'Johnson', pageLocators.getUserPage().submitEditBtn);
+    await browser.driver.sleep(1000);
+    await browser.click(pageLocators.getUserPage().logoutBtn);
+    await browser.driver.sleep(2000);
+    await browser.click(pageLocators.getLoginPage().forgetPassword);
+    await browser.driver.sleep(2000);
+    await browser.click(pageLocators.getLoginPage().securityQLink);
+    await browser.driver.sleep(2000);
+    await browser.enterDataAndClick(pageLocators.getLoginPage().securityEmail, 'user@user.com', pageLocators.getLoginPage().securitySubmitBtn);
+    await browser.driver.sleep(2000);
+    await browser.enterDataAndClick(pageLocators.getLoginPage().answerFld, 'Johnson', pageLocators.getLoginPage().submitAnswer);
+    await browser.driver.sleep(2000);
+    await browser.enterDataAndClick(pageLocators.getLoginPage().newPasswordFld, '12345', pageLocators.getLoginPage().securitySubmitBtn);
+    await browser.driver.sleep(2000);
+    await browser.loginToPage('user@user.com', '12345');
+    await browser.driver.sleep(2000);
+    var result = await browser.getText(pageLocators.getLoginPage().label);
+    expect(result).toEqual("Enter your code");
+    browser.driver.quit();
+
+  });
+
+  
+  it('Check change password option with security question - inserting incorrect answer', async () => {
+
+    await browser.driver.sleep(2000);
+    await browser.goToPage(rootURL);
+    await browser.driver.sleep(2000);
+    await browser.loginToPage('user@user.com', '12345');
+    await browser.driver.sleep(2000);
+    await browser.enterDataAndClick(pageLocators.getLoginPage().formCode, '604731', pageLocators.getLoginPage().submitCodeBtn);
+    await browser.driver.sleep(2000);
+    await browser.click(pageLocators.getUserPage().editBtn);
+    await browser.driver.sleep(2000);
+    await browser.enterDataAndClick(pageLocators.getUserPage().securityFld, 'Smith', pageLocators.getUserPage().submitEditBtn);
+    await browser.driver.sleep(1000);
+    await browser.click(pageLocators.getUserPage().logoutBtn);
+    await browser.driver.sleep(2000);
+    await browser.click(pageLocators.getLoginPage().forgetPassword);
+    await browser.driver.sleep(2000);
+    await browser.click(pageLocators.getLoginPage().securityQLink);
+    await browser.driver.sleep(2000);
+    await browser.enterDataAndClick(pageLocators.getLoginPage().securityEmail, 'user@user.com', pageLocators.getLoginPage().securitySubmitBtn);
+    await browser.driver.sleep(2000);
+    await browser.enterDataAndClick(pageLocators.getLoginPage().answerFld, 'Johnson', pageLocators.getLoginPage().submitAnswer);
+    await browser.driver.sleep(2000);
+    var result = await browser.getText(pageLocators.getLoginPage().errorAnswer);
+    expect(result).toEqual('Your answer is incorrect.')
+    await browser.driver.sleep(2000);
+
+  });
   
   afterAll(() => {
     browser.driver.quit();
