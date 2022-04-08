@@ -1,6 +1,6 @@
 import React from "react";
-import { useState, useContext } from "react";
-import { Container, Form, Button } from "react-bootstrap";
+import { useState } from "react";
+import { Container, Form, Button,Modal } from "react-bootstrap";
 import { Link } from 'react-router-dom';
 import '../ChangePassword.css';
 
@@ -8,6 +8,12 @@ import '../ChangePassword.css';
 function ChangePasswordM() {
 
     const [email, setEmail] = useState();
+    const [modal, setmodal] = useState("Your reset link is on the way! Please, check your email inbox.");
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => {
+        setShow(false);
+    }
 
     const handleUserEmail = async (event) => {
         event.preventDefault();// ne dirati
@@ -38,7 +44,8 @@ function ChangePasswordM() {
             })
             
             const data = await rez.json()
-            
+
+            setShow(true);
 
             //posalji mail
 
@@ -54,6 +61,7 @@ function ChangePasswordM() {
             //event.preventDefault(); //dodati u slucaju debagiranja
             fetch('/api/mail/pass', options).then(res => {
                 if (res.ok) {
+                    
                     return res;
                 } else {
                     throw Error(`Request rejected with status ${res.status}`);
@@ -88,6 +96,17 @@ function ChangePasswordM() {
                     </Button>
                 </Form>
             </Container>
+            <Modal show={show} onHide={handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Information</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>{modal}</Modal.Body>
+                <Modal.Footer>
+                    <Button variant="primary" onClick={handleClose}>
+                        OK
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     )
 };
