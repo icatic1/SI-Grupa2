@@ -55,7 +55,7 @@ namespace SIProjectSet1.Controllers
             _totpController = new TotpController();
         }
 
-        //[Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator")]
         [HttpPost]
         [Route("AddUser")]
         public async Task<ActionResult<UserViewModel>> AddUser(UserViewModel user)
