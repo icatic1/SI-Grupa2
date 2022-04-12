@@ -52,7 +52,25 @@ function ChangePasswordQ() {
 
     async function handleAnswerSubmit(e) {
         e.preventDefault()
-        if (enteredAnswer === answer) {
+
+
+        var formBody = [];
+        var encodedKey = encodeURIComponent("email");
+        var encodedAnswer = encodeURIComponent("answer");
+        var encodedValue = encodeURIComponent(email);
+        var encudedEnteredAnswer = encodeURIComponent(enteredAnswer);
+        formBody.push(encodedKey + "=" + encodedValue +   "&" + encodedAnswer + "=" + encudedEnteredAnswer);
+
+        let headers = { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' }
+        const response = await fetch('api/user/VerifySecurityQuestion?' + formBody, {
+            method: 'GET',
+            headers: headers
+        })
+
+        alert(formBody        );
+
+
+        if (response.ok) {
             document.getElementById("errorAnswer").style.display = "none"
 
             var formBody = [];

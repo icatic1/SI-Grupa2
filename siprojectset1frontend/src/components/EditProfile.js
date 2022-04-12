@@ -165,7 +165,7 @@ function EditProfile() {
                             ))}
                             </Form.Control>
                             <Form.Group className="mb-3" controlId="formAnswer">
-                                <Form.Control required type="text" defaultValue={securityQuestion.answer} style={{ width: "60%" }} placeholder="Answer here" onChange={(e) => setSecurityQuestion({ ...securityQuestion, answer: e.target.value })} />
+                                <Form.Control required type="password" defaultValue={securityQuestion.answer} style={{ width: "60%" }} placeholder="Answer here" onChange={(e) => setSecurityQuestion({ ...securityQuestion, answer: e.target.value })} />
                                 </Form.Group>
                         </Form.Group>
 

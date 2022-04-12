@@ -68,7 +68,7 @@ namespace SIProjectSet1.UserService
                 newUser.Email = user.Email;
                 newUser.Surname = user.Surname;
                 newUser.Name = user.Name;
-                newUser.Password = user.Password;
+                newUser.Password = BCrypt.Net.BCrypt.HashPassword(user.Password); ;
                 newUser.RoleId = 1;
                 var addedUser = await _context.Users.AddAsync(newUser);
                 await _context.SaveChangesAsync();
@@ -88,7 +88,7 @@ namespace SIProjectSet1.UserService
                 var tempUser = await _context.Users.Where(o => o.Email == email).SingleOrDefaultAsync();
                 if (tempUser == null) return false;
 
-                tempUser.Password = password;
+                tempUser.Password = BCrypt.Net.BCrypt.HashPassword(password); ;
                 await _context.SaveChangesAsync();
                 return true;
             }
@@ -198,7 +198,7 @@ namespace SIProjectSet1.UserService
                 if (tempUser == null) return null;
                 tempUser.Surname = user.Surname;
                 tempUser.Name = user.Name;
-                tempUser.Password = user.Password;
+                tempUser.Password =  BCrypt.Net.BCrypt.HashPassword( user.Password);
                 tempUser.Email = user.Email;
                 tempUser.RoleId = user.RoleId;
                 await _context.SaveChangesAsync();
@@ -214,15 +214,17 @@ namespace SIProjectSet1.UserService
         {
             try
             {
-                var tempUser = await _context.Users.Where(o => o.Email == email && o.Password == pass).SingleOrDefaultAsync();
-                var userToken = new UserToken();
+              
+                var tempUser = await _context.Users.Where(o => o.Email == email).SingleOrDefaultAsync(); 
                 if (tempUser == null) return false;
+                if (!BCrypt.Net.BCrypt.Verify(pass, tempUser.Password)) return false;
+                var userToken = new UserToken();
                 userToken.UserId = tempUser.Id;
                 userToken.JwtToken = jwt;
                 userToken.TokenExpiration = expiration;
-                //var addedToken = await _context.UserTokens.AddAsync(userToken);
                 await _context.SaveChangesAsync();
                 return true;
+
             }
             catch (Exception ex)
             {
