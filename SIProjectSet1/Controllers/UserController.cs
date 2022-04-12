@@ -55,7 +55,7 @@ namespace SIProjectSet1.Controllers
             _totpController = new TotpController();
         }
 
-        [Authorize(Roles = "Administrator")]
+        //[Authorize(Roles = "Administrator")]
         [HttpPost]
         [Route("AddUser")]
         public async Task<ActionResult<UserViewModel>> AddUser(UserViewModel user)
@@ -373,6 +373,7 @@ namespace SIProjectSet1.Controllers
             {
                 if (!ModelState.IsValid) return BadRequest();
 
+                securityQuestion.Answer = BCrypt.Net.BCrypt.HashPassword(securityQuestion.Answer);
                 var res = await _userService.AddSecurityQuestion(securityQuestion);
 
                 if (res == null) return BadRequest();
@@ -406,6 +407,31 @@ namespace SIProjectSet1.Controllers
 
                 return Ok(securityQuestion);
             } catch(Exception ex)
+            {
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+
+
+        }
+
+        [HttpGet]
+        [Route("VerifySecurityQuestion")]
+        public async Task<ActionResult<SecurityQuestion>> VerifySecurityQuestion(string email,string answer)
+        {
+            try
+            {
+                var user = await _userService.getOneUser(email);
+
+                if (user == null) return BadRequest();
+
+                var securityQuestion = await _userService.GetSecurityQuestion(user.Id);
+
+                if (securityQuestion == null) return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+
+                if (!BCrypt.Net.BCrypt.Verify(answer, securityQuestion.Answer)) return BadRequest("Incorrect answer") ;
+                return Ok(securityQuestion);
+            }
+            catch (Exception ex)
             {
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
