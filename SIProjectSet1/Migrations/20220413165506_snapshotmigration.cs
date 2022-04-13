@@ -4,7 +4,7 @@
 
 namespace SIProjectSet1.Migrations
 {
-    public partial class Initial : Migration
+    public partial class snapshotmigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -21,6 +21,30 @@ namespace SIProjectSet1.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_FTAs", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "JsonConfigurations",
+                columns: table => new
+                {
+                    MacAddress = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Configuration = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_JsonConfigurations", x => x.MacAddress);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Licences",
+                columns: table => new
+                {
+                    MacAddress = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Licenced = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Licences", x => x.MacAddress);
                 });
 
             migrationBuilder.CreateTable(
@@ -99,6 +123,12 @@ namespace SIProjectSet1.Migrations
         {
             migrationBuilder.DropTable(
                 name: "FTAs");
+
+            migrationBuilder.DropTable(
+                name: "JsonConfigurations");
+
+            migrationBuilder.DropTable(
+                name: "Licences");
 
             migrationBuilder.DropTable(
                 name: "PassTokens");

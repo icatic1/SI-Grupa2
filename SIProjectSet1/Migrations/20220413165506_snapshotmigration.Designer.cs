@@ -11,8 +11,8 @@ using SIProjectSet1.Infrastructure;
 namespace SIProjectSet1.Migrations
 {
     [DbContext(typeof(SIProjectSet1Context))]
-    [Migration("20220401230254_Initial")]
-    partial class Initial
+    [Migration("20220413165506_snapshotmigration")]
+    partial class snapshotmigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -22,6 +22,32 @@ namespace SIProjectSet1.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("SIProjectSet1.Entities.JsonConfiguration", b =>
+                {
+                    b.Property<string>("MacAddress")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Configuration")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("MacAddress");
+
+                    b.ToTable("JsonConfigurations");
+                });
+
+            modelBuilder.Entity("SIProjectSet1.Entities.Licence", b =>
+                {
+                    b.Property<string>("MacAddress")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("Licenced")
+                        .HasColumnType("bit");
+
+                    b.HasKey("MacAddress");
+
+                    b.ToTable("Licences");
+                });
 
             modelBuilder.Entity("SIProjectSet1.Entities.PassToken", b =>
                 {
