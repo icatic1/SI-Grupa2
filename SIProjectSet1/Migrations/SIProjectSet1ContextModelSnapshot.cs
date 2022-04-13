@@ -21,6 +21,32 @@ namespace SIProjectSet1.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
+            modelBuilder.Entity("SIProjectSet1.Entities.JsonConfiguration", b =>
+                {
+                    b.Property<string>("MacAddress")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Configuration")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("MacAddress");
+
+                    b.ToTable("JsonConfigurations");
+                });
+
+            modelBuilder.Entity("SIProjectSet1.Entities.Licence", b =>
+                {
+                    b.Property<string>("MacAddress")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("Licenced")
+                        .HasColumnType("bit");
+
+                    b.HasKey("MacAddress");
+
+                    b.ToTable("Licences");
+                });
+
             modelBuilder.Entity("SIProjectSet1.Entities.PassToken", b =>
                 {
                     b.Property<long>("Id")
