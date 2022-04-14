@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SIProjectSet1.Infrastructure;
 using SIProjectSet1.Entities;
+using System.Text.Json;
 
 namespace SnapshotServer.Controllers
 {
@@ -32,19 +33,21 @@ namespace SnapshotServer.Controllers
         // POST: JSONConfiguration/setJSON/ABCDEFGHIJKL/JSON
         [HttpPost]
         [Route("setJSON")]
-        public bool SetJSON([FromQuery]string MACAddress, [FromQuery]string JSON)
+        public async Task<bool> SetJSONAsync([FromQuery]string MACAddress, [FromBody]JsonElement JSON)
         {
             try
             {
                 var configuration = _context.JsonConfigurations.FirstOrDefaultAsync(configuration => configuration.MacAddress == MACAddress);
                 if (configuration.Result != null)
-                    configuration.Result.Configuration = JSON;
+                {
+                    configuration.Result.Configuration = JSON.ToString();
+                }
                 else
                     _context.JsonConfigurations.Add(
                         new JsonConfiguration()
                         {
                             MacAddress = MACAddress,
-                            Configuration = JSON
+                            Configuration = JSON.ToString()
                         });
 
                 _context.SaveChanges();
