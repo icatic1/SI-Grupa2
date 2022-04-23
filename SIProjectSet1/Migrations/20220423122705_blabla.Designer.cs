@@ -11,8 +11,8 @@ using SIProjectSet1.Infrastructure;
 namespace SIProjectSet1.Migrations
 {
     [DbContext(typeof(SIProjectSet1Context))]
-    [Migration("20220413165506_snapshotmigration")]
-    partial class snapshotmigration
+    [Migration("20220423122705_blabla")]
+    partial class blabla
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -43,6 +43,9 @@ namespace SIProjectSet1.Migrations
 
                     b.Property<bool>("Licenced")
                         .HasColumnType("bit");
+
+                    b.Property<string>("TerminalID")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("MacAddress");
 

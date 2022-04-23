@@ -4,7 +4,7 @@
 
 namespace SIProjectSet1.Migrations
 {
-    public partial class snapshotmigration : Migration
+    public partial class blabla : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -40,6 +40,7 @@ namespace SIProjectSet1.Migrations
                 columns: table => new
                 {
                     MacAddress = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    TerminalID = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Licenced = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>

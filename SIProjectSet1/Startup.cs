@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using SIProjectSet1.Settings;
+using SIProjectSet1.LicenceService;
 
 namespace SIProjectSet1
 {
@@ -33,6 +34,7 @@ namespace SIProjectSet1
 
 
             services.AddScoped<IUserService, UserService.UserService>();
+            services.AddScoped<ILicenceService, LicenceService.LicenceService>();
             //.AddNewtonsoftJson(options =>
             //{
             //    // To prevent "A possible object cycle was detected which is not supported" error

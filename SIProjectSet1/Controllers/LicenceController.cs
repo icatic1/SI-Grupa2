@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using SIProjectSet1.Infrastructure;
 using SIProjectSet1.Entities;
 using System.Collections.Generic;
+using SIProjectSet1.LicenceService;
 
 namespace SnapshotServer.Controllers
 {
@@ -13,18 +14,46 @@ namespace SnapshotServer.Controllers
     public class LicenceController : Controller
     {
         private readonly SIProjectSet1Context _context;
+        private readonly ILicenceService _licenceService;
 
-        public LicenceController(SIProjectSet1Context context)
+        public LicenceController(SIProjectSet1Context context, ILicenceService licenceService)
         {
             _context = context;
+            _licenceService = licenceService;
+        }
+
+        [HttpGet]
+        [Route("ConnectionCheck")]
+        public IActionResult ConnectionCheck()
+        {
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("GetTerminalAndDebug")]
+        public async Task<IActionResult> GetTerminalIDAndDebugLog(string MacAddress)
+        {
+            var licence = await _licenceService.GetTerminalAndDebug(MacAddress);
+            
+            return !(licence == null) ? Ok(licence) : BadRequest("Invalid");
+        }
+
+        [HttpPost]
+        [Route("AddTerminalAndDebug")]
+        public async Task<IActionResult> InitialAddTerminalAndDebugLog(string MacAddress, string TerminalID, Boolean DebugLog)
+        {
+            var terminal = await _licenceService.AddTerminalDebug(MacAddress, TerminalID, DebugLog);
+            return Ok(terminal);
         }
 
         // GET: Licence/ABCDEFGHIJKL
         [HttpGet("{MacAddress}")]
-        public bool CheckLicence(string MacAddress)
+        public async Task<ActionResult<bool>> CheckLicence(string MacAddress)
         {
-            var licence = _context.Licences.FirstOrDefaultAsync(licence => licence.MacAddress == MacAddress);
-            return !(licence.Result == null) && licence.Result.Licenced;
+            var licence = await _licenceService.CheckLicence(MacAddress);
+            if (!(licence == null) && licence.Licenced)
+                return Ok(licence.Licenced);
+            return BadRequest(licence.Licenced);
         }
     }
 }

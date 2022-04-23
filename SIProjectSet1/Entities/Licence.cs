@@ -10,7 +10,10 @@ namespace SIProjectSet1.Entities
     {
         [Key]
         public string MacAddress { get; set; }
+
+        public string TerminalID { get; set; }
         public bool Licenced { get; set; }
+        public bool DebugLog { get; set; }
 
         public Licence() { }
     }

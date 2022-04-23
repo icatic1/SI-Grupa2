@@ -1,0 +1,104 @@
+{
+	"cameras":
+	[
+		{
+			"device_configuration":
+			{
+				"device_type": "USBCamera",
+				"id": "Integrated Camera",
+				"trigger_file_path": "aaaaa",
+				"regex": "bbbbbbbb", 
+				"output_folder_path": "ccccccc",
+				"output_validity_days": "1",
+				"camera_number": "1"
+			},
+			"video_configuration":
+			{
+				"resolution": "Resolution640x480",
+				"contrast_level": "0",
+				"image_color": "Control",
+				"motion_detection": "False"
+			},
+			"network_configuration":
+			{
+				"server_version": "",
+				"server_IP_address": "",
+				"server_port": "0",
+				"connection_status": "False"
+			},
+			"capture_configuration":
+			{
+				"image_capture": "True",
+				"single_mode": "True",
+				"duration": "1",
+				"burst_period": "1"
+			}
+		},
+		{
+			"device_configuration":
+			{
+				"device_type": "USBCamera",
+				"id": "",
+				"trigger_file_path": "",
+				"regex": "", 
+				"output_folder_path": "",
+				"output_validity_days": "0",
+				"camera_number": "0"
+			},
+			"video_configuration":
+			{
+				"resolution": "Resolution640x480",
+				"contrast_level": "0",
+				"image_color": "Control",
+				"motion_detection": "False"
+			},
+			"network_configuration":
+			{
+				"server_version": "",
+				"server_IP_address": "",
+				"server_port": "0",
+				"connection_status": "False"
+			},
+			"capture_configuration":
+			{
+				"image_capture": "True",
+				"single_mode": "True",
+				"duration": "0",
+				"burst_period": "0"
+			}
+		},
+		{
+			"device_configuration":
+			{
+				"device_type": "USBCamera",
+				"id": "",
+				"trigger_file_path": "",
+				"regex": "", 
+				"output_folder_path": "",
+				"output_validity_days": "0",
+				"camera_number": "0"
+			},
+			"video_configuration":
+			{
+				"resolution": "Resolution640x480",
+				"contrast_level": "0",
+				"image_color": "Control",
+				"motion_detection": "False"
+			},
+			"network_configuration":
+			{
+				"server_version": "",
+				"server_IP_address": "",
+				"server_port": "0",
+				"connection_status": "False"
+			},
+			"capture_configuration":
+			{
+				"image_capture": "True",
+				"single_mode": "True",
+				"duration": "0",
+				"burst_period": "0"
+			}
+		}
+	]
+}
