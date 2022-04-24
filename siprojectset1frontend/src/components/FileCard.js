@@ -1,25 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Form, Button, Row, Col, Modal, ButtonGroup, Card, Placeholder  } from "react-bootstrap";
-
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 
 const FileCard = ({ file }) => {
 
     const [placeHolder, setPlaceHolder] = useState();
+    const navigate = useNavigate();
+
 
     useEffect(() => {
-        if (file.extension == "jpg")
+        if (file.extension == "jpg" || file.extension == "png")
             setPlaceHolder("/image-place-holder.png");
-        else
+        else if(file.extension == "mp4")
             setPlaceHolder("/video-place-holder.gif");
-
+        else 
+            setPlaceHolder("/folder-place-holder.png");
     }, []);
 
     return (
 
         <Container>
-            <div className="card">
+            <div className="card" onClick={() => { if (file.extension == "folder") navigate("/FileList", { state: file.cropped });  }}>
                 <img className="card__image" variant="top" src={ placeHolder } />
                 <div className="body">
                     <div className="card__title"> {file.name}</div>

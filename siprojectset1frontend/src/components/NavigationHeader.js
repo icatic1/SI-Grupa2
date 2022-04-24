@@ -2,11 +2,13 @@ import { Container, Navbar, ListGroup } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useContext, useEffect } from 'react';
 import jwt from 'jwt-decode';
+import { useLocation } from 'react-router-dom';
 
 import { AuthContext } from "../App"
 
 function NavigationHeader() {
 
+    let { state } = useLocation();
     const { onLogout, token } = useContext(AuthContext)
 
     function checkAdmin() {
@@ -35,7 +37,7 @@ function NavigationHeader() {
                             <li><Link to={'/EditProfile'} className="nav-link" style={{ color: "white", fontSize: "24px" }}> Edit Profile </Link></li>
                             {checkAdmin() === true ? <li><Link to={'/AddUser'} className="nav-link" style={{ color: "white", fontSize: "24px" }}> Add user </Link></li> : <></>}
                             {checkAdmin() === true ? <li><Link to={'/GetAll'} className="nav-link" style={{ color: "white", fontSize: "24px" }}>Users</Link></li> : <></>}
-                            <li><Link to={'/FileList'} className="nav-link" style={{ color: "white", fontSize: "24px" }}> File List </Link></li>
+                            <li><Link to={'/FileList'} state={""} className="nav-link" style={{ color: "white", fontSize: "24px" }}> File List </Link></li>
                         </ul>
                         <ul className="nav navbar-nav ml-auto">
                             <li className="nav navbar-nav"><Link to={'/'} onClick={onLogout} className="nav-link" style={{ color: "white", fontSize: "24px" }}>Logout</Link></li>

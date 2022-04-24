@@ -10,6 +10,7 @@ import jwt from 'jwt-decode';
 
 const UsersList = ({ editUser }) => {
     const [users, setUsers] = useState();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchMain = async () => {
