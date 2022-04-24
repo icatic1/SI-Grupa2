@@ -101,7 +101,7 @@ namespace SIProjectSet1.Controllers
         /// <remarks></remarks>
         /// <returns></returns>
         [HttpGet]
-        [Route("ReadLargeFileByMac/{MacAddress}")]
+        [Route("UploadLargeFile/{MacAddress}")]
         public async Task<IActionResult> ReadLargeFileByMac(String MacAddress)
         {
             string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", MacAddress);

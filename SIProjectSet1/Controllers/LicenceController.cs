@@ -64,7 +64,7 @@ namespace SnapshotServer.Controllers
             return BadRequest(licence.Licenced);
         }
 
-        // GET: Licence/ABCDEFGHIJKL
+        // GET: GetAllLicences/ABCDEFGHIJKL
         [HttpGet("GetAllLicences")]
         public async Task<ActionResult<List<Licence>>> GetAllLicences()
         {
