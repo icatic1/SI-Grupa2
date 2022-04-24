@@ -88,10 +88,26 @@ namespace SIProjectSet1.Controllers
         }
 
         [HttpGet]
-        [Route("ReadLargeFile/{FileName}")]
-        public async Task<IActionResult> ReadLargeFile(String FileName)
+        [Route("Folders/{FolderName}")]
+        public async Task<IActionResult> GetFolders(String FolderName)
         {
-            var files = Directory.GetFiles(Path.GetDirectoryName(Path.GetFullPath(FileName)));
+            String[] dijelovi = FolderName.Split("%2F");
+            String p = Path.Combine(Directory.GetCurrentDirectory());
+            foreach (String file in dijelovi) p = Path.Combine(p, file);
+            var dirs = Directory.GetDirectories(Path.GetFullPath(p));
+            //var dirs = Directory.GetDirectories(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", FolderName));
+            return Ok(dirs);
+        }
+        [HttpGet]
+        [Route("Files/{FolderName}")]
+        public async Task<IActionResult> GetFiles(String FolderName)
+        {
+            String[] dijelovi = FolderName.Split("%2F");
+            String p = Path.Combine(Directory.GetCurrentDirectory());
+            foreach (String file in dijelovi) p = Path.Combine(p, file);
+            
+            var files = Directory.GetFiles(Path.GetFullPath(p));
+            //var files = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", FolderName));
             return Ok(files);
         }
 
