@@ -127,9 +127,9 @@ namespace SnapshotServer.Controllers
         // GET: JSONConfiguration/getJSON/ABCDEFGHIJKL
         [HttpGet]
         [Route("getJSON/{MACAddress}")]
-        public string GetJSON(string MacAddress)
+        public string GetJSON(string MACAddress)
         {
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", MacAddress);
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", MACAddress);
             var file = Path.Combine(filePath, "configuration.json");
             var content = System.IO.File.ReadAllText(file);
             return content.Length != 0 ? content : "Empty";
