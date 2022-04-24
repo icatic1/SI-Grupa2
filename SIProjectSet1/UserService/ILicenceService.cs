@@ -14,7 +14,8 @@ namespace SIProjectSet1.LicenceService
     {
         Task<Licence> CheckLicence(String MacAddress);
         Task<Licence> GetTerminalAndDebug(String MacAddress);
-        Task<bool> AddTerminalDebug(String MacAddress, String Terminal, Boolean Debug);
+        Task<bool> UpdateTerminalDebug(String MacAddress, String Terminal, Boolean Debug);
+        Task<bool> InitialAddDevice(string macAddress, string terminalID, bool debugLog);
     }
 
     public class LicenceService : ILicenceService
@@ -40,7 +41,7 @@ namespace SIProjectSet1.LicenceService
             return licence;
         }
 
-        public async Task<bool> AddTerminalDebug(String MacAddress, String Terminal, Boolean Debug)
+        public async Task<bool> UpdateTerminalDebug(String MacAddress, String Terminal, Boolean Debug)
         {
             var licence = await _context.Licences.FirstOrDefaultAsync(licence => licence.MacAddress == MacAddress);
             if (licence == null) return false;
@@ -50,6 +51,21 @@ namespace SIProjectSet1.LicenceService
             await _context.SaveChangesAsync();
 
             return true;
+        }
+
+        public async Task<bool> InitialAddDevice(String MacAddress, String Terminal, Boolean Debug)
+        {
+            try
+            {
+                var licence = new Licence() { MacAddress = MacAddress, TerminalID = Terminal, DebugLog = Debug, Licenced = false };
+                _context.Licences.Add(licence);
+                await _context.SaveChangesAsync();
+
+                return true;
+            } catch (Exception ex)
+            {
+                return false;
+            }
         }
     }
 }

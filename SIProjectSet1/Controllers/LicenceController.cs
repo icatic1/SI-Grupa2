@@ -30,7 +30,7 @@ namespace SnapshotServer.Controllers
         }
 
         [HttpGet]
-        [Route("GetTerminalAndDebug")]
+        [Route("GetTerminalAndDebugLog")]
         public async Task<IActionResult> GetTerminalIDAndDebugLog(string MacAddress)
         {
             var licence = await _licenceService.GetTerminalAndDebug(MacAddress);
@@ -39,10 +39,18 @@ namespace SnapshotServer.Controllers
         }
 
         [HttpPost]
-        [Route("AddTerminalAndDebug")]
-        public async Task<IActionResult> InitialAddTerminalAndDebugLog(string MacAddress, string TerminalID, Boolean DebugLog)
+        [Route("InitialAddDevice")]
+        public async Task<IActionResult> InitialAddDevice(string MacAddress, string TerminalID, Boolean DebugLog = false)
         {
-            var terminal = await _licenceService.AddTerminalDebug(MacAddress, TerminalID, DebugLog);
+            var terminal = await _licenceService.InitialAddDevice(MacAddress, TerminalID, DebugLog);
+            return Ok(terminal);
+        }
+
+        [HttpPost]
+        [Route("UpdateTerminalAndDebugLog")]
+        public async Task<IActionResult> UpdateTerminalAndDebugLog(string MacAddress, string TerminalID, Boolean DebugLog)
+        {
+            var terminal = await _licenceService.UpdateTerminalDebug(MacAddress, TerminalID, DebugLog);
             return Ok(terminal);
         }
 

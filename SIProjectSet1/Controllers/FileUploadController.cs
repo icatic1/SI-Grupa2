@@ -38,7 +38,6 @@ namespace SIProjectSet1.Controllers
         public async Task<IActionResult> UploadLargeFile()
         {
             var request = HttpContext.Request;
-
             // validation of Content-Type
             // 1. first, it must be a form-data request
             // 2. a boundary should be found in the Content-Type
@@ -48,7 +47,6 @@ namespace SIProjectSet1.Controllers
             {
                 return new UnsupportedMediaTypeResult();
             }
-
             var reader = new MultipartReader(mediaTypeHeader.Boundary.Value, request.Body);
             var section = await reader.ReadNextSectionAsync();
 
@@ -69,8 +67,10 @@ namespace SIProjectSet1.Controllers
 
                     // Get the temporary folder, and combine a random file name with it
                     var fileName = Path.GetRandomFileName();
+                    var MacAddress = contentDisposition.Name.Value;
                     //var saveToPath = Path.Combine(Path.GetTempPath(), fileName);
-                    var saveToPath = Path.Combine(Directory.GetCurrentDirectory(), contentDisposition.FileName.Value);
+                    Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", MacAddress));
+                    var saveToPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", MacAddress, contentDisposition.FileName.Value);
 
                     using (var targetStream = System.IO.File.Create(saveToPath))
                     {
@@ -91,8 +91,16 @@ namespace SIProjectSet1.Controllers
         [Route("ReadLargeFile/{FileName}")]
         public async Task<IActionResult> ReadLargeFile(String FileName)
         {
-            var files = Directory.GetFiles(FileName);
-            return Ok(Path.GetFullPath(files[0]).ToString());
+            var files = Directory.GetFiles(Path.GetDirectoryName(Path.GetFullPath(FileName)));
+            return Ok(files);
+        }
+
+        [HttpGet]
+        [Route("GetFilesByMac/{MacAddress}")]
+        public async Task<IActionResult> GetFilesByMac(String MacAddress)
+        {
+            var files = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", MacAddress));
+            return Ok(files);
         }
 
     }
