@@ -16,6 +16,7 @@ namespace SIProjectSet1.LicenceService
         Task<Licence> GetTerminalAndDebug(String MacAddress);
         Task<bool> UpdateTerminalDebug(String MacAddress, String Terminal, Boolean Debug);
         Task<bool> InitialAddDevice(string macAddress, string terminalID, bool debugLog);
+        Task<List<Licence>> GetAllLicences();
     }
 
     public class LicenceService : ILicenceService
@@ -32,6 +33,12 @@ namespace SIProjectSet1.LicenceService
         public async Task<Licence> CheckLicence(String MacAddress)
         {
             var licence = await _context.Licences.FirstOrDefaultAsync(licence => licence.MacAddress == MacAddress);
+            return licence;
+        }
+
+        public async Task<List<Licence>> GetAllLicences()
+        {
+            var licence = await _context.Licences.ToListAsync();
             return licence;
         }
 
