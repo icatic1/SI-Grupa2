@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using SIProjectSet1.Infrastructure;
 using SIProjectSet1.Entities;
 using System.Text.Json;
+using Newtonsoft.Json.Linq;
 
 namespace SnapshotServer.Controllers
 {
@@ -18,16 +19,16 @@ namespace SnapshotServer.Controllers
             _context = context;
         }
 
+        
         // GET: JSONConfiguration/getJSON/ABCDEFGHIJKL
         [HttpGet]
         [Route("getJSON/{MACAddress}")]
         public string GetJSON(string MacAddress)
         {
-            var configuration = _context.JsonConfigurations.FirstOrDefaultAsync(configuration => configuration.MacAddress == MacAddress);
-            if (configuration.Result == null)
-                return "Empty output";
-
-            return configuration.Result.Configuration;
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", MacAddress);
+            var file = Path.Combine(filePath, "configuration.json");
+            var content = System.IO.File.ReadAllText(file);
+            return content.Length != 0 ? content : "Empty";
         }
 
         // POST: JSONConfiguration/setJSON/ABCDEFGHIJKL/JSON
@@ -43,15 +44,14 @@ namespace SnapshotServer.Controllers
                     configuration.Result.Configuration = JSON.ToString();
                 }
                 else
-                    _context.JsonConfigurations.Add(
-                        new JsonConfiguration()
-                        {
-                            MacAddress = MACAddress,
-                            Configuration = JSON.ToString()
-                        });
-
-                _context.SaveChanges();
+                {   
+                    //Napisati u file
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", MACAddress);
+                    var file = Path.Combine(filePath, "configuration.json");
+                    System.IO.File.WriteAllText(file, JSON.ToString());
+                }
                 return true;
+
             }
             catch
             {
