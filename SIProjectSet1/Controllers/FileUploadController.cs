@@ -25,6 +25,14 @@ namespace SIProjectSet1.Controllers
             _logger = logger;
         }
 
+        [HttpGet]
+        [Route("ConnectionCheck")]
+        public IActionResult ConnectionCheck()
+        {
+            return Ok();
+        }
+
+
         /// <summary>
         /// Action for upload large file
         /// </summary>
@@ -66,11 +74,11 @@ namespace SIProjectSet1.Controllers
                     // Here, we just use the temporary folder and a random file name
 
                     // Get the temporary folder, and combine a random file name with it
-                    var fileName = Path.GetRandomFileName();
-                    var MacAddress = contentDisposition.Name.Value;
+                    var fileName = contentDisposition.Name.Value;
+                    //var MacAddress = contentDisposition.Name.Value;
                     //var saveToPath = Path.Combine(Path.GetTempPath(), fileName);
-                    Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", MacAddress));
-                    var saveToPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", MacAddress, contentDisposition.FileName.Value);
+                    Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", fileName));
+                    var saveToPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", fileName, contentDisposition.FileName.Value);
 
                     using (var targetStream = System.IO.File.Create(saveToPath))
                     {
@@ -85,6 +93,21 @@ namespace SIProjectSet1.Controllers
 
             // If the code runs to this location, it means that no files have been saved
             return BadRequest("No files data in the request.");
+        }
+
+        /// <summary>
+        /// Action for returning all files and folders for a given device
+        /// </summary>
+        /// <remarks></remarks>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("ReadLargeFileByMac/{MacAddress}")]
+        public async Task<IActionResult> ReadLargeFileByMac(String MacAddress)
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", MacAddress);
+            string[] entries = Directory.GetFileSystemEntries(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", MacAddress), "*", SearchOption.AllDirectories);
+            //var files = Directory.GetFiles(Path.GetDirectoryName(Path.GetFullPath(FileName)));
+            return Ok(entries);
         }
 
         [HttpGet]
