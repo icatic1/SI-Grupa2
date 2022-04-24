@@ -6,6 +6,7 @@ import NavigationHeader from './components/NavigationHeader'
 import Home from './components/Home'
 import AddUser from './components/AddUser'
 import UserList from './components/UserList'
+import FileList from './components/FileList'
 import UpdateUser from './components/UpdateUser'
 import ChangePassword from "./components/ChangePassword";
 import ChangePasswordM from "./components/ChangePasswordM";
@@ -26,7 +27,7 @@ const AuthProvider = ({ children }) => {
     const navigate = useNavigate()
 
     useEffect(() => {
-        
+
         if (localStorage.getItem('token') != null) {
 
             setToken(localStorage.getItem('token'))
@@ -65,12 +66,12 @@ const AuthProvider = ({ children }) => {
             body: formBody
         });
 
-        if(!response1.ok) return null
+        if (!response1.ok) return null
         const resp = await response1;
         const resp2 = await response1.body;
         const resp3 = await resp2.getReader().read();
         var result = String.fromCharCode.apply(null, resp3.value);
-        
+
         return result;
 
     }
@@ -171,9 +172,10 @@ function App() {
     return (
         <Router>
             <AuthProvider>
-            <NavigationHeader />
+                <NavigationHeader />
                 <Routes>
                     <Route exact path="/Home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+                    <Route exact path="/FileList" element={<ProtectedRoute><FileList /></ProtectedRoute>} />
                     <Route exact path="/EditProfile" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
                     <Route exact path='/' element={<HomeWrapper />} />
                     <Route exact path='/AddUser' element={<ProtectedAdminRoute><AddUser /></ProtectedAdminRoute>} />
@@ -184,7 +186,7 @@ function App() {
                     <Route exact path='/ChangePasswordQ' element={<ChangePasswordQ />} />
                     <Route exact path='/ChangePass/:passtoken' element={<ChangePass />} />
                     <Route exact path='/TFA' element={<TFA />} />
-                    <Route path="*" element={<NotFound/>}/>
+                    <Route path="*" element={<NotFound />} />
                 </Routes>
             </AuthProvider>
         </Router>)

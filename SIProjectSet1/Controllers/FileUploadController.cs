@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
+using SIProjectSet1.ViewModels;
+using System.Collections;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -118,6 +120,32 @@ namespace SIProjectSet1.Controllers
             var files = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", MacAddress));
             return Ok(files);
         }
+
+        [HttpGet]
+        [Route("GetFilesByPathSorted/{path}")]
+        public async Task<IActionResult> GetFilesByPathSorted(String path)
+        {
+
+            string dirPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", path);
+            if (!Directory.Exists(dirPath)) return NotFound(dirPath);
+
+            var imagesDir = Directory.GetFiles(dirPath).Where(f => (f.EndsWith(".png") || f.EndsWith(".jpg")));
+            var videosDir = Directory.GetFiles(dirPath).Where(f => f.EndsWith(".mp4"));
+            var filesDir = Directory.GetFiles(dirPath).Where(f => !(f.EndsWith(".mp4") || f.EndsWith(".png") || f.EndsWith(".jpg"))); ;
+            var Dirs = Directory.GetDirectories(dirPath);
+            var array = new ArrayList();
+
+            var a = new FilesViewModel()
+            {
+                images = imagesDir,
+                videos = videosDir,
+                files = filesDir,
+                folders = Dirs
+            };
+            return Ok(a);
+        }
+
+
 
     }
 }
