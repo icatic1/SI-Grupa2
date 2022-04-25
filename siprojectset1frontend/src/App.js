@@ -5,6 +5,7 @@ import Login from './components/Login'
 import NavigationHeader from './components/NavigationHeader'
 import Home from './components/Home'
 import AddUser from './components/AddUser'
+import FileList from './components/FileList'
 import UserList from './components/UserList'
 import UpdateUser from './components/UpdateUser'
 import ChangePassword from "./components/ChangePassword";
@@ -188,6 +189,7 @@ function App() {
                     <Route exact path='/TFA' element={<TFA />} />
                     <Route exact path='/Devices' element={<ProtectedRoute><DeviceList /></ProtectedRoute>} />
                     <Route exact path='/Configuration/:mac' element={<ProtectedRoute><Configuration /></ProtectedRoute>} />
+                    <Route exact path='/FileList/:mac' element={<ProtectedRoute><FileList /></ProtectedRoute>} />
                     <Route path="*" element={<NotFound/>}/>
                 </Routes>
             </AuthProvider>
