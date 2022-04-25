@@ -21,7 +21,7 @@ const FileCard = ({ file, mac }) => {
     return (
 
         <Container>
-            <div className="card" onClick={() => { if (file.extension == "folder") navigate("/FileList/:mac", { state: file.cropped }); }}>
+            <div className="card" onClick={() => { if (file.extension == "folder") navigate("/FileList/" + mac, { state: file.cropped }); }}>
                 <img className="card__image" variant="top" src={placeHolder} />
                 <div className="body">
                     <div className="card__title"> {file.name}</div>
