@@ -59,3 +59,7 @@ code {
 .card__title {
     padding: 1rem;
 }
+
+.modal-customw {
+    min-width: 680px;
+}

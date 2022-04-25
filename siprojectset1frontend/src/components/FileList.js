@@ -48,6 +48,16 @@ const FileList = () => {
         data.videos.forEach(video => {
             const chars = video.split('\\');
             var croppedPath = "";
+            var previewPath = "";
+
+            for (let i = 0; i < chars.length; i++) {
+                if (chars[i] == "wwwroot") {
+                    for (let j = i + 1; j < chars.length; j++) {
+                        previewPath = previewPath + "\\" + chars[j];
+                    }
+                    break;
+                }
+            };
 
             for (let i = 0; i < chars.length; i++) {
                 if (chars[i] == "UserContent") {
@@ -62,7 +72,7 @@ const FileList = () => {
 
             const nameOfFile = chars[chars.length - 1].split('.');
             console.log(nameOfFile[0]);
-            var obj = { path: video, name: nameOfFile[0], extension: nameOfFile[1], cropped: croppedPath };
+            var obj = { path: video, name: nameOfFile[0], extension: nameOfFile[1], cropped: croppedPath, previewPath: previewPath };
             objects.push(obj);
 
         });

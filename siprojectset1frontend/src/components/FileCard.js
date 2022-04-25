@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Form, Button, Row, Col, Modal, ButtonGroup, Card, Placeholder } from "react-bootstrap";
 import { useLocation, useNavigate } from 'react-router-dom';
+import ReactPlayer from 'react-player'
 
 
 const FileCard = ({ file, mac }) => {
 
     const [placeHolder, setPlaceHolder] = useState();
     const navigate = useNavigate();
-
+    const [show, setShow] = useState(false);
 
     useEffect(() => {
+
         if (file.extension == "jpg" || file.extension == "png")
             setPlaceHolder(file.previewPath);
         else if (file.extension == "mp4")
@@ -19,16 +21,39 @@ const FileCard = ({ file, mac }) => {
     }, []);
 
     return (
-
+        <>
         <Container>
-            <div className="card" onClick={() => { if (file.extension == "folder") navigate("/FileList/" + mac, { state: file.cropped }); }}>
+            <div className="card" onClick={() => { if (file.extension == "folder") { navigate("/FileList/" + mac, { state: file.cropped }); setShow(false); } else setShow(true); }}>
                 <img className="card__image" variant="top" src={placeHolder} />
                 <div className="body">
                     <div className="card__title"> {file.name}</div>
                 </div>
             </div>
-
         </Container>
+
+        <Modal
+                show={show}
+                onHide={() => setShow(false)}
+                dialogClassName="modal-customw"
+        >
+                <Modal.Header closeButton>
+                    <Modal.Title id="example-custom-modal-styling-title">
+                        { file.name }
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {file.extension === "png" || file.extension === "jpg" ?
+                        <div>
+                            <img src={file.previewPath} alt="Random" />
+                        </div> :
+                        <div>
+                            {console.log(file.previewPath)}
+                            <ReactPlayer controls url={file.previewPath} />
+                        </div>
+                    }
+                </Modal.Body>
+            </Modal>
+        </>
 
     )
 };
