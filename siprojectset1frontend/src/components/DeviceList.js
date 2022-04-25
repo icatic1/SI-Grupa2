@@ -41,7 +41,9 @@ const DeviceList = () => {
     }
 
     function viewCaptures(device) {
-        console.log("View Captures!")
+
+        navigate("/FileList/" + device.macAddress);
+
     }
 
     return (
