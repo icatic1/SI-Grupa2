@@ -12,9 +12,10 @@ import ChangePasswordM from "./components/ChangePasswordM";
 import ChangePasswordQ from "./components/ChangePasswordQ";
 import ChangePass from "./components/ChangePass";
 import TFA from "./components/TFA";
-import NotFound from "./components/NotFound"
-import EditProfile from "./components/EditProfile"
+import NotFound from "./components/NotFound";
+import EditProfile from "./components/EditProfile";
 import DeviceList from "./components/DeviceList";
+import Configuration from "./components/Configuration";
 
 import './App.css';
 
@@ -186,6 +187,7 @@ function App() {
                     <Route exact path='/ChangePass/:passtoken' element={<ChangePass />} />
                     <Route exact path='/TFA' element={<TFA />} />
                     <Route exact path='/Devices' element={<ProtectedRoute><DeviceList /></ProtectedRoute>} />
+                    <Route exact path='/Configuration/:mac' element={<ProtectedRoute><Configuration /></ProtectedRoute>} />
                     <Route path="*" element={<NotFound/>}/>
                 </Routes>
             </AuthProvider>

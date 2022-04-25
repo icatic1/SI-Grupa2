@@ -132,8 +132,15 @@ namespace SnapshotServer.Controllers
         {
             var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent", MACAddress);
             var file = Path.Combine(filePath, "configuration.json");
-            var content = System.IO.File.ReadAllText(file);
-            return content.Length != 0 ? content : "Empty";
+            try
+            {
+                var content = System.IO.File.ReadAllText(file);
+                return content.Length != 0 ? content : "{}";
+            } catch (Exception e) {
+                return "{}";
+            }
+
+            
         }
 
         // POST: JSONConfiguration/setJSON/ABCDEFGHIJKL/JSON

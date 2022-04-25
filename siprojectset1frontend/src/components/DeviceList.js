@@ -36,7 +36,7 @@ const DeviceList = () => {
 
     function editConfiguration(device) {
 
-        //navigate("/DeviceConfiguration/" + device.macAddress)
+        navigate("/Configuration/" + device.macAddress)
 
     }
 
