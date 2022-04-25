@@ -38,7 +38,7 @@ const Configuration = () => {
 
                     var camera = {
                         device_configuration: {
-                            device_type: "",
+                            device_type: "USBCamera",
                             id: "",
                             trigger_file_path: "",
                             regex: "",
