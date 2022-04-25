@@ -77,8 +77,8 @@ namespace SIProjectSet1.Controllers
                     var fileName = contentDisposition.Name.Value;
                     //var MacAddress = contentDisposition.Name.Value;
                     //var saveToPath = Path.Combine(Path.GetTempPath(), fileName);
-                    Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", fileName));
-                    var saveToPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", fileName, contentDisposition.FileName.Value);
+                    Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent", fileName));
+                    var saveToPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent", fileName, contentDisposition.FileName.Value);
 
                     using (var targetStream = System.IO.File.Create(saveToPath))
                     {
@@ -104,8 +104,8 @@ namespace SIProjectSet1.Controllers
         [Route("UploadLargeFile/{MacAddress}")]
         public async Task<IActionResult> ReadLargeFileByMac(String MacAddress)
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", MacAddress);
-            string[] entries = Directory.GetFileSystemEntries(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", MacAddress), "*", SearchOption.AllDirectories);
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent", MacAddress);
+            string[] entries = Directory.GetFileSystemEntries(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent", MacAddress), "*", SearchOption.AllDirectories);
             //var files = Directory.GetFiles(Path.GetDirectoryName(Path.GetFullPath(FileName)));
             return Ok(entries);
         }
@@ -138,7 +138,7 @@ namespace SIProjectSet1.Controllers
         [Route("GetFilesByMac/{MacAddress}")]
         public async Task<IActionResult> GetFilesByMac(String MacAddress)
         {
-            var files = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", MacAddress));
+            var files = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent", MacAddress));
             return Ok(files);
         }
 

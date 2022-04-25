@@ -29,7 +29,7 @@ namespace SnapshotServer.Controllers
             if (MacAddress == null)
                 return BadRequest("Device is not available.");
 
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", MacAddress, "configuration.json");
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent", MacAddress, "configuration.json");
             try
             {
                 var memory = new MemoryStream();
@@ -39,7 +39,8 @@ namespace SnapshotServer.Controllers
                 }
                 memory.Position = 0;
                 return File(memory, GetContentType(path), Path.GetFileName(path));
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 return BadRequest("There is not a config file present for the provided device. ");
             }
@@ -100,8 +101,8 @@ namespace SnapshotServer.Controllers
                     var fileName = Path.GetRandomFileName();
                     var MacAddress = contentDisposition.Name.Value;
                     //var saveToPath = Path.Combine(Path.GetTempPath(), fileName);
-                    Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", MacAddress));
-                    var saveToPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", MacAddress, contentDisposition.FileName.Value);
+                    Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent", MacAddress));
+                    var saveToPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent", MacAddress, contentDisposition.FileName.Value);
 
                     using (var targetStream = System.IO.File.Create(saveToPath))
                     {
@@ -129,7 +130,7 @@ namespace SnapshotServer.Controllers
         [Route("getJSON/{MACAddress}")]
         public string GetJSON(string MACAddress)
         {
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", MACAddress);
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent", MACAddress);
             var file = Path.Combine(filePath, "configuration.json");
             var content = System.IO.File.ReadAllText(file);
             return content.Length != 0 ? content : "Empty";
@@ -138,28 +139,22 @@ namespace SnapshotServer.Controllers
         // POST: JSONConfiguration/setJSON/ABCDEFGHIJKL/JSON
         [HttpPost]
         [Route("setJSON")]
-        public async Task<bool> SetJSONAsync([FromQuery] string MACAddress, [FromBody] JsonElement JSON)
+        public async Task<IActionResult> SetJSON([FromQuery] string MACAddress, [FromBody] JsonElement JSON)
         {
             try
             {
-                var configuration = _context.JsonConfigurations.FirstOrDefaultAsync(configuration => configuration.MacAddress == MACAddress);
-                if (configuration.Result != null)
-                {
-                    configuration.Result.Configuration = JSON.ToString();
-                }
-                else
-                {
-                    //Napisati u file
-                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", MACAddress);
-                    var file = Path.Combine(filePath, "configuration.json");
-                    System.IO.File.WriteAllText(file, JSON.ToString());
-                }
-                return true;
+
+                //Napisati u file
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent", MACAddress);
+                var file = Path.Combine(filePath, "configuration.json");
+                System.IO.File.WriteAllText(file, JSON.ToString());
+
+                return Ok(true);
 
             }
             catch
             {
-                return false;
+                return BadRequest(false);
             }
         }
     }
