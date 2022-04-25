@@ -14,6 +14,7 @@ import ChangePass from "./components/ChangePass";
 import TFA from "./components/TFA";
 import NotFound from "./components/NotFound"
 import EditProfile from "./components/EditProfile"
+import DeviceList from "./components/DeviceList";
 
 import './App.css';
 
@@ -184,6 +185,7 @@ function App() {
                     <Route exact path='/ChangePasswordQ' element={<ChangePasswordQ />} />
                     <Route exact path='/ChangePass/:passtoken' element={<ChangePass />} />
                     <Route exact path='/TFA' element={<TFA />} />
+                    <Route exact path='/Devices' element={<ProtectedRoute><DeviceList /></ProtectedRoute>} />
                     <Route path="*" element={<NotFound/>}/>
                 </Routes>
             </AuthProvider>

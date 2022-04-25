@@ -35,6 +35,7 @@ function NavigationHeader() {
                             <li><Link to={'/EditProfile'} className="nav-link" style={{ color: "white", fontSize: "24px" }}> Edit Profile </Link></li>
                             {checkAdmin() === true ? <li><Link to={'/AddUser'} className="nav-link" style={{ color: "white", fontSize: "24px" }}> Add user </Link></li> : <></>}
                             {checkAdmin() === true ? <li><Link to={'/GetAll'} className="nav-link" style={{ color: "white", fontSize: "24px" }}>Users</Link></li> : <></>}
+                            <li><Link to={'/Devices'} className="nav-link" style={{ color: "white", fontSize: "24px" }}> Devices </Link></li>
                         </ul>
                         <ul className="nav navbar-nav ml-auto">
                             <li className="nav navbar-nav"><Link to={'/'} onClick={onLogout} className="nav-link" style={{ color: "white", fontSize: "24px" }}>Logout</Link></li>
