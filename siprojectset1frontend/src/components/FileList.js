@@ -100,10 +100,10 @@ const FileList = () => {
             try {
                 // console.log("Ovo je mac: " + mac);
                 if (state == null)
-                    state = mac;
+                    state = "/" + mac;
 
 
-                const response1 = await fetch('/api/FileUpload/GetFilesByPathSorted/' + state + '%5C',
+                const response1 = await fetch('/api/FileUpload/GetFilesByPathSorted' + state + '%5C',
                     {
                         method: 'GET',
                         headers: { 'Content-Type': 'application/json' },
