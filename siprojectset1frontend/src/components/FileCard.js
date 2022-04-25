@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Form, Button, Row, Col, Modal, ButtonGroup, Card, Placeholder } from "react-bootstrap";
 import { useLocation, useNavigate } from 'react-router-dom';
+import ReactPlayer from 'react-player'
 
 
 const FileCard = ({ file, mac }) => {
@@ -10,6 +11,7 @@ const FileCard = ({ file, mac }) => {
     const [show, setShow] = useState(false);
 
     useEffect(() => {
+
         if (file.extension == "jpg" || file.extension == "png")
             setPlaceHolder(file.previewPath);
         else if (file.extension == "mp4")
@@ -40,7 +42,15 @@ const FileCard = ({ file, mac }) => {
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                  Neki tekst
+                    {file.extension === "png" || file.extension === "jpg" ?
+                        <div>
+                            <img src={file.previewPath} alt="Random" />
+                        </div> :
+                        <div>
+                            {console.log(file.previewPath)}
+                            <ReactPlayer controls url={file.previewPath} />
+                        </div>
+                    }
                 </Modal.Body>
             </Modal>
         </>
