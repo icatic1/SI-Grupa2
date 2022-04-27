@@ -154,7 +154,11 @@ namespace SnapshotServer.Controllers
                 //Napisati u file
                 var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent", MACAddress);
                 var file = Path.Combine(filePath, "configuration.json");
+                if(!Directory.Exists(filePath))
+                    Directory.CreateDirectory(filePath);
+
                 System.IO.File.WriteAllText(file, JSON.ToString());
+                
 
                 return Ok(true);
 
