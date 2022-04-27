@@ -18,6 +18,7 @@ const Configuration = () => {
     const [displayBurst, setDisplayBurst] = useState(null)
     const [burstUnit, setBurstUnit] = useState("seconds")
     const [show, setShow] = useState(false)
+    const [modal, setModal] = useState("")
 
     const { mac } = useParams();
 
@@ -53,11 +54,12 @@ const Configuration = () => {
                             motion_detection: "False"
                         },
                         network_configuration: {
-                            server_version: "",
-                            saving_path: "",
                             server_IP_address: "",
                             server_port: "",
+                            server_media_path: "",
+                            server_JSON_configuration_path: "",
                             synchronization_period: "60",
+                            latest_synchronization_ticks: "",
                             connection_status: "False"
                         },
                         capture_configuration: {
@@ -75,14 +77,17 @@ const Configuration = () => {
 
                 setConfiguration(data);
 
-
-                setFirstCamera(data.cameras[0])
-                setSecondCamera(data.cameras[1])
-                setThirdCamera(data.cameras[2])
-                setCurrentCamera(data.cameras[0])
-                setDisplaySynchronizationPeriod(data.cameras[0].network_configuration.synchronization_period)
-                setDisplayDuration(data.cameras[0].capture_configuration.duration)
-                setDisplayBurst(data.cameras[0].capture_configuration.burst_period)
+                try {
+                    setFirstCamera(data.cameras[0])
+                    setSecondCamera(data.cameras[1])
+                    setThirdCamera(data.cameras[2])
+                    setCurrentCamera(data.cameras[0])
+                    setDisplaySynchronizationPeriod(data.cameras[0].network_configuration.synchronization_period)
+                    setDisplayDuration(data.cameras[0].capture_configuration.duration)
+                    setDisplayBurst(data.cameras[0].capture_configuration.burst_period)
+                } catch (e) {
+                    handleShow("The configuration file is corrupt!")
+                }
 
             } catch (e) {
                 console.log(e)
@@ -99,7 +104,8 @@ const Configuration = () => {
     }, [firstCamera])
 
     const handleClose = () => { setShow(false); }
-    const handleShow = () => {
+    const handleShow = (msg) => {
+        setModal(msg)
         setShow(true);
     }
 
@@ -126,7 +132,7 @@ const Configuration = () => {
             let response = await fetch('/api/JSONConfiguration/setJSON/?MACAddress=' + mac, options)
 
             if (response) {
-                handleShow()
+                handleShow("Configuration saved successfully!")
             }
         } catch (e) {
             console.log(e);
@@ -218,14 +224,23 @@ const Configuration = () => {
                     setThirdCamera({ ...thirdCamera, device_configuration: { ...thirdCamera.device_configuration, output_validity_days: value } })
                 setCurrentCamera({ ...currentCamera, device_configuration: { ...currentCamera.device_configuration, output_validity_days: value } })
                 break;
-            case "savingPath":
+            case "mediaPath":
                 if (cameraNum == 1)
-                    setFirstCamera({ ...firstCamera, network_configuration: { ...firstCamera.network_configuration, saving_path: value } })
+                    setFirstCamera({ ...firstCamera, network_configuration: { ...firstCamera.network_configuration, server_media_path: value } })
                 else if (cameraNum == 2)
-                    setSecondCamera({ ...secondCamera, network_configuration: { ...secondCamera.network_configuration, saving_path: value } })
+                    setSecondCamera({ ...secondCamera, network_configuration: { ...secondCamera.network_configuration, server_media_path: value } })
                 else
-                    setThirdCamera({ ...thirdCamera, network_configuration: { ...thirdCamera.network_configuration, saving_path: value } })
-                setCurrentCamera({ ...currentCamera, network_configuration: { ...currentCamera.network_configuration, saving_path: value } })
+                    setThirdCamera({ ...thirdCamera, network_configuration: { ...thirdCamera.network_configuration, server_media_path: value } })
+                setCurrentCamera({ ...currentCamera, network_configuration: { ...currentCamera.network_configuration, server_media_path: value } })
+                break;
+            case "configPath":
+                if (cameraNum == 1)
+                    setFirstCamera({ ...firstCamera, network_configuration: { ...firstCamera.network_configuration, server_JSON_configuration_path: value } })
+                else if (cameraNum == 2)
+                    setSecondCamera({ ...secondCamera, network_configuration: { ...secondCamera.network_configuration, server_JSON_configuration_path: value } })
+                else
+                    setThirdCamera({ ...thirdCamera, network_configuration: { ...thirdCamera.network_configuration, server_JSON_configuration_path: value } })
+                setCurrentCamera({ ...currentCamera, network_configuration: { ...currentCamera.network_configuration, server_JSON_configuration_path: value } })
                 break;
             case "serverPort":
                 if (cameraNum == 1)
@@ -609,12 +624,7 @@ const Configuration = () => {
                         : step === 2 ? <>
                             <h2 style={{ color: "#0275d8" }}>Server configuration</h2>
                             <hr />
-                            <div className="mb-3 row">
-                                <label htmlFor="savingPath" className="col-sm-4 col-form-label">Path for saving files</label>
-                                <div className="col-sm-7">
-                                    <input type="text" className="form-control" id="savingPath" value={currentCamera.network_configuration.saving_path} onChange={(e) => { changeValues(e.target.value, "savingPath") }} />
-                                </div>
-                            </div>
+                            
                             <div className="mb-3 row">
                                 <label htmlFor="serverIPAddress" className="col-sm-4 col-form-label">Server IP address</label>
                                 <div className="col-sm-5">
@@ -625,6 +635,18 @@ const Configuration = () => {
                                 <label htmlFor="serverPort" className="col-sm-4 col-form-label">Server Port</label>
                                 <div className="col-sm-5">
                                     <input type="text" className="form-control" id="serverPort" value={currentCamera.network_configuration.server_port} onChange={(e) => { changeValues(e.target.value, "serverPort") }} />
+                                </div>
+                            </div>
+                            <div className="mb-3 row">
+                                <label htmlFor="mediaPath" className="col-sm-4 col-form-label">Media path</label>
+                                <div className="col-sm-7">
+                                    <input type="text" className="form-control" id="mediaPath" value={currentCamera.network_configuration.server_media_path} onChange={(e) => { changeValues(e.target.value, "mediaPath") }} />
+                                </div>
+                            </div>
+                            <div className="mb-3 row">
+                                <label htmlFor="configPath" className="col-sm-4 col-form-label">Configuration path</label>
+                                <div className="col-sm-7">
+                                    <input type="text" className="form-control" id="configPath" value={currentCamera.network_configuration.server_JSON_configuration_path} onChange={(e) => { changeValues(e.target.value, "configPath") }} />
                                 </div>
                             </div>
                             <div className="mb-3 row">
@@ -749,7 +771,7 @@ const Configuration = () => {
                 <Modal.Header closeButton>
                     <Modal.Title>Information</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>Configuration successfully saved!</Modal.Body>
+                <Modal.Body>{modal}</Modal.Body>
                 <Modal.Footer>
                     <Button variant="primary" onClick={handleClose}>
                         OK
