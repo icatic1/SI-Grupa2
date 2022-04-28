@@ -32,59 +32,104 @@ const Configuration = () => {
 
 
 
-                const data = await response.json();
+                var data = await response.json();
+                
 
+                if (data[0] == undefined) {
 
-                if (data.cameras == undefined) {
-
-                    var camera = {
-                        device_configuration: {
-                            device_type: "USBCamera",
-                            id: "",
-                            trigger_file_path: "",
-                            regex: "",
-                            output_folder_path: "",
-                            output_validity_days: "1",
-                            camera_number: "0"
-                        },
-                        video_configuration: {
-                            resolution: "Resolution640x480",
-                            contrast_level: "0",
-                            image_color: "Control",
-                            motion_detection: "False"
-                        },
-                        network_configuration: {
-                            server_IP_address: "",
-                            server_port: "",
-                            server_media_path: "",
-                            server_JSON_configuration_path: "",
-                            synchronization_period: "60",
-                            latest_synchronization_ticks: "",
-                            connection_status: "False"
-                        },
-                        capture_configuration: {
-                            image_capture: "True",
-                            single_mode: "True",
-                            duration: "0",
-                            burst_period: "0"
-                        }
+                    var camera1 = {
+                       
+                            Type: 0,
+                            Id: "",
+                            TriggerFilePath: "",
+                            Regex: "",
+                            OutputFolderPath: "",
+                            OutputValidity: 1,
+                            CameraNumber: 0,
+                            Resolution: 0,
+                            ContrastLevel: 0,
+                            ImageColor: "Control",
+                            MotionDetection: false,
+                            ServerIP: "",
+                            ServerPort: 0,
+                            MediaPath: "",
+                            JSONConfigPath: "",
+                            SynchronizationPeriod: 60,
+                            LatestSynchronizationTicks: 0,
+                            ConnectionStatus: false,
+                            ImageCapture: true,
+                            SingleMode: true,
+                            Duration: 0,
+                            Period: 0
                     }
 
-                    data.cameras = [camera, camera, camera]
-                    data.cameras[1].device_configuration.camera_number = "1"
-                    data.cameras[2].device_configuration.camera_number = "2"
+                    var camera2 = {
+
+                        Type: 0,
+                        Id: "",
+                        TriggerFilePath: "",
+                        Regex: "",
+                        OutputFolderPath: "",
+                        OutputValidity: 1,
+                        CameraNumber: 1,
+                        Resolution: 0,
+                        ContrastLevel: 0,
+                        ImageColor: "Control",
+                        MotionDetection: false,
+                        ServerIP: "",
+                        ServerPort: 0,
+                        MediaPath: "",
+                        JSONConfigPath: "",
+                        SynchronizationPeriod: 60,
+                        LatestSynchronizationTicks: 0,
+                        ConnectionStatus: false,
+                        ImageCapture: true,
+                        SingleMode: true,
+                        Duration: 0,
+                        Period: 0
+                    }
+
+                    var camera3 = {
+
+                        Type: 0,
+                        Id: "",
+                        TriggerFilePath: "",
+                        Regex: "",
+                        OutputFolderPath: "",
+                        OutputValidity: 1,
+                        CameraNumber: 2,
+                        Resolution: 0,
+                        ContrastLevel: 0,
+                        ImageColor: "Control",
+                        MotionDetection: false,
+                        ServerIP: "",
+                        ServerPort: 0,
+                        MediaPath: "",
+                        JSONConfigPath: "",
+                        SynchronizationPeriod: 60,
+                        LatestSynchronizationTicks: 0,
+                        ConnectionStatus: false,
+                        ImageCapture: true,
+                        SingleMode: true,
+                        Duration: 0,
+                        Period: 0
+                    }
+                    
+
+                    data = [camera1, camera2, camera3]
+                    
                 }
 
                 setConfiguration(data);
 
                 try {
-                    setFirstCamera(data.cameras[0])
-                    setSecondCamera(data.cameras[1])
-                    setThirdCamera(data.cameras[2])
-                    setCurrentCamera(data.cameras[0])
-                    setDisplaySynchronizationPeriod(data.cameras[0].network_configuration.synchronization_period)
-                    setDisplayDuration(data.cameras[0].capture_configuration.duration)
-                    setDisplayBurst(data.cameras[0].capture_configuration.burst_period)
+                    setFirstCamera(data[0])
+                    setSecondCamera(data[1])
+                    setThirdCamera(data[2])
+                    setCurrentCamera(data[0])
+                    setDisplaySynchronizationPeriod(data[0].SynchronizationPeriod)
+                    setDisplayDuration(data[0].Duration)
+                    setDisplayBurst(data[0].Period)
                 } catch (e) {
                     handleShow("The configuration file is corrupt!")
                 }
@@ -99,7 +144,7 @@ const Configuration = () => {
     }, []);
 
     useEffect(() => {
-
+        
         hideSpinner()
     }, [firstCamera])
 
@@ -116,7 +161,7 @@ const Configuration = () => {
     }
 
     async function saveConfiguration() {
-        configuration.cameras = [firstCamera, secondCamera, thirdCamera]
+        let configuration = [firstCamera, secondCamera, thirdCamera]
 
         try {
 
@@ -146,11 +191,11 @@ const Configuration = () => {
                 document.getElementById("secondCamera").classList.remove("active")
                 document.getElementById("thirdCamera").classList.remove("active")
                 setCameraNum(1)
-                setDisplaySynchronizationPeriod(firstCamera.network_configuration.synchronization_period)
+                setDisplaySynchronizationPeriod(firstCamera.SynchronizationPeriod)
                 setSynchronizationUnit("seconds")
-                setDisplayDuration(firstCamera.capture_configuration.duration)
+                setDisplayDuration(firstCamera.Duration)
                 setDurationUnit("seconds")
-                setDisplayBurst(firstCamera.capture_configuration.burst_period)
+                setDisplayBurst(firstCamera.Period)
                 setBurstUnit("seconds")
                 setCurrentCamera(firstCamera)
 
@@ -160,11 +205,11 @@ const Configuration = () => {
                 document.getElementById("secondCamera").classList.add("active")
                 document.getElementById("thirdCamera").classList.remove("active")
                 setCameraNum(2)
-                setDisplaySynchronizationPeriod(secondCamera.network_configuration.synchronization_period)
+                setDisplaySynchronizationPeriod(secondCamera.SynchronizationPeriod)
                 setSynchronizationUnit("seconds")
-                setDisplayDuration(secondCamera.capture_configuration.duration)
+                setDisplayDuration(secondCamera.Duration)
                 setDurationUnit("seconds")
-                setDisplayBurst(secondCamera.capture_configuration.burst_period)
+                setDisplayBurst(secondCamera.Period)
                 setBurstUnit("seconds")
                 setCurrentCamera(secondCamera)
                 break;
@@ -173,11 +218,11 @@ const Configuration = () => {
                 document.getElementById("secondCamera").classList.remove("active")
                 document.getElementById("thirdCamera").classList.add("active")
                 setCameraNum(3)
-                setDisplaySynchronizationPeriod(thirdCamera.network_configuration.synchronization_period)
+                setDisplaySynchronizationPeriod(thirdCamera.SynchronizationPeriod)
                 setSynchronizationUnit("seconds")
-                setDisplayDuration(thirdCamera.capture_configuration.duration)
+                setDisplayDuration(thirdCamera.Duration)
                 setDurationUnit("seconds")
-                setDisplayBurst(thirdCamera.capture_configuration.burst_period)
+                setDisplayBurst(thirdCamera.Period)
                 setBurstUnit("seconds")
                 setCurrentCamera(thirdCamera)
 
@@ -186,115 +231,147 @@ const Configuration = () => {
         }
     }
 
+    function detectCameraType(type) {
+        if (type == 0)
+            return "USB Camera"
+        else
+            return "IP Camera"
+    }
+
+    function detectResolution(num) {
+        switch (num) {
+            case 0:
+                return "640x480"
+                break;
+            case 1:
+                return "720x480"
+                break;
+            case 2:
+                return "1280x960"
+                break;
+            case 3:
+                return "1280x1024"
+                break;
+            case 4:
+                return "1920x1080"
+                break;
+            case 5:
+                return "2048x1536"
+                break;
+        }
+
+            
+    }
+
     function changeValues(value, property) {
         switch (property) {
             case "regex":
                 if (cameraNum == 1)
-                    setFirstCamera({ ...firstCamera, device_configuration: { ...firstCamera.device_configuration, regex: value } })
+                    setFirstCamera({ ...firstCamera, Regex: value } )
                 else if (cameraNum == 2)
-                    setSecondCamera({ ...secondCamera, device_configuration: { ...secondCamera.device_configuration, regex: value } })
+                    setSecondCamera({ ...secondCamera, Regex: value  })
                 else
-                    setThirdCamera({ ...thirdCamera, device_configuration: { ...thirdCamera.device_configuration, regex: value } })
-                setCurrentCamera({ ...currentCamera, device_configuration: { ...currentCamera.device_configuration, regex: value } })
+                    setThirdCamera({ ...thirdCamera, Regex: value } )
+                setCurrentCamera({ ...currentCamera, Regex: value })
                 break;
             case "triggerFilePath":
                 if (cameraNum == 1)
-                    setFirstCamera({ ...firstCamera, device_configuration: { ...firstCamera.device_configuration, trigger_file_path: value } })
+                    setFirstCamera({ ...firstCamera,  TriggerFilePath: value } )
                 else if (cameraNum == 2)
-                    setSecondCamera({ ...secondCamera, device_configuration: { ...secondCamera.device_configuration, trigger_file_path: value } })
+                    setSecondCamera({ ...secondCamera,  TriggerFilePath: value } )
                 else
-                    setThirdCamera({ ...thirdCamera, device_configuration: { ...thirdCamera.device_configuration, trigger_file_path: value } })
-                setCurrentCamera({ ...currentCamera, device_configuration: { ...currentCamera.device_configuration, trigger_file_path: value } })
+                    setThirdCamera({ ...thirdCamera,  TriggerFilePath: value } )
+                setCurrentCamera({ ...currentCamera,  TriggerFilePath: value } )
                 break;
             case "outputFolderPath":
                 if (cameraNum == 1)
-                    setFirstCamera({ ...firstCamera, device_configuration: { ...firstCamera.device_configuration, output_folder_path: value } })
+                    setFirstCamera({ ...firstCamera,  OutputFolderPath: value } )
                 else if (cameraNum == 2)
-                    setSecondCamera({ ...secondCamera, device_configuration: { ...secondCamera.device_configuration, output_folder_path: value } })
+                    setSecondCamera({ ...secondCamera,  OutputFolderPath: value  })
                 else
-                    setThirdCamera({ ...thirdCamera, device_configuration: { ...thirdCamera.device_configuration, output_folder_path: value } })
-                setCurrentCamera({ ...currentCamera, device_configuration: { ...currentCamera.device_configuration, output_folder_path: value } })
+                    setThirdCamera({ ...thirdCamera,  OutputFolderPath: value } )
+                setCurrentCamera({ ...currentCamera,  OutputFolderPath: value } )
                 break;
             case "outputValidityDays":
                 if (cameraNum == 1)
-                    setFirstCamera({ ...firstCamera, device_configuration: { ...firstCamera.device_configuration, output_validity_days: value } })
+                    setFirstCamera({ ...firstCamera,  OutputValidity: value } )
                 else if (cameraNum == 2)
-                    setSecondCamera({ ...secondCamera, device_configuration: { ...secondCamera.device_configuration, output_validity_days: value } })
+                    setSecondCamera({ ...secondCamera,  OutputValidity: value  })
                 else
-                    setThirdCamera({ ...thirdCamera, device_configuration: { ...thirdCamera.device_configuration, output_validity_days: value } })
-                setCurrentCamera({ ...currentCamera, device_configuration: { ...currentCamera.device_configuration, output_validity_days: value } })
+                    setThirdCamera({ ...thirdCamera,  OutputValidity: value } )
+                setCurrentCamera({ ...currentCamera,  OutputValidity: value } )
                 break;
             case "mediaPath":
                 if (cameraNum == 1)
-                    setFirstCamera({ ...firstCamera, network_configuration: { ...firstCamera.network_configuration, server_media_path: value } })
+                    setFirstCamera({ ...firstCamera,  MediaPath: value })
                 else if (cameraNum == 2)
-                    setSecondCamera({ ...secondCamera, network_configuration: { ...secondCamera.network_configuration, server_media_path: value } })
+                    setSecondCamera({ ...secondCamera,  MediaPath: value })
                 else
-                    setThirdCamera({ ...thirdCamera, network_configuration: { ...thirdCamera.network_configuration, server_media_path: value } })
-                setCurrentCamera({ ...currentCamera, network_configuration: { ...currentCamera.network_configuration, server_media_path: value } })
+                    setThirdCamera({ ...thirdCamera,  MediaPath: value } )
+                setCurrentCamera({ ...currentCamera,  MediaPath: value } )
                 break;
             case "configPath":
                 if (cameraNum == 1)
-                    setFirstCamera({ ...firstCamera, network_configuration: { ...firstCamera.network_configuration, server_JSON_configuration_path: value } })
+                    setFirstCamera({ ...firstCamera,  JSONConfigPath: value })
                 else if (cameraNum == 2)
-                    setSecondCamera({ ...secondCamera, network_configuration: { ...secondCamera.network_configuration, server_JSON_configuration_path: value } })
+                    setSecondCamera({ ...secondCamera,  JSONConfigPath: value })
                 else
-                    setThirdCamera({ ...thirdCamera, network_configuration: { ...thirdCamera.network_configuration, server_JSON_configuration_path: value } })
-                setCurrentCamera({ ...currentCamera, network_configuration: { ...currentCamera.network_configuration, server_JSON_configuration_path: value } })
+                    setThirdCamera({ ...thirdCamera,  JSONConfigPath: value } )
+                setCurrentCamera({ ...currentCamera,  JSONConfigPath: value } )
                 break;
             case "serverPort":
                 if (cameraNum == 1)
-                    setFirstCamera({ ...firstCamera, network_configuration: { ...firstCamera.network_configuration, server_port: value } })
+                    setFirstCamera({ ...firstCamera,  ServerPort: value } )
                 else if (cameraNum == 2)
-                    setSecondCamera({ ...secondCamera, network_configuration: { ...secondCamera.network_configuration, server_port: value } })
+                    setSecondCamera({ ...secondCamera,  ServerPort: value } )
                 else
-                    setThirdCamera({ ...thirdCamera, network_configuration: { ...thirdCamera.network_configuration, server_port: value } })
-                setCurrentCamera({ ...currentCamera, network_configuration: { ...currentCamera.network_configuration, server_port: value } })
+                    setThirdCamera({ ...thirdCamera,  ServerPort: value } )
+                setCurrentCamera({ ...currentCamera,  ServerPort: value } )
                 break;
             case "serverIPAddress":
                 if (cameraNum == 1)
-                    setFirstCamera({ ...firstCamera, network_configuration: { ...firstCamera.network_configuration, server_IP_address: value } })
+                    setFirstCamera({ ...firstCamera,  ServerIP: value } )
                 else if (cameraNum == 2)
-                    setSecondCamera({ ...secondCamera, network_configuration: { ...secondCamera.network_configuration, server_IP_address: value } })
+                    setSecondCamera({ ...secondCamera,  ServerIP: value  })
                 else
-                    setThirdCamera({ ...thirdCamera, network_configuration: { ...thirdCamera.network_configuration, server_IP_address: value } })
-                setCurrentCamera({ ...currentCamera, network_configuration: { ...currentCamera.network_configuration, server_IP_address: value } })
+                    setThirdCamera({ ...thirdCamera,  ServerIP: value })
+                setCurrentCamera({ ...currentCamera,  ServerIP: value  })
                 break;
             case "resolution":
                 if (cameraNum == 1)
-                    setFirstCamera({ ...firstCamera, video_configuration: { ...firstCamera.video_configuration, resolution: value } })
+                    setFirstCamera({ ...firstCamera,  Resolution: value } )
                 else if (cameraNum == 2)
-                    setSecondCamera({ ...secondCamera, video_configuration: { ...secondCamera.video_configuration, resolution: value } })
+                    setSecondCamera({ ...secondCamera,  Resolution: value } )
                 else
-                    setThirdCamera({ ...thirdCamera, video_configuration: { ...thirdCamera.video_configuration, resolution: value } })
-                setCurrentCamera({ ...currentCamera, video_configuration: { ...currentCamera.video_configuration, resolution: value } })
+                    setThirdCamera({ ...thirdCamera,  Resolution: value } )
+                setCurrentCamera({ ...currentCamera,  Resolution: value } )
                 break;
             case "contrast":
                 if (cameraNum == 1)
-                    setFirstCamera({ ...firstCamera, video_configuration: { ...firstCamera.video_configuration, contrast_level: value } })
+                    setFirstCamera({ ...firstCamera,  ContrastLevel: value } )
                 else if (cameraNum == 2)
-                    setSecondCamera({ ...secondCamera, video_configuration: { ...secondCamera.video_configuration, contrast_level: value } })
+                    setSecondCamera({ ...secondCamera,  ContrastLevel: value })
                 else
-                    setThirdCamera({ ...thirdCamera, video_configuration: { ...thirdCamera.video_configuration, contrast_level: value } })
-                setCurrentCamera({ ...currentCamera, video_configuration: { ...currentCamera.video_configuration, contrast_level: value } })
+                    setThirdCamera({ ...thirdCamera,  ContrastLevel: value } )
+                setCurrentCamera({ ...currentCamera,  ContrastLevel: value } )
                 break;
             case "imageColor":
                 if (cameraNum == 1)
-                    setFirstCamera({ ...firstCamera, video_configuration: { ...firstCamera.video_configuration, image_color: "ff" + value.substring(1) } })
+                    setFirstCamera({ ...firstCamera,  ImageColor: value.substring(1) } )
                 else if (cameraNum == 2)
-                    setSecondCamera({ ...secondCamera, video_configuration: { ...secondCamera.video_configuration, image_color: "ff" + value.substring(1) } })
+                    setSecondCamera({ ...secondCamera,  ImageColor: value.substring(1) } )
                 else
-                    setThirdCamera({ ...thirdCamera, video_configuration: { ...thirdCamera.video_configuration, image_color: "ff" + value.substring(1) } })
-                setCurrentCamera({ ...currentCamera, video_configuration: { ...currentCamera.video_configuration, image_color: "ff" + value.substring(1) } })
+                    setThirdCamera({ ...thirdCamera,  ImageColor: value.substring(1) } )
+                setCurrentCamera({ ...currentCamera,  ImageColor: value.substring(1) } )
                 break;
             case "motionDetection":
                 if (cameraNum == 1)
-                    setFirstCamera({ ...firstCamera, video_configuration: { ...firstCamera.video_configuration, motion_detection: value === "False" ? "True" : "False" } })
+                    setFirstCamera({ ...firstCamera, MotionDetection: !firstCamera.MotionDetection })
                 else if (cameraNum == 2)
-                    setSecondCamera({ ...secondCamera, video_configuration: { ...secondCamera.video_configuration, motion_detection: value === "False" ? "True" : "False" } })
+                    setSecondCamera({ ...secondCamera, MotionDetection: !secondCamera.MotionDetection })
                 else
-                    setThirdCamera({ ...thirdCamera, video_configuration: { ...thirdCamera.video_configuration, motion_detection: value === "False" ? "True" : "False" } })
-                setCurrentCamera({ ...currentCamera, video_configuration: { ...currentCamera.video_configuration, motion_detection: value === "False" ? "True" : "False" } })
+                    setThirdCamera({ ...thirdCamera, MotionDetection: !thirdCamera.MotionDetection } )
+                setCurrentCamera({ ...currentCamera, MotionDetection: !currentCamera.MotionDetection } )
                 break;
 
         }
@@ -325,12 +402,12 @@ const Configuration = () => {
                 }
 
                 if (cameraNum == 1)
-                    setFirstCamera({ ...firstCamera, network_configuration: { ...firstCamera.network_configuration, synchronization_period: time } })
+                    setFirstCamera({ ...firstCamera,  SynchronizationPeriod: time } )
                 else if (cameraNum == 2)
-                    setSecondCamera({ ...secondCamera, network_configuration: { ...secondCamera.network_configuration, synchronization_period: time } })
+                    setSecondCamera({ ...secondCamera,  SynchronizationPeriod: time } )
                 else
-                    setThirdCamera({ ...thirdCamera, network_configuration: { ...thirdCamera.network_configuration, synchronization_period: time } })
-                setCurrentCamera({ ...currentCamera, network_configuration: { ...currentCamera.network_configuration, synchronization_period: time } })
+                    setThirdCamera({ ...thirdCamera,  SynchronizationPeriod: time } )
+                setCurrentCamera({ ...currentCamera,  SynchronizationPeriod: time } )
                 setDisplaySynchronizationPeriod(value)
 
                 break;
@@ -352,12 +429,12 @@ const Configuration = () => {
                 }
 
                 if (cameraNum == 1)
-                    setFirstCamera({ ...firstCamera, capture_configuration: { ...firstCamera.capture_configuration, duration: time } })
+                    setFirstCamera({ ...firstCamera,  Duration: time } )
                 else if (cameraNum == 2)
-                    setSecondCamera({ ...secondCamera, capture_configuration: { ...secondCamera.capture_configuration, duration: time } })
+                    setSecondCamera({ ...secondCamera,  Duration: time })
                 else
-                    setThirdCamera({ ...thirdCamera, capture_configuration: { ...thirdCamera.capture_configuration, duration: time } })
-                setCurrentCamera({ ...currentCamera, capture_configuration: { ...currentCamera.capture_configuration, duration: time } })
+                    setThirdCamera({ ...thirdCamera,  Duration: time } )
+                setCurrentCamera({ ...currentCamera,  Duration: time } )
                 setDisplayDuration(value)
 
                 break;
@@ -379,12 +456,12 @@ const Configuration = () => {
                 }
 
                 if (cameraNum == 1)
-                    setFirstCamera({ ...firstCamera, capture_configuration: { ...firstCamera.capture_configuration, burst_period: time } })
+                    setFirstCamera({ ...firstCamera,  Period: time } )
                 else if (cameraNum == 2)
-                    setSecondCamera({ ...secondCamera, capture_configuration: { ...secondCamera.capture_configuration, burst_period: time } })
+                    setSecondCamera({ ...secondCamera,  Period: time } )
                 else
-                    setThirdCamera({ ...thirdCamera, capture_configuration: { ...thirdCamera.capture_configuration, burst_period: time } })
-                setCurrentCamera({ ...currentCamera, capture_configuration: { ...currentCamera.capture_configuration, burst_period: time } })
+                    setThirdCamera({ ...thirdCamera,  Period: time } )
+                setCurrentCamera({ ...currentCamera,  Period: time } )
                 setDisplayBurst(value)
 
                 break;
@@ -413,12 +490,12 @@ const Configuration = () => {
                 }
 
                 if (cameraNum == 1)
-                    setFirstCamera({ ...firstCamera, network_configuration: { ...firstCamera.network_configuration, synchronization_period: time } })
+                    setFirstCamera({ ...firstCamera,  SynchronizationPeriod: time } )
                 else if (cameraNum == 2)
-                    setSecondCamera({ ...secondCamera, network_configuration: { ...secondCamera.network_configuration, synchronization_period: time } })
+                    setSecondCamera({ ...secondCamera,  SynchronizationPeriod: time } )
                 else
-                    setThirdCamera({ ...thirdCamera, network_configuration: { ...thirdCamera.network_configuration, synchronization_period: time } })
-                setCurrentCamera({ ...currentCamera, network_configuration: { ...currentCamera.network_configuration, synchronization_period: time } })
+                    setThirdCamera({ ...thirdCamera,  SynchronizationPeriod: time } )
+                setCurrentCamera({ ...currentCamera,  SynchronizationPeriod: time } )
                 setSynchronizationUnit(unit)
 
                 break;
@@ -437,12 +514,12 @@ const Configuration = () => {
                 }
 
                 if (cameraNum == 1)
-                    setFirstCamera({ ...firstCamera, capture_configuration: { ...firstCamera.capture_configuration, duration: time } })
+                    setFirstCamera({ ...firstCamera,  Duration: time } )
                 else if (cameraNum == 2)
-                    setSecondCamera({ ...secondCamera, capture_configuration: { ...secondCamera.capture_configuration, duration: time } })
+                    setSecondCamera({ ...secondCamera,  Duration: time } )
                 else
-                    setThirdCamera({ ...thirdCamera, capture_configuration: { ...thirdCamera.capture_configuration, duration: time } })
-                setCurrentCamera({ ...currentCamera, capture_configuration: { ...currentCamera.capture_configuration, duration: time } })
+                    setThirdCamera({ ...thirdCamera,  Duration: time } )
+                setCurrentCamera({ ...currentCamera,  Duration: time } )
                 setDurationUnit(unit)
 
                 break;
@@ -461,12 +538,12 @@ const Configuration = () => {
                 }
 
                 if (cameraNum == 1)
-                    setFirstCamera({ ...firstCamera, capture_configuration: { ...firstCamera.capture_configuration, burst_period: time } })
+                    setFirstCamera({ ...firstCamera,  Period: time } )
                 else if (cameraNum == 2)
-                    setSecondCamera({ ...secondCamera, capture_configuration: { ...secondCamera.capture_configuration, burst_period: time } })
+                    setSecondCamera({ ...secondCamera,  Period: time } )
                 else
-                    setThirdCamera({ ...thirdCamera, capture_configuration: { ...thirdCamera.capture_configuration, burst_period: time } })
-                setCurrentCamera({ ...currentCamera, capture_configuration: { ...currentCamera.capture_configuration, burst_period: time } })
+                    setThirdCamera({ ...thirdCamera,  Period: time } )
+                setCurrentCamera({ ...currentCamera,  Period: time } )
                 setBurstUnit(unit)
 
                 break;
@@ -476,41 +553,41 @@ const Configuration = () => {
 
     function clearImageColor() {
         if (cameraNum == 1)
-            setFirstCamera({ ...firstCamera, video_configuration: { ...firstCamera.video_configuration, image_color: "Control" } })
+            setFirstCamera({ ...firstCamera,  ImageColor: "Control" } )
         else if (cameraNum == 2)
-            setSecondCamera({ ...secondCamera, video_configuration: { ...secondCamera.video_configuration, image_color: "Control" } })
+            setSecondCamera({ ...secondCamera,  ImageColor: "Control" } )
         else
-            setThirdCamera({ ...thirdCamera, video_configuration: { ...thirdCamera.video_configuration, image_color: "Control" } })
-        setCurrentCamera({ ...currentCamera, video_configuration: { ...currentCamera.video_configuration, image_color: "Control" } })
+            setThirdCamera({ ...thirdCamera,  ImageColor: "Control" } )
+        setCurrentCamera({ ...currentCamera,  ImageColor: "Control" } )
     }
 
     function typeCaptureChange(type) {
 
         if (type == "image") {
             if (cameraNum == 1)
-                setFirstCamera({ ...firstCamera, capture_configuration: { ...firstCamera.capture_configuration, image_capture: "True" } })
+                setFirstCamera({ ...firstCamera,  ImageCapture: true } )
             else if (cameraNum == 2)
-                setSecondCamera({ ...secondCamera, capture_configuration: { ...secondCamera.capture_configuration, image_capture: "True" } })
+                setSecondCamera({ ...secondCamera,  ImageCapture: true } )
             else
-                setThirdCamera({ ...thirdCamera, capture_configuration: { ...thirdCamera.capture_configuration, image_capture: "True" } })
-            setCurrentCamera({ ...currentCamera, capture_configuration: { ...currentCamera.capture_configuration, image_capture: "True" } })
+                setThirdCamera({ ...thirdCamera,  ImageCapture: true } )
+            setCurrentCamera({ ...currentCamera,  ImageCapture: true } )
 
             document.getElementById("imageCapture").checked = true
             document.getElementById("videoCapture").checked = false
         } else if (type == "video") {
             if (cameraNum == 1) {
-                setFirstCamera({ ...firstCamera, capture_configuration: { ...firstCamera.capture_configuration, image_capture: "False", burst_period: 0 } })
+                setFirstCamera({ ...firstCamera,  ImageCapture: false, Period: 0 } )
 
             }
             else if (cameraNum == 2) {
-                setSecondCamera({ ...secondCamera, capture_configuration: { ...secondCamera.capture_configuration, image_capture: "False", burst_period: 0 } })
+                setSecondCamera({ ...secondCamera,  ImageCapture: false, Period: 0 } )
 
             }
             else {
-                setThirdCamera({ ...thirdCamera, capture_configuration: { ...thirdCamera.capture_configuration, image_capture: "False", burst_period: 0 } })
+                setThirdCamera({ ...thirdCamera,  ImageCapture: false, Period: 0 } )
 
             }
-            setCurrentCamera({ ...currentCamera, capture_configuration: { ...currentCamera.capture_configuration, image_capture: "False", burst_period: 0 } })
+            setCurrentCamera({ ...currentCamera,  ImageCapture: false, Period: 0 } )
 
             document.getElementById("imageCapture").checked = false
             document.getElementById("videoCapture").checked = true
@@ -518,30 +595,30 @@ const Configuration = () => {
         } else if (type == "burst") {
 
             if (cameraNum == 1)
-                setFirstCamera({ ...firstCamera, capture_configuration: { ...firstCamera.capture_configuration, single_mode: "False" } })
+                setFirstCamera({ ...firstCamera,  SingleMode: false } )
             else if (cameraNum == 2)
-                setSecondCamera({ ...secondCamera, capture_configuration: { ...secondCamera.capture_configuration, single_mode: "False" } })
+                setSecondCamera({ ...secondCamera,  SingleMode: false } )
             else
-                setThirdCamera({ ...thirdCamera, capture_configuration: { ...thirdCamera.capture_configuration, single_mode: "False" } })
-            setCurrentCamera({ ...currentCamera, capture_configuration: { ...currentCamera.capture_configuration, single_mode: "False" } })
+                setThirdCamera({ ...thirdCamera,  SingleMode: false } )
+            setCurrentCamera({ ...currentCamera,  SingleMode: false } )
 
             document.getElementById("single").checked = false
             document.getElementById("burst").checked = true
         } else if (type == "single") {
 
             if (cameraNum == 1) {
-                setFirstCamera({ ...firstCamera, capture_configuration: { ...firstCamera.capture_configuration, single_mode: "True", duration: 0, burst_period: 0 } })
+                setFirstCamera({ ...firstCamera, SingleMode: true, Duration: 0, Period: 0 } )
 
             }
             else if (cameraNum == 2) {
-                setSecondCamera({ ...secondCamera, capture_configuration: { ...secondCamera.capture_configuration, single_mode: "True", duration: 0, burst_period: 0 } })
+                setSecondCamera({ ...secondCamera, SingleMode: true, Duration: 0, Period: 0 } )
 
             }
             else {
-                setThirdCamera({ ...thirdCamera, capture_configuration: { ...thirdCamera.capture_configuration, single_mode: "True", duration: 0, burst_period: 0 } })
+                setThirdCamera({ ...thirdCamera, SingleMode: true, Duration: 0, Period: 0 } )
 
             }
-            setCurrentCamera({ ...currentCamera, capture_configuration: { ...currentCamera.capture_configuration, single_mode: "True", duration: 0, burst_period: 0 } })
+            setCurrentCamera({ ...currentCamera, SingleMode: true, Duration: 0, Period: 0 } )
 
 
             document.getElementById("single").checked = true
@@ -575,38 +652,38 @@ const Configuration = () => {
                             <div className="mb-3 row">
                                 <label htmlFor="deviceType" className="col-sm-4 col-form-label">Device Type</label>
                                 <div className="col-sm-5">
-                                    <input type="text" className="form-control" id="deviceType" value={currentCamera.device_configuration.device_type} readOnly />
+                                    <input type="text" className="form-control" id="deviceType" value={detectCameraType(currentCamera.Type)} readOnly />
                                 </div>
                             </div>
                             <div className="mb-3 row">
                                 <label htmlFor="device" className="col-sm-4 col-form-label">Device</label>
                                 <div className="col-sm-5">
-                                    <input type="text" className="form-control" id="device" value={currentCamera.device_configuration.id} readOnly />
+                                    <input type="text" className="form-control" id="device" value={currentCamera.Id} readOnly />
                                 </div>
                             </div>
                             <div className="mb-3 row">
                                 <label htmlFor="triggerPath" className="col-sm-4 col-form-label">Trigger file path</label>
                                 <div className="col-sm-7">
-                                    <input className="form-control" type="text" id="formFile" value={currentCamera.device_configuration.trigger_file_path} onChange={(e) => { changeValues(e.target.value, "triggerFilePath") }} />
+                                    <input className="form-control" type="text" id="formFile" value={currentCamera.TriggerFilePath} onChange={(e) => { changeValues(e.target.value, "triggerFilePath") }} />
                                 </div>
                             </div>
                             <div className="mb-3 row">
                                 <label htmlFor="triggerRegex" className="col-sm-4 col-form-label">Trigger regex</label>
                                 <div className="col-sm-7">
-                                    <input type="text" className="form-control" id="triggerRegex" value={currentCamera.device_configuration.regex} onChange={(e) => { changeValues(e.target.value, "regex") }} />
+                                    <input type="text" className="form-control" id="triggerRegex" value={currentCamera.Regex} onChange={(e) => { changeValues(e.target.value, "regex") }} />
                                 </div>
                             </div>
                             <div className="mb-3 row">
                                 <label htmlFor="outputPath" className="col-sm-4 col-form-label">Output folder path</label>
                                 <div className="col-sm-7">
-                                    <input type="text" className="form-control" id="outputPath" value={currentCamera.device_configuration.output_folder_path} onChange={(e) => { changeValues(e.target.value, "outputFolderPath") }} />
+                                    <input type="text" className="form-control" id="outputPath" value={currentCamera.OutputFolderPath} onChange={(e) => { changeValues(e.target.value, "outputFolderPath") }} />
                                 </div>
                             </div>
                             <div className="mb-3 row">
                                 <label htmlFor="outputPath" className="col-sm-4 col-form-label">Keep capture for </label>
 
                                 <div className="d-flex align-items-center col-sm-4">
-                                    <input type="number" min="1" value={currentCamera.device_configuration.output_validity_days} onChange={e => changeValues(e.target.value, "outputValidityDays")} />
+                                    <input type="number" min="1" value={currentCamera.OutputValidity} onChange={e => changeValues(e.target.value, "outputValidityDays")} />
 
                                     <span style={{ padding: "10px" }}> days</span>
                                 </div>
@@ -628,25 +705,25 @@ const Configuration = () => {
                             <div className="mb-3 row">
                                 <label htmlFor="serverIPAddress" className="col-sm-4 col-form-label">Server IP address</label>
                                 <div className="col-sm-5">
-                                    <input type="text" className="form-control" id="serverIPAddress" value={currentCamera.network_configuration.server_IP_address} onChange={(e) => { changeValues(e.target.value, "serverIPAddress") }} />
+                                    <input type="text" className="form-control" id="serverIPAddress" value={currentCamera.ServerIP} onChange={(e) => { changeValues(e.target.value, "serverIPAddress") }} />
                                 </div>
                             </div>
                             <div className="mb-3 row">
                                 <label htmlFor="serverPort" className="col-sm-4 col-form-label">Server Port</label>
                                 <div className="col-sm-5">
-                                    <input type="text" className="form-control" id="serverPort" value={currentCamera.network_configuration.server_port} onChange={(e) => { changeValues(e.target.value, "serverPort") }} />
+                                    <input type="number" className="form-control" id="serverPort" value={currentCamera.ServerPort} onChange={(e) => { changeValues(e.target.value, "serverPort") }} />
                                 </div>
                             </div>
                             <div className="mb-3 row">
                                 <label htmlFor="mediaPath" className="col-sm-4 col-form-label">Media path</label>
                                 <div className="col-sm-7">
-                                    <input type="text" className="form-control" id="mediaPath" value={currentCamera.network_configuration.server_media_path} onChange={(e) => { changeValues(e.target.value, "mediaPath") }} />
+                                    <input type="text" className="form-control" id="mediaPath" value={currentCamera.MediaPath} onChange={(e) => { changeValues(e.target.value, "mediaPath") }} />
                                 </div>
                             </div>
                             <div className="mb-3 row">
                                 <label htmlFor="configPath" className="col-sm-4 col-form-label">Configuration path</label>
                                 <div className="col-sm-7">
-                                    <input type="text" className="form-control" id="configPath" value={currentCamera.network_configuration.server_JSON_configuration_path} onChange={(e) => { changeValues(e.target.value, "configPath") }} />
+                                    <input type="text" className="form-control" id="configPath" value={currentCamera.JSONConfigPath} onChange={(e) => { changeValues(e.target.value, "configPath") }} />
                                 </div>
                             </div>
                             <div className="mb-3 row">
@@ -677,13 +754,13 @@ const Configuration = () => {
                                     <label htmlFor="resolution" className="col-sm-2 col-form-label">Resolution</label>
                                     <div className="d-flex align-items-center col-sm-3">
 
-                                        <DropdownButton className="lg" id="resolution" title={currentCamera.video_configuration.resolution.substring(10)} >
-                                            <Dropdown.Item href="#" value="640x480" onClick={() => { changeValues("Resolution640x480", "resolution") }}>640x480</Dropdown.Item>
-                                            <Dropdown.Item href="#" value="720x480" onClick={() => { changeValues("Resolution720x480", "resolution") }}>720x480</Dropdown.Item>
-                                            <Dropdown.Item href="#" value="1280x960" onClick={() => { changeValues("Resolution1280x960", "resolution") }}>1280x960</Dropdown.Item>
-                                            <Dropdown.Item href="#" value="1280x1024" onClick={() => { changeValues("Resolution1280x1024", "resolution") }}>1280x1024</Dropdown.Item>
-                                            <Dropdown.Item href="#" value="1920x1080" onClick={() => { changeValues("Resolution1920x1080", "resolution") }}>1920x1080</Dropdown.Item>
-                                            <Dropdown.Item href="#" value="2048x1536" onClick={() => { changeValues("Resolution2048x1536", "resolution") }}>2048x1536</Dropdown.Item>
+                                        <DropdownButton className="lg" id="resolution" title={detectResolution(currentCamera.Resolution)} >
+                                            <Dropdown.Item href="#" value="640x480" onClick={() => { changeValues(0, "resolution") }}>640x480</Dropdown.Item>
+                                            <Dropdown.Item href="#" value="720x480" onClick={() => { changeValues(1, "resolution") }}>720x480</Dropdown.Item>
+                                            <Dropdown.Item href="#" value="1280x960" onClick={() => { changeValues(2, "resolution") }}>1280x960</Dropdown.Item>
+                                            <Dropdown.Item href="#" value="1280x1024" onClick={() => { changeValues(3, "resolution") }}>1280x1024</Dropdown.Item>
+                                            <Dropdown.Item href="#" value="1920x1080" onClick={() => { changeValues(4, "resolution") }}>1920x1080</Dropdown.Item>
+                                            <Dropdown.Item href="#" value="2048x1536" onClick={() => { changeValues(5, "resolution") }}>2048x1536</Dropdown.Item>
                                         </DropdownButton>
 
 
@@ -692,19 +769,19 @@ const Configuration = () => {
                                 <div className="mb-3 row">
                                     <label htmlFor="contrast" className="col-sm-2 col-form-label">Contrast</label>
                                     <div className="col-sm-4">
-                                        <RangeSlider id="contrast" min={0} max={10} value={currentCamera.video_configuration.contrast_level} onChange={(e) => { changeValues(e.target.value, "contrast") }} tooltip="auto" tooltipPlacement="top" />
+                                        <RangeSlider id="contrast" min={0} max={10} value={currentCamera.ContrastLevel} onChange={(e) => { changeValues(e.target.value, "contrast") }} tooltip="auto" tooltipPlacement="top" />
                                     </div>
                                 </div>
                                 <div className="mb-3 row">
                                     <label htmlFor="imageColor" className="col-sm-2 col-form-label">Image color</label>
                                     <div className="col-sm-4">
-                                        <Form.Control type="color" id="imageColor" value={"#" + currentCamera.video_configuration.image_color.substring(2)} onChange={(e) => { changeValues(e.target.value, "imageColor") }} />
+                                        <Form.Control type="color" id="imageColor" value={"#" + currentCamera.ImageColor.substring(2)} onChange={(e) => { changeValues(e.target.value, "imageColor") }} />
                                     </div>
                                     <Button className="btn-dark" onClick={() => { clearImageColor() }}>Clear</Button>
                                 </div>
                                 <div className="mb-3 row d-flex align-items-center">
                                     <div className="col-sm-1">
-                                        <input type="checkbox" id="motionDetection" checked={currentCamera.video_configuration.motion_detection == "True" ? true : false} value={currentCamera.video_configuration.motion_detection} onChange={(e) => { console.log(e.target.value); changeValues(e.target.value, "motionDetection") }} />
+                                        <input type="checkbox" id="motionDetection" checked={currentCamera.MotionDetection} value={currentCamera.MotionDetection} onChange={(e) => { changeValues(e.target.value, "motionDetection") }} />
                                     </div>
                                     <label htmlFor="motionDetection" className="col-sm-5 col-form-label">Motion detection</label>
                                 </div>
@@ -721,19 +798,19 @@ const Configuration = () => {
                                 <div className="mb-3 row">
                                     <label htmlFor="typeCapture" className="col-sm-5 col-form-label">Type of capture</label>
 
-                                    <Form.Check inline label="Image capture" name="imageCapture" type={'radio'} id={"imageCapture"} onChange={() => { typeCaptureChange("image") }} checked={currentCamera.capture_configuration.image_capture == "True"} />
-                                    <Form.Check inline label="Video capture" name="videoCapture" type={'radio'} id={"videoCapture"} onChange={() => { typeCaptureChange("video") }} checked={currentCamera.capture_configuration.image_capture == "False"} />
+                                    <Form.Check inline label="Image capture" name="imageCapture" type={'radio'} id={"imageCapture"} onChange={() => { typeCaptureChange("image") }} checked={currentCamera.ImageCapture == true} />
+                                    <Form.Check inline label="Video capture" name="videoCapture" type={'radio'} id={"videoCapture"} onChange={() => { typeCaptureChange("video") }} checked={currentCamera.ImageCapture == false} />
 
                                 </div>
-                                {currentCamera.capture_configuration.image_capture == "True" ?
+                                {currentCamera.ImageCapture == true ?
                                     <div className="mb-3 row">
                                         <label htmlFor="modeCapture" className="col-sm-5 col-form-label">Mode of capture</label>
 
-                                        <Form.Check inline label="Single mode" name="single" type={'radio'} id={"single"} onChange={() => { typeCaptureChange("single") }} checked={currentCamera.capture_configuration.single_mode == "True"} />
-                                        <Form.Check inline label="Burst mode" name="burst" type={'radio'} id={"burst"} onChange={() => { typeCaptureChange("burst") }} checked={currentCamera.capture_configuration.single_mode == "False"} />
+                                        <Form.Check inline label="Single mode" name="single" type={'radio'} id={"single"} onChange={() => { typeCaptureChange("single") }} checked={currentCamera.SingleMode == true} />
+                                        <Form.Check inline label="Burst mode" name="burst" type={'radio'} id={"burst"} onChange={() => { typeCaptureChange("burst") }} checked={currentCamera.SingleMode == false} />
 
                                     </div> : <></>}
-                                {currentCamera.capture_configuration.single_mode == "True" && currentCamera.capture_configuration.image_capture == "True" ? <></> :
+                                {currentCamera.SingleMode == true && currentCamera.ImageCapture == true ? <></> :
                                     <div className="mb-3 row">
                                         <label htmlFor="duration" className="col-sm-5 col-form-label">Duration</label>
                                         <input type="number" id="duration" min="1" step={1} value={displayDuration} onChange={(e) => { calculateTime(e.target.value, "duration") }} />
@@ -744,7 +821,7 @@ const Configuration = () => {
 
                                         </DropdownButton>
                                     </div>}
-                                {currentCamera.capture_configuration.single_mode == "False" && currentCamera.capture_configuration.image_capture == "True" ?
+                                {currentCamera.SingleMode == false && currentCamera.ImageCapture == true ?
                                     <div className="mb-3 row">
                                         <label htmlFor="burstPeriod" className="col-sm-5 col-form-label">Burst period</label>
                                         <input type="number" id="burstPeriod" min="1" step={1} value={displayBurst} onChange={(e) => { calculateTime(e.target.value, "burst") }} />
