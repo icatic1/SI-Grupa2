@@ -3,14 +3,19 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
+using SIProjectSet1.FilesService;
 using SIProjectSet1.ViewModels;
 using System.Collections;
 using System.IO;
+using System.IO.Compression;
+using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 
 namespace SIProjectSet1.Controllers
 {
+
 
 
     /// <summary>
@@ -21,10 +26,12 @@ namespace SIProjectSet1.Controllers
     public class FileUploadController : ControllerBase
     {
         private readonly ILogger<FileUploadController> _logger;
+        private readonly IFilesService _filesService;
 
-        public FileUploadController(ILogger<FileUploadController> logger)
+        public FileUploadController(ILogger<FileUploadController> logger, IFilesService filesService)
         {
             _logger = logger;
+            _filesService = filesService;
         }
 
         [HttpGet]
@@ -126,24 +133,95 @@ namespace SIProjectSet1.Controllers
         public async Task<IActionResult> GetFilesByPathSorted(String path)
         {
 
-            string dirPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent", path);
-            if (!Directory.Exists(dirPath)) return NotFound(dirPath);
-
-            var imagesDir = Directory.GetFiles(dirPath).Where(f => (f.EndsWith(".png") || f.EndsWith(".jpg")));
-            var videosDir = Directory.GetFiles(dirPath).Where(f => f.EndsWith(".mp4"));
-            var filesDir = Directory.GetFiles(dirPath).Where(f => !(f.EndsWith(".mp4") || f.EndsWith(".png") || f.EndsWith(".jpg"))); ;
-            var Dirs = Directory.GetDirectories(dirPath);
-            var array = new ArrayList();
-
-            var a = new FilesViewModel()
-            {
-                images = imagesDir,
-                videos = videosDir,
-                files = filesDir,
-                folders = Dirs
-            };
+            var a = await _filesService.GetPathsSorted(path);
             return Ok(a);
         }
 
+        [HttpPost]
+        [Route("DownloadFiles")]
+        // Download file from the server
+        public async Task<IActionResult> DownloadFiles([FromBody] JsonElement files)
+        {
+
+            
+
+            List<String> filesList = new List<String>();
+            files.GetProperty("files").EnumerateArray().ToList().ForEach(f => filesList.Add(f.ToString()));
+
+            var fajlovi = new List<String>();
+            var folderi = new List<String>();
+            foreach (var file in filesList)
+            {
+                var temp = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent", file);
+                if (Directory.Exists(temp)) {
+                    folderi.Add(temp);
+                    var subfolders = Directory.GetDirectories(temp);
+                    if(subfolders != null && subfolders.Length > 0) folderi.AddRange(subfolders);
+                    foreach (var f in subfolders)
+                    {
+                        fajlovi.AddRange(Directory.GetFiles(f));
+                    }
+                    fajlovi.AddRange(Directory.GetFiles(temp));
+                } else if (System.IO.File.Exists(temp)) fajlovi.Add(temp);
+                
+            }
+
+            if (System.IO.File.Exists("archive.zip"))
+                System.IO.File.Delete("archive.zip");
+
+            var archiveName = @"archive-" + DateTime.Now.Year + DateTime.Now.Month + DateTime.Now.Day + "-" + DateTime.Now.Hour + DateTime.Now.Minute + DateTime.Now.Second + ".zip";
+            using var archive =
+                ZipFile
+                .Open(archiveName, ZipArchiveMode.Create);
+
+            //foreach (var file in fajlovi)
+            //{
+            //    var entry =
+            //        archive.CreateEntryFromFile(
+            //            file,
+            //            Path.GetFileName(file),
+            //            CompressionLevel.Optimal
+            //        );
+
+            //    Console.WriteLine($"{entry.FullName} was compressed.");
+            //}
+
+            foreach(var file in fajlovi)
+            {
+                var newFile = file.Replace(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent"), "");
+                newFile = Regex.Replace(newFile, @"^\\[a-zA-Z0-9]{1,}\\", "");
+                archive.CreateEntry(newFile, CompressionLevel.Optimal);
+            }
+
+            foreach (var folder in folderi)
+            {
+                var newFolder = folder.Replace(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent"), "");
+                newFolder = Regex.Replace(newFolder, @"^\\[a-zA-Z0-9]{1,}\\", "");
+                archive.CreateEntry(newFolder + "/", CompressionLevel.Optimal);
+            }
+
+            archive.Dispose();
+
+            try
+            {
+                var memory = new MemoryStream();
+                using (var stream = new FileStream(archiveName, FileMode.Open))
+                {
+                    await stream.CopyToAsync(memory);
+                }
+                memory.Position = 0;
+                return File(memory, "application/zip", Path.GetFileName(archiveName.ToString()));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
     }
+
+
+    
+
 }
