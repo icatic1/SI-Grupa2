@@ -24,6 +24,7 @@ namespace SIProjectSet1.Infrastructure
 
         public virtual DbSet<JsonConfiguration> JsonConfigurations { get; set; }
         public virtual DbSet<Licence> Licences { get; set; }
+        public DbSet<Entities.File> Files { get; set; }
 
     }
 }

@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http; 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 using SIProjectSet1.FilesService;
 using SIProjectSet1.ViewModels;
-using System.Collections;
 using System.IO;
 using System.IO.Compression;
 using System.Text.Json;
@@ -93,7 +92,49 @@ namespace SIProjectSet1.Controllers
                     {
                         await section.Body.CopyToAsync(targetStream);
                     }
+                    //////////
+                  
+                         String[] chars = saveToPath.Split('\\');
+                        var croppedPath = "";
+                        var previewPath = "";
 
+                        for (var  i = 0; i < chars.Length; i++)
+                        {
+                            if (chars[i] == "wwwroot")
+                            {
+                                for (var j = i + 1; j < chars.Length; j++)
+                                {
+                                    previewPath = previewPath + "\\" + chars[j];
+                                }
+                                break;
+                            }
+                        };
+
+                        for (var i = 0; i < chars.Length; i++)
+                        {
+                            if (chars[i] == "UserContent")
+                            {
+                                for (var j = i + 1; j < chars.Length; j++)
+                                {
+                                    croppedPath = croppedPath + "%5C" + chars[j];
+                                }
+                                break;
+                            }
+                        }
+                        var nameOfFile = chars[chars.Length - 1].Split('.');
+                        //var obj = { path: image, name: nameOfFile[0], extension: nameOfFile[1], cropped: croppedPath, previewPath: previewPath };
+             
+                //////////
+                var returnFile = new FileViewModel();
+                    returnFile.Name = nameOfFile[0];
+                    returnFile.Path = saveToPath;
+                    returnFile.CroppedPath = croppedPath;
+                    returnFile.PreviewPath = previewPath;
+                    returnFile.Type = nameOfFile[1];
+                    returnFile.Date = DateTime.Now;
+                    returnFile.Size = new System.IO.FileInfo(saveToPath).Length;
+
+                    await _filesService.AddFileDB(returnFile);
                     return Ok("Uspjeh");
                 }
 
@@ -120,13 +161,14 @@ namespace SIProjectSet1.Controllers
         }
 
 
-        [HttpGet]
-        [Route("GetFilesByMac/{MacAddress}")]
-        public async Task<IActionResult> GetFilesByMac(String MacAddress)
-        {
-            var files = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent", MacAddress));
-            return Ok(files);
-        }
+        //[HttpGet]
+        //[Route("GetFilesByPathSorted/{path}")]
+        //public async Task<IActionResult> GetFilesByPathSorted(String path)
+        //{
+        //    //var files = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", MacAddress));
+        //    var files = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", path));
+        //    return Ok(files);
+        //}
 
         [HttpGet]
         [Route("GetFilesByPathSorted/{path}")]
@@ -134,6 +176,16 @@ namespace SIProjectSet1.Controllers
         {
 
             var a = await _filesService.GetPathsSorted(path);
+            return Ok(a);
+        }
+
+
+        [HttpGet]
+        [Route("GetFilesByPathSortedNew/{path}")]
+        public async Task<IActionResult> GetFilesByPathSortedNew(String path)
+        {
+
+            var a = await _filesService.GetPathsSortedNew(path);
             return Ok(a);
         }
 
