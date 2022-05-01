@@ -74,21 +74,6 @@ namespace SIProjectSet1.FilesService
         }
         public async Task<List<FileViewModel>> GetPathsSortedNew(String path)
         {
-            //if (!Directory.Exists(dirPath)) return null;
-
-            //var imagesDir = Directory.GetFiles(dirPath).Where(f => (f.EndsWith(".png") || f.EndsWith(".jpg")));
-            //var videosDir = Directory.GetFiles(dirPath).Where(f => f.EndsWith(".mp4"));
-            //var filesDir = Directory.GetFiles(dirPath).Where(f => !(f.EndsWith(".mp4") || f.EndsWith(".png") || f.EndsWith(".jpg"))); ;
-            //var Dirs = Directory.GetDirectories(dirPath);
-            //var array = new ArrayList();
-
-            //var a = new FilesViewModel()
-            //{
-            //    images = imagesDir,
-            //    videos = videosDir,
-            //    files = filesDir,
-            //    folders = Dirs
-            //};
 
             string dirPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent", path ) + "\\";
             if (!Directory.Exists(dirPath)) return null;
@@ -126,7 +111,6 @@ namespace SIProjectSet1.FilesService
                     {
                         for (var j = i + 1; j < chars.Length; j++)
                         {
-                            previewPath = previewPath + "\\" + chars[j];
 
                             if (j >= i + 2)
                             {
@@ -148,7 +132,10 @@ namespace SIProjectSet1.FilesService
                     {
                         for (var j = i + 1; j < chars.Length; j++)
                         {
-                            croppedPath = croppedPath + "%5C" + chars[j];
+                            if( j == i + 1)
+                                croppedPath = croppedPath + "/" + chars[j];
+                            else
+                                croppedPath = croppedPath + "%5C" + chars[j];
                         }
                         break;
                     }
@@ -200,7 +187,11 @@ namespace SIProjectSet1.FilesService
                     {
                         for (var j = i + 1; j < chars.Length; j++)
                         {
-                            croppedPath = croppedPath + "%5C" + chars[j];
+                            if (j == i + 1)
+                                croppedPath = croppedPath + "/" + chars[j];
+                            else
+                                croppedPath = croppedPath + "%5C" + chars[j];
+                            
                         }
                         break;
                     }

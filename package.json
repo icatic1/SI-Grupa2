@@ -1,5 +1,8 @@
 {
   "dependencies": {
-    "react-bootstrap-range-slider": "^3.0.4"
+    "@types/react-bootstrap-table": "^4.3.11",
+    "react-bootstrap-range-slider": "^3.0.4",
+    "react-bootstrap-table-next": "^4.0.3",
+    "react-player": "^2.10.0"
   }
 }
