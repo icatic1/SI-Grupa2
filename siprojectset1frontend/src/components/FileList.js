@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Modal } from "react-bootstrap";
+import { Container, Modal, CloseButton } from "react-bootstrap";
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import BootstrapTable from 'react-bootstrap-table-next';
 import ReactPlayer from 'react-player'
+
 
 const FileList = () => {
 
@@ -61,7 +62,7 @@ const FileList = () => {
         var icon = "";
         if (row.type == "File folder")
             icon = "/iconFolder.png";
-        else if (row.type == "jpg" || row.type == "png")
+        else if (row.type == "jpg" || row.type == "PNG" || row.type == "png")
             icon = "/iconPicture.png";
         else
             icon = "/iconVideo.png";
@@ -135,18 +136,20 @@ const FileList = () => {
                 show={show}
                 onHide={() => setShow(false)}
                 dialogClassName="modal-customw"
+                
             >
                 <Modal.Header closeButton>
+                    
                     <Modal.Title id="example-custom-modal-styling-title">
                         {file.name}
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    {file.type === "png" || file.type === "jpg" ?
-                        <div>
+                    {file.type === "png" || file.type === "jpg" || file.type == "PNG" ?
+                        <div class="d-flex justify-content-center py-4">
                             <img src={file.previewPath} alt="Random" class="img-responsive"/>
                         </div> :
-                        <div>
+                        <div class="d-flex justify-content-center py-4">
                             {console.log(file.previewPath)}
                             <ReactPlayer controls url={file.previewPath} />
                         </div>

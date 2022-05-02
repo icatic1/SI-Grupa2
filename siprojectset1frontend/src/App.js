@@ -17,6 +17,7 @@ import NotFound from "./components/NotFound";
 import EditProfile from "./components/EditProfile";
 import DeviceList from "./components/DeviceList";
 import Configuration from "./components/Configuration";
+import CloseIcon from '@mui/icons-material/Close';
 
 import './App.css';
 
