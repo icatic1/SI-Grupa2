@@ -198,7 +198,8 @@ namespace SIProjectSet1.UserService
                 if (tempUser == null) return null;
                 tempUser.Surname = user.Surname;
                 tempUser.Name = user.Name;
-                tempUser.Password =  BCrypt.Net.BCrypt.HashPassword( user.Password);
+                if(tempUser.Password != user.Password)
+                    tempUser.Password =  BCrypt.Net.BCrypt.HashPassword( user.Password);
                 tempUser.Email = user.Email;
                 tempUser.RoleId = user.RoleId;
                 await _context.SaveChangesAsync();
@@ -497,15 +498,17 @@ namespace SIProjectSet1.UserService
 
                 if (securityQuestion == null)
                 {
-                    
+                    newSecurityQuestion.Answer = BCrypt.Net.BCrypt.HashPassword(newSecurityQuestion.Answer);
                     var addedQuestion = await _context.SecurityQuestions.AddAsync(newSecurityQuestion);
                     await _context.SaveChangesAsync();
                     if (addedQuestion == null) return null;
                    
                 } else
                 {
+                    if (securityQuestion.Question == newSecurityQuestion.Question && newSecurityQuestion.Answer == securityQuestion.Answer)
+                        return newSecurityQuestion;
                     securityQuestion.Question = newSecurityQuestion.Question;
-                    securityQuestion.Answer = newSecurityQuestion.Answer;
+                    securityQuestion.Answer = BCrypt.Net.BCrypt.HashPassword(newSecurityQuestion.Answer);
                     await _context.SaveChangesAsync();
                 }
                 return newSecurityQuestion;

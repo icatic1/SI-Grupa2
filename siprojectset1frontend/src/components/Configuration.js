@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect} from 'react';
 import { Container, Spinner, Form, Button, ButtonGroup, DropdownButton, Dropdown, Modal } from "react-bootstrap";
 import RangeSlider from 'react-bootstrap-range-slider';
 import { useParams } from 'react-router-dom';
@@ -18,7 +18,7 @@ const Configuration = () => {
     const [displayBurst, setDisplayBurst] = useState(null)
     const [burstUnit, setBurstUnit] = useState("seconds")
     const [show, setShow] = useState(false)
-    const [modal, setModal] = useState("")
+    const [modal, setModal] = useState({title:"Information", body:""})
 
     const { mac } = useParams();
 
@@ -134,6 +134,8 @@ const Configuration = () => {
                     handleShow("The configuration file is corrupt!")
                 }
 
+        
+
             } catch (e) {
                 console.log(e)
 
@@ -149,8 +151,8 @@ const Configuration = () => {
     }, [firstCamera])
 
     const handleClose = () => { setShow(false); }
-    const handleShow = (msg) => {
-        setModal(msg)
+    const handleShow = (title,msg) => {
+        setModal({title: title, body: msg})
         setShow(true);
     }
 
@@ -160,7 +162,42 @@ const Configuration = () => {
 
     }
 
+    function checkPath(path) {
+        let reg = /^[A-Z,a-z]{1}:\\.+/
+        if (path.match(reg)) 
+            return true
+
+        return false
+    }
+
+    function validatePaths(num=0) {
+        if (step != 1)
+            return
+        if (num == 1 || num == 0) {
+            if (checkPath(currentCamera.TriggerFilePath))
+                document.getElementById("triggerPath").style.backgroundColor = "white";
+            else
+                document.getElementById("triggerPath").style.backgroundColor = "#c46868";
+        }
+
+        if (num == 2 || num == 0) {
+            if (checkPath(currentCamera.OutputFolderPath))
+                document.getElementById("outputPath").style.backgroundColor = "white";
+            else
+                document.getElementById("outputPath").style.backgroundColor = "#c46868";
+        }
+    }
+
     async function saveConfiguration() {
+        
+        if (!(checkPath(firstCamera.TriggerFilePath) && checkPath(firstCamera.OutputFolderPath)
+            && checkPath(secondCamera.TriggerFilePath) && checkPath(secondCamera.OutputFolderPath)
+            && checkPath(thirdCamera.TriggerFilePath) && checkPath(thirdCamera.OutputFolderPath))) {
+            handleShow("Error","Make sure you've entered correct trigger file and output paths!")
+            return
+        }
+
+
         let configuration = [firstCamera, secondCamera, thirdCamera]
 
         try {
@@ -177,7 +214,7 @@ const Configuration = () => {
             let response = await fetch('/api/JSONConfiguration/setJSON/?MACAddress=' + mac, options)
 
             if (response) {
-                handleShow("Configuration saved successfully!")
+                handleShow("Information","Configuration saved successfully!")
             }
         } catch (e) {
             console.log(e);
@@ -229,6 +266,7 @@ const Configuration = () => {
                 break;
 
         }
+        validatePaths()
     }
 
     function detectCameraType(type) {
@@ -627,11 +665,11 @@ const Configuration = () => {
     }
 
     return (
-        <Container>
+        <Container style={{height:"100%"}}>
             <Container fluid className="d-flex justify-content-center">
                 <Spinner id="spinner" animation="border" variant="primary" />
             </Container>
-            {currentCamera == null ? <></> : <Container id="forma">
+            {currentCamera == null ? <></> : <Container id="forma" style={{ height: "100%" }}>
                 <ul className="nav nav-tabs">
                     <li className="nav-item">
                         <a className="nav-link active" href="#" aria-current="page" onClick={() => changeCamera(1)} id="firstCamera">Camera 1</a>
@@ -643,12 +681,13 @@ const Configuration = () => {
                         <a className="nav-link" href="#" onClick={() => changeCamera(3)} id="thirdCamera">Camera 3</a>
                     </li>
                 </ul>
-                <Form style={{ padding: "10px" }}>
-
+                <Form style={{ padding: "10px", height: "100%" }}>
+                    
                     {step === 1 ?
-                        <>
+                        <div style={{height: "100%" }}>
                             <h2 style={{ color: "#0275d8" }}>Device configuration</h2>
                             <hr />
+                            <div>
                             <div className="mb-3 row">
                                 <label htmlFor="deviceType" className="col-sm-4 col-form-label">Device Type</label>
                                 <div className="col-sm-5">
@@ -664,19 +703,19 @@ const Configuration = () => {
                             <div className="mb-3 row">
                                 <label htmlFor="triggerPath" className="col-sm-4 col-form-label">Trigger file path</label>
                                 <div className="col-sm-7">
-                                    <input className="form-control" type="text" id="formFile" value={currentCamera.TriggerFilePath} onChange={(e) => { changeValues(e.target.value, "triggerFilePath") }} />
+                                        <input className="form-control" type="text" id="triggerPath"  value={currentCamera.TriggerFilePath} onBlur={() => validatePaths(1)} onChange={(e) => { changeValues(e.target.value, "triggerFilePath") }} />
                                 </div>
                             </div>
                             <div className="mb-3 row">
                                 <label htmlFor="triggerRegex" className="col-sm-4 col-form-label">Trigger regex</label>
                                 <div className="col-sm-7">
-                                    <input type="text" className="form-control" id="triggerRegex" value={currentCamera.Regex} onChange={(e) => { changeValues(e.target.value, "regex") }} />
+                                        <input type="text" className="form-control" id="triggerRegex" value={currentCamera.Regex}  onChange={(e) => { changeValues(e.target.value, "regex") }} />
                                 </div>
                             </div>
                             <div className="mb-3 row">
                                 <label htmlFor="outputPath" className="col-sm-4 col-form-label">Output folder path</label>
                                 <div className="col-sm-7">
-                                    <input type="text" className="form-control" id="outputPath" value={currentCamera.OutputFolderPath} onChange={(e) => { changeValues(e.target.value, "outputFolderPath") }} />
+                                        <input type="text" className="form-control" id="outputPath"  value={currentCamera.OutputFolderPath} onBlur={() => validatePaths(2)} onChange={(e) => { changeValues(e.target.value, "outputFolderPath") }} />
                                 </div>
                             </div>
                             <div className="mb-3 row">
@@ -688,7 +727,7 @@ const Configuration = () => {
                                     <span style={{ padding: "10px" }}> days</span>
                                 </div>
                             </div>
-
+                            </div>
                             <hr />
                             <ButtonGroup className="float-right pl-0" >
                                 <Button variant="primary" className=" border btn-dark float-left" style={{ width: "80px" }} onClick={saveConfiguration}>Save</Button>
@@ -696,12 +735,12 @@ const Configuration = () => {
 
                             </ButtonGroup>
 
-                        </>
+                        </div>
 
                         : step === 2 ? <>
                             <h2 style={{ color: "#0275d8" }}>Server configuration</h2>
                             <hr />
-                            
+                            <div style={{ height: "60%" }}>
                             <div className="mb-3 row">
                                 <label htmlFor="serverIPAddress" className="col-sm-4 col-form-label">Server IP address</label>
                                 <div className="col-sm-5">
@@ -738,7 +777,8 @@ const Configuration = () => {
                                     </DropdownButton>
 
                                 </div>
-                            </div>
+                                </div>
+                             </div>
                             <hr />
                             <ButtonGroup className="float-right pl-0" >
                                 <Button variant="primary" className=" border btn-dark float-left" style={{ width: "80px" }} onClick={saveConfiguration}>Save</Button>
@@ -750,6 +790,7 @@ const Configuration = () => {
                                 <h2 style={{ color: "#0275d8" }}>Video configuration</h2>
                                 <hr />
 
+                                <div style={{ height: "60%" }}>
                                 <div className="mb-3 row">
                                     <label htmlFor="resolution" className="col-sm-2 col-form-label">Resolution</label>
                                     <div className="d-flex align-items-center col-sm-3">
@@ -784,6 +825,7 @@ const Configuration = () => {
                                         <input type="checkbox" id="motionDetection" checked={currentCamera.MotionDetection} value={currentCamera.MotionDetection} onChange={(e) => { changeValues(e.target.value, "motionDetection") }} />
                                     </div>
                                     <label htmlFor="motionDetection" className="col-sm-5 col-form-label">Motion detection</label>
+                                    </div>
                                 </div>
                                 <hr />
                                 <ButtonGroup className="float-right pl-0" >
@@ -795,6 +837,8 @@ const Configuration = () => {
                             </> : <>
                                 <h2 style={{ color: "#0275d8" }}>Capture configuration</h2>
                                 <hr />
+
+                                <div style={{ height: "60%" }}>
                                 <div className="mb-3 row">
                                     <label htmlFor="typeCapture" className="col-sm-5 col-form-label">Type of capture</label>
 
@@ -832,7 +876,7 @@ const Configuration = () => {
 
                                         </DropdownButton>
                                     </div> : <></>}
-
+                                </div>
                                 <hr />
                                 <ButtonGroup className="float-right pl-0" >
                                     <Button variant="primary" className=" border btn-dark float-left" style={{ width: "80px" }} onClick={saveConfiguration}>Save</Button>
@@ -846,9 +890,9 @@ const Configuration = () => {
             </Container>}
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Information</Modal.Title>
+                    <Modal.Title>{modal.title}</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>{modal}</Modal.Body>
+                <Modal.Body>{modal.body}</Modal.Body>
                 <Modal.Footer>
                     <Button variant="primary" onClick={handleClose}>
                         OK

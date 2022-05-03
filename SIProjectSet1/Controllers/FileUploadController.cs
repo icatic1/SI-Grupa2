@@ -226,19 +226,19 @@ namespace SIProjectSet1.Controllers
                 ZipFile
                 .Open(archiveName, ZipArchiveMode.Create);
 
-            //foreach (var file in fajlovi)
-            //{
-            //    var entry =
-            //        archive.CreateEntryFromFile(
-            //            file,
-            //            Path.GetFileName(file),
-            //            CompressionLevel.Optimal
-            //        );
+            foreach (var file in fajlovi)
+            {
+                var entry =
+                    archive.CreateEntryFromFile(
+                        file,
+                        Path.GetFileName(file),
+                        CompressionLevel.Optimal
+                    );
 
-            //    Console.WriteLine($"{entry.FullName} was compressed.");
-            //}
+                Console.WriteLine($"{entry.FullName} was compressed.");
+            }
 
-            foreach(var file in fajlovi)
+            /*foreach(var file in fajlovi)
             {
                 var newFile = file.Replace(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent"), "");
                 newFile = Regex.Replace(newFile, @"^\\[a-zA-Z0-9]{1,}\\", "");
@@ -250,7 +250,7 @@ namespace SIProjectSet1.Controllers
                 var newFolder = folder.Replace(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent"), "");
                 newFolder = Regex.Replace(newFolder, @"^\\[a-zA-Z0-9]{1,}\\", "");
                 archive.CreateEntry(newFolder + "/", CompressionLevel.Optimal);
-            }
+            }*/
 
             archive.Dispose();
 

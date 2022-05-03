@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Modal, CloseButton } from "react-bootstrap";
+import { Container, Modal, CloseButton, ButtonGroup, Button } from "react-bootstrap";
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import BootstrapTable from 'react-bootstrap-table-next';
 import ReactPlayer from 'react-player'
+
 
 
 const FileList = () => {
@@ -10,11 +11,14 @@ const FileList = () => {
     var { state } = useLocation();
     const navigate = useNavigate();
     const { mac } = useParams();
+    const fileDownload = require('js-file-download');
+    
 
 
     const [filesAndFolders, setFilesAndFolders] = useState([]);
     const [show, setShow] = useState(false);
     const [file, setFile] = useState({});
+    const [selectedFiles, setSelectedFiles] = useState([]);
 
 
     useEffect(() => {
@@ -31,11 +35,11 @@ const FileList = () => {
                     });
 
 
-                console.log(response1);
+               
                 var data1 = await response1.json();
-                console.log(data1);
+                
                 await setFilesAndFolders(data1);
-                console.log("Sta se desava " + filesAndFolders);
+                
 
             } catch (e) {
                 console.log(e)
@@ -48,8 +52,43 @@ const FileList = () => {
 
 
     const handleOnSelect = (row, isSelect) => {
-        //Amila
+        if (isSelect == true) {
+            setSelectedFiles([...selectedFiles, row.path])
+        }
+        else {
+            setSelectedFiles(selectedFiles.filter((it) => it != row.path))
+        }
+        
+        
         return true; // return true or dont return to approve current select action
+    }
+
+    const handleOnSelectAll = (isSelect, rows, e) => {
+        if (isSelect) {
+            setSelectedFiles(rows.map((r) => r.path))
+        } else {
+            setSelectedFiles([])
+        }
+        
+    }
+
+    const handleDownload = async () => {
+        if (selectedFiles.length === 0)
+            return;
+        var formBody = { files: selectedFiles }
+        
+        const response = await fetch('/api/FileUpload/DownloadFiles',
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formBody)
+
+            });
+        const data = await response.blob()
+        console.log(data)
+        
+        fileDownload(data, 'snapshotCaptures.zip');
+        console.log(response)
     }
 
     const mystyle = {
@@ -80,6 +119,7 @@ const FileList = () => {
         // clickToSelect: true,
         bgColor: '#f2f3f4',
         onSelect: handleOnSelect,
+        onSelectAll: handleOnSelectAll
     };
 
     const rowEvents = {
@@ -124,13 +164,17 @@ const FileList = () => {
 
     return (
         <Container>
+            <ButtonGroup style={{ float: 'right'}}>
+                <Button variant="primary" style={{  marginBottom: '10px' }} onClick={handleDownload}>Download</Button>
+            </ButtonGroup>
             <BootstrapTable
                 keyField="date"
                 data={filesAndFolders}
                 columns={columns}
                 selectRow={selectRow}
-                rowEvents={ rowEvents }
+                rowEvents={rowEvents}
                 bordered={false}
+                
             />
             <Modal
                 show={show}
@@ -150,7 +194,6 @@ const FileList = () => {
                             <img src={file.previewPath} alt="Random" class="img-responsive"/>
                         </div> :
                         <div class="d-flex justify-content-center py-4">
-                            {console.log(file.previewPath)}
                             <ReactPlayer controls url={file.previewPath} />
                         </div>
                     }

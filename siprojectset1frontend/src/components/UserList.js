@@ -15,7 +15,7 @@ const UsersList = ({ editUser }) => {
         const fetchMain = async () => {
             try {
 
-                console.log(localStorage.getItem('token'))
+                
                 let token = 'Bearer ' + localStorage.getItem('token')
                 //const response = await addUser();
                 const headers = { "Authorization": token }
@@ -26,19 +26,13 @@ const UsersList = ({ editUser }) => {
                         headers: headers
                     });
 
-                console.log(response1);
                 const data = await response1.json();
-                setUsers(data);
+                setUsers(data.filter(u => u.email != jwt(localStorage.getItem("token")).email));
                 hideSpinner();
-                // setSpinner(false);
-                // console.log("Fetchali smo useres " + JSON.stringify(data));
-
-
-
-
+              
             } catch (e) {
                 console.log(e)
-                // setError("Unable to fetch users");
+               
             }
         };
 

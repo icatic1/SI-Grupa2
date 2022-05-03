@@ -5,6 +5,12 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  height:100%;
+}
+
+html {
+    height:100%;
+    margin:0;
 }
 
 code {
@@ -26,11 +32,12 @@ code {
 
 .customContainer {
     max-width: 500px;
-    margin: 30px auto;
+    margin:  auto;
     overflow: auto;
     min-height: 300px;
     border: 1px solid steelblue;
     padding: 30px;
+    margin-top: 10%;
     border-radius: 5px;
 }
 

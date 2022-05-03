@@ -91,7 +91,7 @@ function AddUser() {
     return (
         <Row>
             <Col md={8}>
-                <Container className="mx-auto" style={{ paddingLeft: "20px" }}>
+                <Container className="mx-auto" style={{ paddingLeft: "40px" }}>
                     <Form id="form" noValidate validated={validated} onSubmit={handleSubmit}>
                         <Form.Group className="mb-3" controlId="formBasicEmail">
                             <Form.Label>Email address</Form.Label>

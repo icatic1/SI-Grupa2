@@ -41,10 +41,9 @@ const AuthProvider = ({ children }) => {
     useEffect(() => {
 
         if (token) {
-
-            if (token.exp * 1000 < Date.now()) {
+            if (jwt(token).exp * 1000 < Date.now()) {
                 setToken(null)
-                localStorage.clear('token')
+                localStorage.removeItem('token')
                 navigate('/')
             }
 
@@ -90,7 +89,6 @@ const AuthProvider = ({ children }) => {
         formBody = formBody.join("&");
 
 
-        console.log(formBody)
         const response1 = await fetch('/api/user/tfasendcode?' + formBody, {
             method: 'POST',
             headers: {
