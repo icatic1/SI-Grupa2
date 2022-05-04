@@ -19,7 +19,7 @@ const UserCard = ({ user, navigation }) => {
         try {
             let token = 'Bearer ' + localStorage.getItem('token')
             const headers = { 'Accept': 'application/json', 'content-type': 'application/json', 'Authorization': token }
-            console.log(JSON.stringify(user));
+            
             fetch('api/user/deleteuser',
                 {
                     method: 'PUT',
@@ -27,7 +27,7 @@ const UserCard = ({ user, navigation }) => {
                     headers: headers
                 }).then(handleClose());
 
-            // console.log(response);
+            
         } catch (e) {
             console.log(e);
         }
@@ -40,7 +40,7 @@ const UserCard = ({ user, navigation }) => {
             <Row >
                 <Col xs={12} sm={8} md={8}  >
                     <Container className="my-1">
-                        Name: {user.name}
+                        <span style={{fontWeight:"bold"}}>Name:</span> {user.name}
                     </Container>
                 </Col>
 
@@ -49,7 +49,7 @@ const UserCard = ({ user, navigation }) => {
             <Row>
                 <Col xs={12} sm={8} md={8}  >
                     <Container className="my-1">
-                        Surname: {user.surname}
+                        <span style={{ fontWeight: "bold" }}>Surname:</span> {user.surname}
                     </Container>
                 </Col>
             </Row>
@@ -57,7 +57,7 @@ const UserCard = ({ user, navigation }) => {
             <Row>
                 <Col xs={12} sm={8} md={8} >
                     <Container className="my-1">
-                        Email: {user.email}
+                        <span style={{ fontWeight: "bold" }}>Email:</span> {user.email}
                     </Container>
                 </Col>
                 <Col xs={12} sm={4} md={4} className="float-right">

@@ -1,4 +1,4 @@
-import { Container, Navbar, ListGroup } from 'react-bootstrap';
+import { Container, Navbar, DropdownButton,Dropdown } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useContext, useEffect } from 'react';
 import jwt from 'jwt-decode';
@@ -25,17 +25,23 @@ function NavigationHeader() {
     return (
         <>
             {token === null ? <></> :
-                <Navbar className="fluid navbar navbar-expand-lg mx-auto bg-primary" style={{ marginBottom: "10px", width:"100%" }}>
+                <Navbar sticky="top" className="fluid navbar navbar-expand-lg mx-auto bg-primary" style={{ marginBottom: "10px", width:"100%", lineHeight:"center" }}>
                     <div className="navbar-header">
-                       <a className="navbar-brand" style={{ color: "white", fontSize: "28px", fontWeight: "bold" }}>SnapShot</a> 
+                       <a className="navbar-brand" style={{ color: "white", fontSize: "28px", fontWeight: "bold", marginRight:"20px" }}>SnapShot</a> 
                     </div>
                     <Container className="mx-auto">
                         <ul className="nav navbar-nav">
-                            <li><Link to={'/Home'} className="nav-link" style={{ color: "white", fontSize: "24px" }}> Home </Link></li>
-                            <li><Link to={'/EditProfile'} className="nav-link" style={{ color: "white", fontSize: "24px" }}> Edit Profile </Link></li>
-                            {checkAdmin() === true ? <li><Link to={'/AddUser'} className="nav-link" style={{ color: "white", fontSize: "24px" }}> Add user </Link></li> : <></>}
-                            {checkAdmin() === true ? <li><Link to={'/GetAll'} className="nav-link" style={{ color: "white", fontSize: "24px" }}>Users</Link></li> : <></>}
-                            <li><Link to={'/Devices'} className="nav-link" style={{ color: "white", fontSize: "24px" }}> Devices </Link></li>
+                            <li><Link to={'/Home'} className="nav-link" style={{ color: "white", fontSize: "20px" }}> Home </Link></li>
+                            <li><DropdownButton size="lg" title="Profile">
+                                <Dropdown.Item ><Link to={'/EditProfile'} style={{ color: "black", textAlign:"left", padding: "2px" }} className="nav-link" > Edit Profile </Link></Dropdown.Item>
+                                <Dropdown.Item ><Link to={'/Devices'} style={{ color: "black", textAlign: "left", padding: "2px" }} className="nav-link" > My devices </Link></Dropdown.Item>
+                            </DropdownButton>
+                                </li>
+                            {checkAdmin() === true ? <li><DropdownButton size="lg" title="Manage users">
+                                <Dropdown.Item ><Link to={'/AddUser'} className="nav-link" style={{ color: "black", textAlign: "left", padding: "2px" }}> Add user </Link></Dropdown.Item>
+                                <Dropdown.Item ><Link to={'/GetAll'} className="nav-link" style={{ color: "black", textAlign: "left", padding: "2px" }}>All users</Link></Dropdown.Item>
+                            </DropdownButton></li> : <></>}
+                            
                         </ul>
                         <ul className="nav navbar-nav ml-auto">
                             <li className="nav navbar-nav"><Link to={'/'} onClick={onLogout} className="nav-link" style={{ color: "white", fontSize: "24px" }}>Logout</Link></li>

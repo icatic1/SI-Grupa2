@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Form, Button,  Row, Col, Spinner } from "react-bootstrap";
+import { Container, Form, Button,  Row, Col, Spinner, Modal } from "react-bootstrap";
 
 import jwt from "jwt-decode";
 
@@ -16,8 +16,15 @@ function EditProfile() {
     const [surname, setSurname] = useState();
     const [securityQuestion, setSecurityQuestion] = useState({ question: "", answer: ""});
     const questions = ["What is your mother's maiden name?", "What is your first pet's name?",
-            "What is the name of your favorite teacher?" , "Where was your grandfather born?"   ]
-   
+        "What is the name of your favorite teacher?", "Where was your grandfather born?"]
+    const [show, setShow] = useState(false)
+    const [modal, setModal] = useState({ title: "Information", body: "" })
+
+    const handleClose = () => { setShow(false); }
+    const handleShow = (title, msg) => {
+        setModal({ title: title, body: msg })
+        setShow(true);
+    }
 
 
     useEffect(async () => {
@@ -53,6 +60,7 @@ function EditProfile() {
             setPassword(data.password)
             
             
+            
             if (responseQ.ok) {
                 let sq = await responseQ.json()
                 setSecurityQuestion({ id: sq.id, userId: sq.userId, question: sq.question, answer: sq.answer })
@@ -74,11 +82,11 @@ function EditProfile() {
             event.preventDefault();
             event.stopPropagation();
         } else {
-
-
-            const userSend = {
-                id: user.id, email: email, name: name, surname: surname, password: password, roleId: user.roleId, deletedStatus: false
-            };
+            
+               const userSend = {
+                    id: user.id, email: email,password: password, name: name, surname: surname, roleId: user.roleId, deletedStatus: false
+                };
+            
 
             try {
 
@@ -90,7 +98,12 @@ function EditProfile() {
                     headers: headers,
                     body: JSON.stringify(userSend)
                 }
-                await fetch('api/user/EditProfile', options)
+                const res1 = await fetch('api/user/EditProfile', options)
+
+                if (res1.status != 200) {
+                    handleShow("Error", "There has been an error, please try again.")
+                    return
+                }
 
                 if (!securityQuestion.question.trim().length == 0 && !securityQuestion.answer.trim().length == 0) {
                     let sq = securityQuestion
@@ -103,10 +116,16 @@ function EditProfile() {
                         headers: headers,
                         body: JSON.stringify(sq)
                     }
-                    await fetch('api/user/UpdateSecurityQuestion', options)
+                    const res = await fetch('api/user/UpdateSecurityQuestion', options)
+
+                    if (res.status == 200) {
+                        handleShow("Information", "Your profile information has been saved successfully!")
+                    } else {
+                        handleShow("Error", "There has been an error, please try again.")
+                    }
                 }
 
-                window.location.reload(false);
+              
 
 
             } catch (e) {
@@ -125,11 +144,11 @@ function EditProfile() {
     }
 
     return (
-
+        <>
         <Row>
             <Col md={8}>
          
-                <Container className="mx-auto" style={{paddingLeft: "20px"}} >
+                    <Container className="mx-auto" style={{paddingLeft:"40px"}}>
                     <Form noValidate validated={validated} onSubmit={handleSubmit}>
                         <Form.Group className="mb-3" controlId="formBasicEmail">
                             <Form.Label>Email address</Form.Label>
@@ -177,6 +196,18 @@ function EditProfile() {
                 </Container>
             </Col>
         </Row>
+         <Modal show={show} onHide={handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>{modal.title}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>{modal.body}</Modal.Body>
+                <Modal.Footer>
+                    <Button variant="primary" onClick={handleClose}>
+                        OK
+                    </Button>
+                </Modal.Footer>
+         </Modal>
+        </>
     )
 };
 

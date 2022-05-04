@@ -17,6 +17,7 @@ import NotFound from "./components/NotFound";
 import EditProfile from "./components/EditProfile";
 import DeviceList from "./components/DeviceList";
 import Configuration from "./components/Configuration";
+import CloseIcon from '@mui/icons-material/Close';
 
 import './App.css';
 
@@ -40,10 +41,9 @@ const AuthProvider = ({ children }) => {
     useEffect(() => {
 
         if (token) {
-
-            if (token.exp * 1000 < Date.now()) {
+            if (jwt(token).exp * 1000 < Date.now()) {
                 setToken(null)
-                localStorage.clear('token')
+                localStorage.removeItem('token')
                 navigate('/')
             }
 
@@ -89,7 +89,6 @@ const AuthProvider = ({ children }) => {
         formBody = formBody.join("&");
 
 
-        console.log(formBody)
         const response1 = await fetch('/api/user/tfasendcode?' + formBody, {
             method: 'POST',
             headers: {

@@ -373,7 +373,7 @@ namespace SIProjectSet1.Controllers
             {
                 if (!ModelState.IsValid) return BadRequest();
 
-                securityQuestion.Answer = BCrypt.Net.BCrypt.HashPassword(securityQuestion.Answer);
+                
                 var res = await _userService.AddSecurityQuestion(securityQuestion);
 
                 if (res == null) return BadRequest();
