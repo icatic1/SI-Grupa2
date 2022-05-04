@@ -164,7 +164,7 @@ const Configuration = () => {
 
     function checkPath(path) {
         let reg = /^[A-Z,a-z]{1}:\\.+/
-        if (path.match(reg)) 
+        if (path.match(reg) || path.length == 0) 
             return true
 
         return false
@@ -174,14 +174,14 @@ const Configuration = () => {
         if (step != 1)
             return
         if (num == 1 || num == 0) {
-            if (checkPath(currentCamera.TriggerFilePath))
+            if (checkPath(currentCamera.TriggerFilePath) || currentCamera.TriggerFilePath.length == 0)
                 document.getElementById("triggerPath").style.backgroundColor = "white";
             else
                 document.getElementById("triggerPath").style.backgroundColor = "#c46868";
         }
 
         if (num == 2 || num == 0) {
-            if (checkPath(currentCamera.OutputFolderPath))
+            if (checkPath(currentCamera.OutputFolderPath) || currentCamera.OutputFolderPath.length == 0)
                 document.getElementById("outputPath").style.backgroundColor = "white";
             else
                 document.getElementById("outputPath").style.backgroundColor = "#c46868";
