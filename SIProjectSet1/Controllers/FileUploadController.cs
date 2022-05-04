@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http; 
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
@@ -93,39 +93,39 @@ namespace SIProjectSet1.Controllers
                         await section.Body.CopyToAsync(targetStream);
                     }
                     //////////
-                  
-                         String[] chars = saveToPath.Split('\\');
-                        var croppedPath = "";
-                        var previewPath = "";
 
-                        for (var  i = 0; i < chars.Length; i++)
-                        {
-                            if (chars[i] == "wwwroot")
-                            {
-                                for (var j = i + 1; j < chars.Length; j++)
-                                {
-                                    previewPath = previewPath + "\\" + chars[j];
-                                }
-                                break;
-                            }
-                        };
+                    String[] chars = saveToPath.Split('\\');
+                    var croppedPath = "";
+                    var previewPath = "";
 
-                        for (var i = 0; i < chars.Length; i++)
+                    for (var i = 0; i < chars.Length; i++)
+                    {
+                        if (chars[i] == "wwwroot")
                         {
-                            if (chars[i] == "UserContent")
+                            for (var j = i + 1; j < chars.Length; j++)
                             {
-                                for (var j = i + 1; j < chars.Length; j++)
-                                {
-                                    croppedPath = croppedPath + "%5C" + chars[j];
-                                }
-                                break;
+                                previewPath = previewPath + "\\" + chars[j];
                             }
+                            break;
                         }
-                        var nameOfFile = chars[chars.Length - 1].Split('.');
-                        //var obj = { path: image, name: nameOfFile[0], extension: nameOfFile[1], cropped: croppedPath, previewPath: previewPath };
-             
-                //////////
-                var returnFile = new FileViewModel();
+                    };
+
+                    for (var i = 0; i < chars.Length; i++)
+                    {
+                        if (chars[i] == "UserContent")
+                        {
+                            for (var j = i + 1; j < chars.Length; j++)
+                            {
+                                croppedPath = croppedPath + "%5C" + chars[j];
+                            }
+                            break;
+                        }
+                    }
+                    var nameOfFile = chars[chars.Length - 1].Split('.');
+                    //var obj = { path: image, name: nameOfFile[0], extension: nameOfFile[1], cropped: croppedPath, previewPath: previewPath };
+
+                    //////////
+                    var returnFile = new FileViewModel();
                     returnFile.Name = nameOfFile[0];
                     returnFile.Path = saveToPath;
                     returnFile.CroppedPath = croppedPath;
@@ -195,7 +195,7 @@ namespace SIProjectSet1.Controllers
         public async Task<IActionResult> DownloadFiles([FromBody] JsonElement files)
         {
 
-            
+
 
             List<String> filesList = new List<String>();
             files.GetProperty("files").EnumerateArray().ToList().ForEach(f => filesList.Add(f.ToString()));
@@ -205,17 +205,19 @@ namespace SIProjectSet1.Controllers
             foreach (var file in filesList)
             {
                 var temp = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent", file);
-                if (Directory.Exists(temp)) {
+                if (Directory.Exists(temp))
+                {
                     folderi.Add(temp);
                     var subfolders = Directory.GetDirectories(temp);
-                    if(subfolders != null && subfolders.Length > 0) folderi.AddRange(subfolders);
+                    if (subfolders != null && subfolders.Length > 0) folderi.AddRange(subfolders);
                     foreach (var f in subfolders)
                     {
                         fajlovi.AddRange(Directory.GetFiles(f));
                     }
                     fajlovi.AddRange(Directory.GetFiles(temp));
-                } else if (System.IO.File.Exists(temp)) fajlovi.Add(temp);
-                
+                }
+                else if (System.IO.File.Exists(temp)) fajlovi.Add(temp);
+
             }
 
             if (System.IO.File.Exists("archive.zip"))
@@ -226,31 +228,30 @@ namespace SIProjectSet1.Controllers
                 ZipFile
                 .Open(archiveName, ZipArchiveMode.Create);
 
+            //foreach (var file in fajlovi)
+            //{
+            //    var entry =
+            //        archive.CreateEntryFromFile(
+            //            file,
+            //            Path.GetFileName(file),
+            //            CompressionLevel.Optimal
+            //        );
+
+            //    Console.WriteLine($"{entry.FullName} was compressed.");
+            //}
+
             foreach (var file in fajlovi)
             {
-                var entry =
-                    archive.CreateEntryFromFile(
-                        file,
-                        Path.GetFileName(file),
-                        CompressionLevel.Optimal
-                    );
-
-                Console.WriteLine($"{entry.FullName} was compressed.");
-            }
-
-            /*foreach(var file in fajlovi)
-            {
                 var newFile = file.Replace(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent"), "");
-                newFile = Regex.Replace(newFile, @"^\\[a-zA-Z0-9]{1,}\\", "");
-                archive.CreateEntry(newFile, CompressionLevel.Optimal);
+                newFile = Regex.Replace(newFile, @"^\\[a-zA-Z0-9]{1,}\\[a-zA-Z0-9]{1,}\\", "");
+                var fileReturn = archive.CreateEntry(newFile, CompressionLevel.Optimal);
+                using (StreamWriter writer = new StreamWriter(fileReturn.Open()))
+                using (StreamReader reader = new StreamReader(file))
+                {
+                    writer.Write(reader.ReadToEnd());
+                }
             }
 
-            foreach (var folder in folderi)
-            {
-                var newFolder = folder.Replace(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent"), "");
-                newFolder = Regex.Replace(newFolder, @"^\\[a-zA-Z0-9]{1,}\\", "");
-                archive.CreateEntry(newFolder + "/", CompressionLevel.Optimal);
-            }*/
 
             archive.Dispose();
 
@@ -272,8 +273,5 @@ namespace SIProjectSet1.Controllers
 
 
     }
-
-
-    
 
 }
