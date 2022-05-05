@@ -38,29 +38,29 @@ const Configuration = () => {
                 if (data[0] == undefined) {
 
                     var camera1 = {
-                       
-                            Type: 0,
-                            Id: "",
-                            TriggerFilePath: "",
-                            Regex: "",
-                            OutputFolderPath: "",
-                            OutputValidity: 1,
-                            CameraNumber: 0,
-                            Resolution: 0,
-                            ContrastLevel: 0,
-                            ImageColor: "Control",
-                            MotionDetection: false,
-                            ServerIP: "",
-                            ServerPort: 0,
-                            MediaPath: "",
-                            JSONConfigPath: "",
-                            SynchronizationPeriod: 60,
-                            LatestSynchronizationTicks: 0,
-                            ConnectionStatus: false,
-                            ImageCapture: true,
-                            SingleMode: true,
-                            Duration: 0,
-                            Period: 0
+
+                        Type: 0,
+                        Id: "",
+                        TriggerFilePath: "",
+                        Regex: "",
+                        OutputFolderPath: "",
+                        OutputValidity: 1,
+                        CameraNumber: 0,
+                        Resolution: 0,
+                        ContrastLevel: 0,
+                        ImageColor: "Control",
+                        MotionDetection: false,
+                        ServerIP: "",
+                        ServerPort: 0,
+                        MediaPath: "",
+                        JSONConfigPath: "",
+                        SynchronizationPeriod: 60,
+                        LatestSynchronizationTicks: 0,
+                        ConnectionStatus: false,
+                        ImageCapture: true,
+                        SingleMode: true,
+                        Duration: 0,
+                        Period: 0
                     }
 
                     var camera2 = {
@@ -114,9 +114,17 @@ const Configuration = () => {
                         Duration: 0,
                         Period: 0
                     }
-                    
+
 
                     data = [camera1, camera2, camera3]
+
+                } else {
+                    data[0].TriggerFilePath = data[0].TriggerFilePath.replace('/', '\\')
+                    data[0].OutputFolderPath = data[0].OutputFolderPath.replace('/', '\\')
+                    data[1].TriggerFilePath = data[1].TriggerFilePath.replace('/', '\\')
+                    data[1].OutputFolderPath = data[1].OutputFolderPath.replace('/', '\\')
+                    data[2].TriggerFilePath = data[2].TriggerFilePath.replace('/', '\\')
+                    data[2].OutputFolderPath = data[2].OutputFolderPath.replace('/', '\\')
                     
                 }
 
@@ -198,7 +206,15 @@ const Configuration = () => {
         }
 
 
-        let configuration = [firstCamera, secondCamera, thirdCamera]
+        let configuration = [JSON.parse(JSON.stringify(firstCamera)),JSON.parse(JSON.stringify(secondCamera)),JSON.parse(JSON.stringify(thirdCamera))]
+
+        configuration[0].TriggerFilePath = configuration[0].TriggerFilePath.replace('\\', '/')
+        configuration[0].OutputFolderPath = configuration[0].OutputFolderPath.replace('\\', '/')
+        configuration[1].TriggerFilePath = configuration[1].TriggerFilePath.replace('\\', '/')
+        configuration[1].OutputFolderPath = configuration[1].OutputFolderPath.replace('\\', '/')
+        configuration[2].TriggerFilePath = configuration[2].TriggerFilePath.replace('\\', '/')
+        configuration[2].OutputFolderPath = configuration[2].OutputFolderPath.replace('\\', '/')
+        
 
         try {
 
