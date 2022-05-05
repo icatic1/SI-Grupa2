@@ -119,12 +119,12 @@ const Configuration = () => {
                     data = [camera1, camera2, camera3]
 
                 } else {
-                    data[0].TriggerFilePath = data[0].TriggerFilePath.replace('/', '\\')
-                    data[0].OutputFolderPath = data[0].OutputFolderPath.replace('/', '\\')
-                    data[1].TriggerFilePath = data[1].TriggerFilePath.replace('/', '\\')
-                    data[1].OutputFolderPath = data[1].OutputFolderPath.replace('/', '\\')
-                    data[2].TriggerFilePath = data[2].TriggerFilePath.replace('/', '\\')
-                    data[2].OutputFolderPath = data[2].OutputFolderPath.replace('/', '\\')
+                    data[0].TriggerFilePath = data[0].TriggerFilePath.replaceAll('/', '\\')
+                    data[0].OutputFolderPath = data[0].OutputFolderPath.replaceAll('/', '\\')
+                    data[1].TriggerFilePath = data[1].TriggerFilePath.replaceAll('/', '\\')
+                    data[1].OutputFolderPath = data[1].OutputFolderPath.replaceAll('/', '\\')
+                    data[2].TriggerFilePath = data[2].TriggerFilePath.replaceAll('/', '\\')
+                    data[2].OutputFolderPath = data[2].OutputFolderPath.replaceAll('/', '\\')
                     
                 }
 
@@ -208,12 +208,12 @@ const Configuration = () => {
 
         let configuration = [JSON.parse(JSON.stringify(firstCamera)),JSON.parse(JSON.stringify(secondCamera)),JSON.parse(JSON.stringify(thirdCamera))]
 
-        configuration[0].TriggerFilePath = configuration[0].TriggerFilePath.replace('\\', '/')
-        configuration[0].OutputFolderPath = configuration[0].OutputFolderPath.replace('\\', '/')
-        configuration[1].TriggerFilePath = configuration[1].TriggerFilePath.replace('\\', '/')
-        configuration[1].OutputFolderPath = configuration[1].OutputFolderPath.replace('\\', '/')
-        configuration[2].TriggerFilePath = configuration[2].TriggerFilePath.replace('\\', '/')
-        configuration[2].OutputFolderPath = configuration[2].OutputFolderPath.replace('\\', '/')
+        configuration[0].TriggerFilePath = configuration[0].TriggerFilePath.replaceAll('\\', '/')
+        configuration[0].OutputFolderPath = configuration[0].OutputFolderPath.replaceAll('\\', '/')
+        configuration[1].TriggerFilePath = configuration[1].TriggerFilePath.replaceAll('\\', '/')
+        configuration[1].OutputFolderPath = configuration[1].OutputFolderPath.replaceAll('\\', '/')
+        configuration[2].TriggerFilePath = configuration[2].TriggerFilePath.replaceAll('\\', '/')
+        configuration[2].OutputFolderPath = configuration[2].OutputFolderPath.replaceAll('\\', '/')
         
 
         try {
