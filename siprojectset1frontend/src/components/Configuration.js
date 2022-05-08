@@ -205,6 +205,9 @@ const Configuration = () => {
             return
         }
 
+        if (firstCamera.ServerPort.length == 0) firstCamera.ServerPort = 0
+        if (secondCamera.ServerPort.length == 0) secondCamera.ServerPort = 0
+        if (thirdCamera.ServerPort.length == 0) thirdCamera.ServerPort = 0
 
         let configuration = [JSON.parse(JSON.stringify(firstCamera)),JSON.parse(JSON.stringify(secondCamera)),JSON.parse(JSON.stringify(thirdCamera))]
 
@@ -214,6 +217,7 @@ const Configuration = () => {
         configuration[1].OutputFolderPath = configuration[1].OutputFolderPath.replaceAll('\\', '/')
         configuration[2].TriggerFilePath = configuration[2].TriggerFilePath.replaceAll('\\', '/')
         configuration[2].OutputFolderPath = configuration[2].OutputFolderPath.replaceAll('\\', '/')
+
         
 
         try {
@@ -766,7 +770,7 @@ const Configuration = () => {
                             <div className="mb-3 row">
                                 <label htmlFor="serverPort" className="col-sm-4 col-form-label">Server Port</label>
                                 <div className="col-sm-5">
-                                    <input type="number" className="form-control" id="serverPort" value={currentCamera.ServerPort} onChange={(e) => { changeValues(e.target.value, "serverPort") }} />
+                                        <input type="number" className="form-control" id="serverPort" min={0} value={currentCamera.ServerPort} onChange={(e) => { changeValues(e.target.value, "serverPort") }} />
                                 </div>
                             </div>
                             <div className="mb-3 row">
