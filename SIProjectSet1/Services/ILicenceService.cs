@@ -17,6 +17,11 @@ namespace SIProjectSet1.LicenceService
         Task<bool> UpdateTerminalDebug(String MacAddress, String Terminal, Boolean Debug);
         Task<bool> InitialAddDevice(string macAddress, string terminalID, bool debugLog);
         Task<List<Licence>> GetAllLicences();
+        Task<List<Device>> GetAllDevices();
+
+        Task<Device> GetDevice(String MacAddress);
+
+        Task<bool> InitialAddDevice(String MacAddress, String Terminal);
     }
 
     public class LicenceService : ILicenceService
@@ -36,10 +41,22 @@ namespace SIProjectSet1.LicenceService
             return licence;
         }
 
+        public async Task<List<Device>> GetAllDevices()
+        {
+            var device = await _context.Devices.ToListAsync();
+            return device;
+        }
+
         public async Task<List<Licence>> GetAllLicences()
         {
             var licence = await _context.Licences.ToListAsync();
             return licence;
+        }
+
+        public async Task<Device> GetDevice(String MacAddress)
+        {
+            var device = await _context.Devices.FirstOrDefaultAsync(device => device.MacAddress == MacAddress);
+            return device;
         }
 
         public async Task<Licence> GetTerminalAndDebug(String MacAddress)
@@ -66,10 +83,27 @@ namespace SIProjectSet1.LicenceService
             {
                 var licence = new Licence() { MacAddress = MacAddress, TerminalID = Terminal, DebugLog = Debug, Licenced = false };
                 _context.Licences.Add(licence);
+                var device = new Device() { MacAddress = MacAddress, TerminalID = Terminal};
+                _context.Devices.Add(device);
                 await _context.SaveChangesAsync();
 
                 return true;
             } catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> InitialAddDevice(String MacAddress, String Terminal)
+        {
+            try
+            {
+                var device = new Device() { MacAddress = MacAddress, TerminalID = Terminal };
+                _context.Devices.Add(device);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
             {
                 return false;
             }
