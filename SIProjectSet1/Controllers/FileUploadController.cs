@@ -134,8 +134,7 @@ namespace SIProjectSet1.Controllers
                     returnFile.Date = DateTime.Now;
                     returnFile.Size = new System.IO.FileInfo(saveToPath).Length;
 
-                    await _filesService.AddFileDB(returnFile);
-                    return Ok("Uspjeh");
+                    return await _filesService.AddFileDB(returnFile) ? Ok("Uspjeh") : BadRequest("Neuspjeh");
                 }
 
                 section = await reader.ReadNextSectionAsync();
@@ -155,6 +154,7 @@ namespace SIProjectSet1.Controllers
         public async Task<IActionResult> ReadLargeFileByMac(String MacAddress)
         {
             string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent", MacAddress);
+            Directory.CreateDirectory(path);
             string[] entries = Directory.GetFileSystemEntries(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent", MacAddress), "*", SearchOption.AllDirectories);
             //var files = Directory.GetFiles(Path.GetDirectoryName(Path.GetFullPath(FileName)));
             return Ok(entries);
@@ -186,7 +186,8 @@ namespace SIProjectSet1.Controllers
         {
 
             var a = await _filesService.GetPathsSortedNew(path);
-            return Ok(a);
+            if(a != null) return Ok(a);
+            return BadRequest(a);
         }
 
         [HttpPost]

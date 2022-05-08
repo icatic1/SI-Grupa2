@@ -38,11 +38,28 @@ namespace SnapshotServer.Controllers
             return !(licence == null) ? Ok(licence) : BadRequest("Invalid");
         }
 
+        [HttpGet]
+        [Route("GetDeviceByMAC")]
+        public async Task<IActionResult> GetDeviceByMAC(string MacAddress)
+        {
+            var device = await _licenceService.GetDevice(MacAddress);
+
+            return !(device == null) ? Ok(device) : BadRequest("Invalid");
+        }
+
         [HttpPost]
         [Route("InitialAddDevice")]
         public async Task<IActionResult> InitialAddDevice(string MacAddress, string TerminalID, Boolean DebugLog = false)
         {
             var terminal = await _licenceService.InitialAddDevice(MacAddress, TerminalID, DebugLog);
+            return Ok(terminal);
+        }
+
+        [HttpPost]
+        [Route("AddDevice")]
+        public async Task<IActionResult> AddDevice(string MacAddress, string TerminalID)
+        {
+            var terminal = await _licenceService.InitialAddDevice(MacAddress, TerminalID);
             return Ok(terminal);
         }
 
@@ -70,6 +87,14 @@ namespace SnapshotServer.Controllers
         {
             var licence = await _licenceService.GetAllLicences();
             return licence == null ? new List<Licence>() : licence;
+        }
+
+        // GET: GetAllLicences/ABCDEFGHIJKL
+        [HttpGet("GetAllDevices")]
+        public async Task<ActionResult<List<Device>>> GetAllDevices()
+        {
+            var device = await _licenceService.GetAllDevices();
+            return device == null ? new List<Device>() : device;
         }
     }
 }

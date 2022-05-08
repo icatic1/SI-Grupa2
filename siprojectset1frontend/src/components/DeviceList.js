@@ -14,7 +14,7 @@ const DeviceList = () => {
         const fetchDevices = async () => {
             try {
 
-                const response = await fetch("api/licence/GetAllLicences")
+                const response = await fetch("api/licence/GetAllDevices")
 
                 const data = await response.json();
                 setDevices(data);
