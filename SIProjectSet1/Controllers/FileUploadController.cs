@@ -299,51 +299,54 @@ namespace SIProjectSet1.Controllers
             return BadRequest(a);
         }
 
+        #region TestRoute
+        //[HttpGet]
+        //[Route("Tester")]
+        //public async Task<IActionResult> Tester()
+        //{
 
-        [HttpGet]
-        [Route("Tester")]
-        public async Task<IActionResult> Tester()
-        {
+        //    string dirPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent", "Test");
+        //    if (!Directory.Exists(dirPath)) return null;
+        //    List<byte[]> lista = new List<byte[]>();
+        //    var imagesDir = Directory.GetFiles(dirPath);
+        //    foreach(var image in imagesDir)
+        //    {
+        //        try
+        //        {
+        //            var memory = new MemoryStream();
+        //            using (var stream = new FileStream(image, FileMode.Open))
+        //            {
+        //                await stream.CopyToAsync(memory);
 
-            string dirPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent", "Test");
-            if (!Directory.Exists(dirPath)) return null;
-            List<byte[]> lista = new List<byte[]>();
-            var imagesDir = Directory.GetFiles(dirPath);
-            foreach(var image in imagesDir)
-            {
-                try
-                {
-                    var memory = new MemoryStream();
-                    using (var stream = new FileStream(image, FileMode.Open))
-                    {
-                        await stream.CopyToAsync(memory);
-                        
-                    }
-                    byte[] array = memory.ToArray();
-                    lista.Add(array);
-                    memory.Position = 0;
-                    
-                }
-                catch (Exception ex)
-                {
-                    return BadRequest("There is not a config file present for the provided device. ");
-                }
-            }
+        //            }
+        //            byte[] array = memory.ToArray();
+        //            lista.Add(array);
+        //            memory.Position = 0;
 
-            for (int i=0; i<2; i++)
-            {
-                for(int j=0; j<lista.Count; j++)
-                {
-                    queue.Enqueue(lista[j]);
-                }
-            }
-            while (queue.Count >= 150)
-            {
-                queue.Dequeue();
-            }
-            return Ok();
-            
-        }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            return BadRequest("There is not a config file present for the provided device. ");
+        //        }
+        //    }
+
+        //    for (int i=0; i<2; i++)
+        //    {
+        //        for(int j=0; j<lista.Count; j++)
+        //        {
+        //            queue.Enqueue(lista[j]);
+        //        }
+        //    }
+        //    while (queue.Count >= 150)
+        //    {
+        //        queue.Dequeue();
+        //    }
+        //    return Ok();
+
+        //}
+        #endregion
+
+
 
         [HttpPost]
         [Route("DownloadFiles")]
