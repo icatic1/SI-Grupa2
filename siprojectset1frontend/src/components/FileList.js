@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Modal, CloseButton, ButtonGroup, Button } from "react-bootstrap";
+import { Container, Modal, CloseButton, ButtonGroup, Button, Row, Col } from "react-bootstrap";
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import BootstrapTable from 'react-bootstrap-table-next';
 import ReactPlayer from 'react-player'
+import Breadcrumb from 'react-bootstrap/Breadcrumb'
 
 
 
@@ -19,7 +20,9 @@ const FileList = () => {
     const [show, setShow] = useState(false);
     const [file, setFile] = useState({});
     const [selectedFiles, setSelectedFiles] = useState([]);
-
+    const [crumbs, setCrumbs] = useState([]);
+    const [lastCrumb, setLastCrumb] = useState({});
+    const [terminalId, setTerminalId] = useState();
 
     useEffect(() => {
         const fetchMain = async () => {
@@ -39,6 +42,42 @@ const FileList = () => {
                 var data1 = await response1.json();
                 
                 await setFilesAndFolders(data1);
+
+
+                var crumbsHelper = await state.substr(1).split('%5C');
+
+
+
+                var pathHelper = "";
+                var crumbsHelperArray = [];
+
+                for (let i = 0; i < crumbsHelper.length; i++) {
+                    if (i == 0)
+                        pathHelper = "/" + crumbsHelper[i];
+                    else
+                        pathHelper = pathHelper + '%5C' + crumbsHelper[i];
+                    crumbsHelperArray.push({
+                        'name': crumbsHelper[i],
+                        'path': pathHelper
+                    })
+                }
+
+                var encodedKey = encodeURIComponent("MacAddress");
+                var encodedValue = encodeURIComponent(mac);
+
+                const response2 = await fetch('/api/Licence/GetTerminalAndDebugLog?' + encodedKey + "=" + encodedValue, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                    },
+                });
+
+                var data2 = await response2.json();
+
+                setTerminalId(data2.terminalID)
+
+                await setCrumbs(crumbsHelperArray);
+                await setLastCrumb(crumbsHelperArray[crumbsHelperArray.length - 1]);
                 
 
             } catch (e) {
@@ -164,9 +203,29 @@ const FileList = () => {
 
     return (
         <Container>
-            <ButtonGroup style={{ float: 'right'}}>
-                <Button variant="primary" style={{  marginBottom: '10px' }} onClick={handleDownload}>Download</Button>
-            </ButtonGroup>
+
+            <h1>{terminalId}</h1>
+            <Row>
+                <Col className="col-10 ">
+                    <Breadcrumb className="w-100 ">
+                        {crumbs.map((item) =>
+                            item.path == lastCrumb.path ?
+                                <Breadcrumb.Item active>{item.name}</Breadcrumb.Item>
+                                :
+                                (
+                                    <Breadcrumb.Item onClick={() => { navigate("/FileList/" + mac, { state: item.path }); }}>
+                                        {item.name}
+                                    </Breadcrumb.Item>
+                                )
+
+                        )}
+                    </Breadcrumb>
+                </Col>
+                <Col className="col-2">
+                    <Button variant="primary" className="w-100 p-2 mt-1" onClick={handleDownload}>Download</Button>
+                </Col>
+            </Row>
+
             <BootstrapTable
                 keyField="date"
                 data={filesAndFolders}
