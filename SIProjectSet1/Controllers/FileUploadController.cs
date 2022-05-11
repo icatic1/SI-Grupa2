@@ -31,6 +31,7 @@ namespace SIProjectSet1.Controllers
         private readonly IFilesService _filesService;
         private static byte[]? imageBase64ByteArray;
         private static Queue<byte[]> queue = new Queue<byte[]>();
+        private static Dictionary<String, Queue<byte[]>> dictionary = new Dictionary<String, Queue<byte[]>>();
 
         public FileUploadController(ILogger<FileUploadController> logger, IFilesService filesService)
         {
@@ -209,10 +210,10 @@ namespace SIProjectSet1.Controllers
                     MemoryStream ms = new MemoryStream();
                     await section.Body.CopyToAsync(ms);
                     imageBase64ByteArray = ms.ToArray();
-                    queue.Enqueue(imageBase64ByteArray);
-                    while(queue.Count >= 150)
+                    dictionary[fileName].Enqueue(imageBase64ByteArray);
+                    while(dictionary[fileName].Count >= 150)
                     {
-                        queue.Dequeue();
+                        dictionary[fileName].Dequeue();
                     }
                     return Ok();
 
@@ -255,8 +256,8 @@ namespace SIProjectSet1.Controllers
 
 
         [HttpGet]
-        [Route("GetLiveFile")]
-        public async Task<IActionResult> GetLiveFile()
+        [Route("GetLiveFile/{MACAddress}")]
+        public async Task<IActionResult> GetLiveFile(String MACAddress)
         {
             String? data = "";
             //if (imageBase64ByteArray != null)
@@ -264,7 +265,7 @@ namespace SIProjectSet1.Controllers
                 //data = Encoding.UTF8.GetString(imageBase64ByteArray);
                 //data = data.Replace("data:image/png;base64,", "");
                 //byte[] imageData = Convert.FromBase64String(data);
-                return Ok(Convert.ToBase64String(queue.Dequeue()));
+                return Ok(Convert.ToBase64String(dictionary[MACAddress].Dequeue()));
             //}
             //else return BadRequest("Errorcina");
         }
@@ -300,50 +301,57 @@ namespace SIProjectSet1.Controllers
         }
 
         #region TestRoute
-        //[HttpGet]
-        //[Route("Tester")]
-        //public async Task<IActionResult> Tester()
-        //{
+        [HttpGet]
+        [Route("Tester")]
+        public async Task<IActionResult> Tester()
+        {
 
-        //    string dirPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent", "Test");
-        //    if (!Directory.Exists(dirPath)) return null;
-        //    List<byte[]> lista = new List<byte[]>();
-        //    var imagesDir = Directory.GetFiles(dirPath);
-        //    foreach(var image in imagesDir)
-        //    {
-        //        try
-        //        {
-        //            var memory = new MemoryStream();
-        //            using (var stream = new FileStream(image, FileMode.Open))
-        //            {
-        //                await stream.CopyToAsync(memory);
+            string dirPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent", "Test");
+            if (!Directory.Exists(dirPath)) return null;
+            List<byte[]> lista = new List<byte[]>();
+            var imagesDir = Directory.GetFiles(dirPath);
+            foreach (var image in imagesDir)
+            {
+                try
+                {
+                    var memory = new MemoryStream();
+                    using (var stream = new FileStream(image, FileMode.Open))
+                    {
+                        await stream.CopyToAsync(memory);
 
-        //            }
-        //            byte[] array = memory.ToArray();
-        //            lista.Add(array);
-        //            memory.Position = 0;
+                    }
+                    byte[] array = memory.ToArray();
+                    lista.Add(array);
+                    memory.Position = 0;
 
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            return BadRequest("There is not a config file present for the provided device. ");
-        //        }
-        //    }
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest("There is not a config file present for the provided device. ");
+                }
+            }
 
-        //    for (int i=0; i<2; i++)
-        //    {
-        //        for(int j=0; j<lista.Count; j++)
-        //        {
-        //            queue.Enqueue(lista[j]);
-        //        }
-        //    }
-        //    while (queue.Count >= 150)
-        //    {
-        //        queue.Dequeue();
-        //    }
-        //    return Ok();
+            for (int i = 0; i < 2; i++)
+            {
+                for (int j = 0; j < lista.Count; j++)
+                {
+                    Queue<byte[]> queue;
+                    if(dictionary.TryGetValue("Test", out queue))
+                    {
+                        queue.Enqueue(lista[j]);
+                    } else
+                    {
+                        dictionary["Test"] = new Queue<byte[]>();
+                    }
+                }
+            }
+            while (dictionary["Test"].Count >= 150)
+            {
+                dictionary["Test"].Dequeue();
+            }
+            return Ok();
 
-        //}
+        }
         #endregion
 
 
