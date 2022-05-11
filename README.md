@@ -1,18 +1,26 @@
 # SI - Set 1
 
 ## Introduction
-An ASP.NET Core app with React
+An ASP.NET Core app with React which serves as a storage for devices that capture video content via the Snapshot app (https://github.com/icatic1/SI-Grupa2). There are two types of users of this app - User and Admin.
 
+## User features:
+- Secure application access (JWT), which contains the necessary authorization for modules and TFA
+- Login and logout
+- Password change (security questions and email)
+- Access to all stored devices by their ID
+- Access to all captures for each stored device
+- Capture download
+- Changing configuration settings for each device
+- Synchronized update registered in the local version and vice versa
+- Live camera review
 
-
-## User stories
-Sprint 1:
-- As a user, I want secure application access (JWT), which contains the necessary authorization for modules and TFA
-- As an Admin, I want to have full access to each individual part of the system (module) and functions.
-- As a user, I want the ability to log out of the application.
-- As an Admin, I want to be able to add a new user.
-- As an Admin, I want to be able to manage each individual user and his settings, change the password.
-- As a user, I want to have a special way to change the password (questions and email / link).
-- As an Admin, I want to be able to delete users
-- As an Admin, I want to be able to control access rights for all types of users of this system
+## Admin features:
+- Full access to each individual part of the system and functions.
+- Adding new users
+- Managing user settings
+- Changing user passwords
+- Deleting users
+- Controling access rights for all types of users
 - Logging
+
+
