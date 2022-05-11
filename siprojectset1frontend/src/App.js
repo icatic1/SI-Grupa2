@@ -17,6 +17,7 @@ import NotFound from "./components/NotFound";
 import EditProfile from "./components/EditProfile";
 import DeviceList from "./components/DeviceList";
 import Configuration from "./components/Configuration";
+import Live from "./components/Live";
 
 import './App.css';
 
@@ -188,6 +189,7 @@ function App() {
                     <Route exact path='/Devices' element={<ProtectedRoute><DeviceList /></ProtectedRoute>} />
                     <Route exact path='/Configuration/:mac' element={<ProtectedRoute><Configuration /></ProtectedRoute>} />
                     <Route exact path='/FileList/:mac' element={<ProtectedRoute><FileList /></ProtectedRoute>} />
+                    <Route exact path='/Live/:id/:mac/:num' element={<ProtectedRoute><Live /></ProtectedRoute>} />
                     <Route path="*" element={<NotFound/>}/>
                 </Routes>
             </AuthProvider>

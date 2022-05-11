@@ -1,7 +1,7 @@
 import React from 'react';
-import { Container, Button, Row, Col, ButtonGroup } from "react-bootstrap";
+import { Container,  Row, Col,  Dropdown, DropdownButton, Button } from "react-bootstrap";
 
-const DeviceCard = ({ device, editConfiguration, viewCaptures }) => {
+const DeviceCard = ({ device, editConfiguration, viewCaptures, cameraOptionsPopup }) => {
 
     return (
         <Container fluid="sm" className="block-example border-bottom border-info" >
@@ -19,11 +19,12 @@ const DeviceCard = ({ device, editConfiguration, viewCaptures }) => {
             <Row>
 
 
-                <Container style={{marginBottom:"5px"}}>
-                    <ButtonGroup className="float-right pl-0">
-                        <Button variant="primary" className=" border btn-primary " style={{ width: "160px" }} onClick={() => { editConfiguration(device) }}> Edit Configuration</Button>
-                        <Button variant="primary" className=" border btn-primary" style={{width:"160px"}} onClick={() => { viewCaptures(device) }} > View Captures </Button>
-                    </ButtonGroup>
+                <Container style={{ marginBottom: "5px" }}>
+                    <DropdownButton title="Actions" className="float-right pl-0">
+                        <Dropdown.Item onClick={() => { editConfiguration(device) }}> Edit configuration </Dropdown.Item>
+                        <Dropdown.Item onClick={() => { viewCaptures(device) }}> View captures </Dropdown.Item>
+                        <Dropdown.Item onClick={() => { cameraOptionsPopup(device) }}> View cameras </Dropdown.Item>
+                    </DropdownButton>
                 </Container>
 
 
