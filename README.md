@@ -10,7 +10,7 @@ An ASP.NET Core app with React which serves as a storage for devices that captur
 - Access to all stored devices by their ID
 - Access to all captures for each stored device
 - Capture download
-- Changing configuration settings for each device
+- Managing configuration settings for each device
 - Synchronized update registered in the local version and vice versa
 - Live camera review
 
