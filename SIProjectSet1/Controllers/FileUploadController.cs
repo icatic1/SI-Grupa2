@@ -32,6 +32,7 @@ namespace SIProjectSet1.Controllers
         private static byte[]? imageBase64ByteArray;
         private static Queue<byte[]> queue = new Queue<byte[]>();
         private static Dictionary<String, Queue<byte[]>> dictionary = new Dictionary<String, Queue<byte[]>>();
+        private static Dictionary<String, bool> streaming = new Dictionary<String, bool>();
 
         public FileUploadController(ILogger<FileUploadController> logger, IFilesService filesService)
         {
@@ -271,14 +272,27 @@ namespace SIProjectSet1.Controllers
         }
         
 
-        //[HttpGet]
-        //[Route("GetFilesByPathSorted/{path}")]
-        //public async Task<IActionResult> GetFilesByPathSorted(String path)
-        //{
-        //    //var files = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", MacAddress));
-        //    var files = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", path));
-        //    return Ok(files);
-        //}
+        [HttpGet]
+        [Route("ChangeStreamState/{MACAddress}/{state}")]
+        public async Task<IActionResult> ChangeStreamState(string MACAddress, int state)
+        {
+            if (state != 0 && state != 1) return BadRequest("State not valid!");
+
+            streaming[MACAddress] = (state == 1);
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("GetStreamState/{MACAddress}")]
+        public async Task<IActionResult> GetStreamState(string MACAddress)
+        {
+            bool state;
+            if(!streaming.TryGetValue(MACAddress, out state)) {
+                streaming[MACAddress] = false;
+            }
+            return Ok(state);
+        }
+
 
         [HttpGet]
         [Route("GetFilesByPathSorted/{path}")]
