@@ -7,23 +7,23 @@ const Live = () => {
     const { mac } = useParams()
     const { id } = useParams()
     const { num } = useParams()
-    
+
 
     useEffect(() => {
 
         if (startLive()) {
             const interval = setInterval(() => {
                 getImage().then(image => {
-                    setImgSrc("data:image/png;base64, " + image);
+                    if (image != null && image) setImgSrc("data:image/png;base64, " + image);
                 });
-            }, 32)
+            }, 100)
             return () => {
                 console.log(interval)
                 clearInterval(interval)
                 endLive()
             }
         }
-        
+
 
     }, []);
 
@@ -32,16 +32,17 @@ const Live = () => {
 
         if (res.ok) {
             console.log("Start live")
-            return true
+            console.log("Buffering...")
+            setTimeout(() => { return true }, 30000);
         }
         return false
     }
 
     async function endLive() {
-        
+
         await fetch('/api/FileUpload/ChangeStreamState/' + mac + '/0')
         console.log("End live")
-        
+
     }
 
 
@@ -68,7 +69,6 @@ const Live = () => {
                 <h1 style={{ color: "#035296", paddingLeft: "40px", marginBottom: "0", fontSize: "150%" }}>{id}</h1>
                 <h2 style={{ color: "#035296", paddingLeft: "50px", marginBottom: "0", fontSize: "130%" }}>Camera {num}</h2>
             </div>
-
             < img src={imgSrc} style={{ width: "100%", height: "100%", margin: "0", maxHeight: "500px", maxWidth: "960px", borderTopRightRadius: "10px", borderBottomLeftRadius: "10px", borderBottomRightRadius: "10px" }} />
 
         </Container>
