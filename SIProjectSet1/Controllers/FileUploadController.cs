@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
+using Newtonsoft.Json;
 using SIProjectSet1.FilesService;
 using SIProjectSet1.ViewModels;
 using System.IO;
@@ -17,9 +18,6 @@ using System.Threading.Tasks;
 
 namespace SIProjectSet1.Controllers
 {
-
-
-
     /// <summary>
     /// controller for upload large file
     /// </summary>
@@ -46,7 +44,6 @@ namespace SIProjectSet1.Controllers
         {
             return Ok();
         }
-
 
         /// <summary>
         /// Action for upload large file
@@ -151,6 +148,35 @@ namespace SIProjectSet1.Controllers
             return BadRequest("No files data in the request.");
         }
 
+        [HttpPost]
+        [Route("StreamBase64")]
+        public async Task<IActionResult> StreamBase64File([FromQuery] string MACAddress, [FromBody] JsonElement imageBase64ByteArray)
+        {
+            // erase after deployment - local hosting help
+            if (!dictionary.ContainsKey("0A0027000016"))
+            {
+                Queue<byte[]> q = new Queue<byte[]>();
+                dictionary.Add("0A0027000016", q);
+            }
+            try
+            {
+                string[]? base64 = (string[])imageBase64ByteArray.Deserialize(typeof(string[]));
+                if (base64 != null)
+                foreach (var image in base64)
+                    dictionary[MACAddress].Enqueue(Convert.FromBase64String(image));
+                
+                while (dictionary[MACAddress].Count >= 150)
+                {
+                    dictionary[MACAddress].Dequeue();
+                }
+                _logger.LogInformation("Ok");
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest(false);
+            }
+        }
 
         /// <summary>
         /// Action for live streaming large files
@@ -172,6 +198,7 @@ namespace SIProjectSet1.Controllers
                 !MediaTypeHeaderValue.TryParse(request.ContentType, out var mediaTypeHeader) ||
                 string.IsNullOrEmpty(mediaTypeHeader.Boundary.Value))
             {
+                _logger.LogInformation("UnsupportedMediaTypeResult");
                 return new UnsupportedMediaTypeResult();
             }
             var reader = new MultipartReader(mediaTypeHeader.Boundary.Value, request.Body);
@@ -216,6 +243,7 @@ namespace SIProjectSet1.Controllers
                     {
                         dictionary[fileName].Dequeue();
                     }
+                    _logger.LogInformation("Ok");
                     return Ok();
 
                     //if (imageBase64ByteArray != null)
@@ -234,10 +262,9 @@ namespace SIProjectSet1.Controllers
             }
 
             // If the code runs to this location, it means that no files have been saved
+            _logger.LogInformation("BadRequest");
             return BadRequest("No files data in the request.");
         }
-
-
 
         /// <summary>
         /// Action for returning all files and folders for a given device
@@ -368,8 +395,6 @@ namespace SIProjectSet1.Controllers
         }
         #endregion
 
-
-
         [HttpPost]
         [Route("DownloadFiles")]
         // Download file from the server
@@ -451,8 +476,6 @@ namespace SIProjectSet1.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
-
     }
 
 }
