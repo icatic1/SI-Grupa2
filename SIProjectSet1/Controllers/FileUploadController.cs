@@ -152,23 +152,26 @@ namespace SIProjectSet1.Controllers
         [Route("StreamBase64")]
         public async Task<IActionResult> StreamBase64File([FromQuery] string MACAddress, [FromBody] JsonElement imageBase64ByteArray)
         {
-            // erase after deployment - local hosting help
-            if (!dictionary.ContainsKey("0A0027000016"))
+            // add new MAC address to dictionary and create a new queue for livestream
+            if (!dictionary.ContainsKey(MACAddress))
             {
                 Queue<byte[]> q = new Queue<byte[]>();
-                dictionary.Add("0A0027000016", q);
+                dictionary.Add(MACAddress, q);
             }
             try
             {
+                // get all 30 images embedded in the request
                 string[]? base64 = (string[])imageBase64ByteArray.Deserialize(typeof(string[]));
+                
+                // put all image frames into the queue
                 if (base64 != null)
                 foreach (var image in base64)
                     dictionary[MACAddress].Enqueue(Convert.FromBase64String(image));
                 
-                while (dictionary[MACAddress].Count >= 150)
-                {
+                // if the queue is overloaded, empty the earliest frames
+                while (dictionary[MACAddress].Count >= 1000)
                     dictionary[MACAddress].Dequeue();
-                }
+                
                 _logger.LogInformation("Ok");
                 return Ok();
             }
@@ -305,7 +308,13 @@ namespace SIProjectSet1.Controllers
         {
             if (state != 0 && state != 1) return BadRequest("State not valid!");
 
+            // change the stream state
             streaming[MACAddress] = (state == 1);
+
+            // empty the queue when ending the stream (if possible)
+            if (state == 0)
+                if (dictionary.ContainsKey(MACAddress))
+                    dictionary[MACAddress].Clear();
             return Ok();
         }
 
