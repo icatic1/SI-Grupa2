@@ -222,7 +222,7 @@ const FileList = () => {
                     </Breadcrumb>
                 </Col>
                 <Col className="col-2">
-                    <Button variant="primary" className="w-100 p-2 mt-1" onClick={handleDownload}>Download</Button>
+                    <Button variant="primary" className="w-100 p-2 mt-1" onClick={handleDownload} style={{marginBottom:"5px"}}>Download</Button>
                 </Col>
             </Row>
 
