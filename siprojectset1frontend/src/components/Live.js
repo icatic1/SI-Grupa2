@@ -1,31 +1,45 @@
 ﻿import React, { useState, useEffect, useRef } from 'react'
-import { useParams, useLocation } from 'react-router-dom'
-import { Container } from 'react-bootstrap'
+import { useParams } from 'react-router-dom'
+import { Container, ButtonGroup, Button } from 'react-bootstrap'
 
 const Live = () => {
-    const [imgSrc, setImgSrc] = useState("https://www.macmillandictionary.com/external/slideshow/full/148259_full.jpg");
+    const [imgSrc, setImgSrc] = useState("https://i.postimg.cc/fW8xkr3p/start-stream.png");
+    const [action, setAction] = useState("Start")
     const { mac } = useParams()
     const { id } = useParams()
     const { num } = useParams()
+    const interval = useRef()
 
 
     useEffect(() => {
 
-        if (startLive()) {
-            const interval = setInterval(() => {
-                getImage().then(image => {
-                    if (image != null && image) setImgSrc("data:image/png;base64, " + image);
-                });
-            }, 100)
-            return () => {
-                console.log(interval)
-                clearInterval(interval)
+        
+        return () => {
+            
+                clearInterval(interval.current)
                 endLive()
-            }
+            
         }
-
-
+        
     }, []);
+
+    function clickBtn() {
+        if (action == "Start") {
+            setAction("End")
+
+            if (startLive())
+                interval.current = setInterval(() => {
+                    getImage().then(image => {
+                        if (image != null && image) setImgSrc("data:image/png;base64, " + image);
+                    });
+                }, 100)
+        } else {
+            setAction("Start")
+            console.log(interval.current)
+            clearInterval(interval.current)
+            endLive()
+        }
+    }
 
     async function startLive() {
         var res = await fetch('/api/FileUpload/ChangeStreamState/' + mac + '/1')
@@ -33,6 +47,8 @@ const Live = () => {
         if (res.ok) {
             console.log("Start live")
             console.log("Buffering...")
+            //connecting
+            setImgSrc('https://i.postimg.cc/c4527hz5/connecting.png')
             setTimeout(() => { return true }, 30000);
         }
         return false
@@ -41,6 +57,7 @@ const Live = () => {
     async function endLive() {
 
         await fetch('/api/FileUpload/ChangeStreamState/' + mac + '/0')
+        setImgSrc('https://i.postimg.cc/fW8xkr3p/start-stream.png')
         console.log("End live")
 
     }
@@ -63,15 +80,18 @@ const Live = () => {
     }
 
     return (
-        <Container style={{ background: "rgba(0, 22, 56, 0.69)", padding: "5%", borderRadius: "20px", marginBottom: "20px" }}>
+    
+        <Container style={{ background: "rgba(24, 36, 67, 0.56)", padding: "10%", borderRadius: "20px", marginBottom: "20px" }}>
 
-            <div style={{ background: "white", width: "35%", marginBottom: "0", borderTopLeftRadius: "30px", borderTopRightRadius: "30px", padding: "5px" }}>
-                <h1 style={{ color: "#035296", paddingLeft: "40px", marginBottom: "0", fontSize: "150%" }}>{id}</h1>
-                <h2 style={{ color: "#035296", paddingLeft: "50px", marginBottom: "0", fontSize: "130%" }}>Camera {num}</h2>
-            </div>
-            < img src={imgSrc} style={{ width: "100%", height: "100%", margin: "0", maxHeight: "500px", maxWidth: "960px", borderTopRightRadius: "10px", borderBottomLeftRadius: "10px", borderBottomRightRadius: "10px" }} />
-
-        </Container>
+                <div style={{ background: "white", width: "35%", marginBottom: "0", borderTopLeftRadius: "30px", borderTopRightRadius: "30px", padding: "5px" }}>
+                    <h1 style={{ color: "#035296", paddingLeft: "40px", marginBottom: "0", fontSize: "150%" }}>{id}</h1>
+                    <h2 style={{ color: "#035296", paddingLeft: "50px", marginBottom: "0", fontSize: "130%" }}>Camera {num}</h2>
+                </div>
+                < img src={imgSrc} style={{ width: "100%", height: "100%", margin: "0", maxHeight: "500px", maxWidth: "960px", borderTopRightRadius: "10px", borderBottomLeftRadius: "10px", borderBottomRightRadius: "10px" }} />
+                <ButtonGroup style={{ float: 'right', marginRight:"1%", marginTop: '10px' }}>
+                    <Button className="btn-danger btn-bg" onClick={clickBtn}>{action} stream</Button>
+                </ButtonGroup>
+            </Container>
 
 
     )
