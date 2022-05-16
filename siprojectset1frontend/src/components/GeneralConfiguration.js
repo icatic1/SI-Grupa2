@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {  Form, Button, ButtonGroup, DropdownButton, Dropdown} from "react-bootstrap";
-
+import TimePicker from 'react-time-picker';
 
 const GeneralConfiguration = ({data, setData, saveConfiguration}) => {
     const [step, setStep] = useState(1)
@@ -436,7 +436,7 @@ const GeneralConfiguration = ({data, setData, saveConfiguration}) => {
                                             <Dropdown.Item href="#" value="hours" onClick={() => { changeUnit("hours", "JSONSyncPeriod") }}>hours</Dropdown.Item>
                                             <Dropdown.Item href="#" value="days" onClick={() => { changeUnit("days", "JSONSyncPeriod") }}>days</Dropdown.Item>
                                         </DropdownButton>
-                                <input type='time' id="JSONTime" style={{ marginLeft: "40px" }} value={data.JSONTime} disabled={data.JSONSyncPeriod != 0} onChange={(e) => { changeValues(e.target.value, "JSONTime")}}/>
+                                <span style={{ marginLeft: "40px" }}><TimePicker id="JSONTime" locale="bs" value={data.JSONTime} disabled={data.JSONSyncPeriod != 0} onChange={(value) => { changeValues(value, "JSONTime")}}/></span>
                                     </div>
                         </div>
                             
@@ -450,7 +450,7 @@ const GeneralConfiguration = ({data, setData, saveConfiguration}) => {
                         </div>
                         <div className="mb-3 row" >
                             <label className="col-sm-4 col-form-label"> </label>
-                            <span>
+                            
                             <div className="d-flex align-items-center col-sm-7">
                                 <input type="number" id="MediaSyncPeriod" min="1" step={1} value={displayMediaSyncPeriod} onChange={(e) => { calculateTime(e.target.value, "MediaSyncPeriod") }} disabled={data.MediaSyncPeriod == 0}/>
                                 <DropdownButton id="MediaSyncPeriodUnit" title={MediaSyncUnit} style={{ marginLeft: "10px" }} disabled={data.MediaSyncPeriod == 0}>
@@ -459,10 +459,10 @@ const GeneralConfiguration = ({data, setData, saveConfiguration}) => {
                                     <Dropdown.Item href="#" value="hours" onClick={() => { changeUnit("hours", "MediaSyncPeriod") }}>hours</Dropdown.Item>
                                     <Dropdown.Item href="#" value="days" onClick={() => { changeUnit("days", "MediaSyncPeriod") }}>days</Dropdown.Item>
                                 </DropdownButton>
-                                    <input type='time' id="MediaSyncTime" style={{ marginLeft: "40px" }} value={data.MediaTime} disabled={data.MediaSyncPeriod != 0} onChange={(e) => {changeValues(e.target.value, "MediaTime") }}/>
+                                <span style={{ marginLeft: "40px" }}> <TimePicker id="MediaSyncTime" locale="bs"  value={data.MediaTime} disabled={data.MediaSyncPeriod != 0} onChange={(value) => {changeValues(value, "MediaTime") }}/></span>
                             </div>
                             
-                            </span>
+                            
                         </div>
                     </div>
                     <hr />
