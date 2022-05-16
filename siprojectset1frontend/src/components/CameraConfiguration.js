@@ -1,23 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Spinner, Form, Button, ButtonGroup, DropdownButton, Dropdown, Modal } from "react-bootstrap";
+import { Container, Form, Button, ButtonGroup, DropdownButton, Dropdown, Modal } from "react-bootstrap";
 import RangeSlider from 'react-bootstrap-range-slider';
+import { SketchPicker } from 'react-color';
 
 
 const CameraConfiguration = ({data, setData, saveConfiguration}) => {
     const [cameraNum, setCameraNum] = useState(1)
     const [currentCamera, setCurrentCamera] = useState(data.Cameras[0])
+    const [show, setShow] = useState(false)
+    const [imageColor, setImageColor] = useState({ r: data.Cameras[0].ImageColor.split(',')[0], g: data.Cameras[0].ImageColor.split(',')[1], b: data.Cameras[0].ImageColor.split(',')[2] })
 
     useEffect(() => {
         if (cameraNum == 1) {
             setCurrentCamera(data.Cameras[0])
+            setImageColor({ r: data.Cameras[0].ImageColor.split(',')[0], g: data.Cameras[0].ImageColor.split(',')[1], b: data.Cameras[0].ImageColor.split(',')[2] })
         } else if (cameraNum == 2) {
             setCurrentCamera(data.Cameras[1])
+            setImageColor({ r: data.Cameras[1].ImageColor.split(',')[0], g: data.Cameras[1].ImageColor.split(',')[1], b: data.Cameras[1].ImageColor.split(',')[2] })
         } else {
             setCurrentCamera(data.Cameras[2])
+            setImageColor({ r: data.Cameras[2].ImageColor.split(',')[0], g: data.Cameras[2].ImageColor.split(',')[1], b: data.Cameras[2].ImageColor.split(',')[2] })
         }
         
     }, [cameraNum])
 
+    const handleClose = () => { setShow(false); }
+
+    function showColorPicker() {
+        setShow(true)
+    }
 
     function detectCameraType(type) {
         if (type == 0)
@@ -26,25 +37,7 @@ const CameraConfiguration = ({data, setData, saveConfiguration}) => {
             return "IP Camera"
     }
 
-    function componentToHex(c) {
-        var hex = c.toString(16);
-        return hex.length == 1 ? "0" + hex : hex;
-    }
-
-    const rgbToHex = (r, g, b) => '#' + [r, g, b].map(x => {
-        const hex = x.toString(16)
-        return hex.length === 1 ? '0' + hex : hex
-    }).join('')
-
-    function hexToRgb(hex) {
-        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-        return result ? {
-            r: parseInt(result[1], 16),
-            g: parseInt(result[2], 16),
-            b: parseInt(result[3], 16)
-        } : null;
-    }
-
+    
 
     function changeValues(value, property) {
         switch (property) {
@@ -67,9 +60,8 @@ const CameraConfiguration = ({data, setData, saveConfiguration}) => {
                 setCurrentCamera({ ...currentCamera, ContrastLevel: value })
                 break;
             case "imageColor":
-                console.log(hexToRgb(value))
-                let rgb = hexToRgb(value)
-                let color = rgb.r + ", " + rgb.g + ", " + rgb.b
+                setImageColor({ r: value.rgb.r, g: value.rgb.g, b: value.rgb.b })
+                let color =  value.rgb.r + ", " + value.rgb.g + ", " + value.rgb.b 
                 if (cameraNum == 1)
                     setData({ ...data, Cameras: [{ ...data.Cameras[0], ImageColor: color }, data.Cameras[1], data.Cameras[2]] })
                 else if (cameraNum == 2)
@@ -116,7 +108,7 @@ const CameraConfiguration = ({data, setData, saveConfiguration}) => {
     }
 
     function clearImageColor() {
-
+        setImageColor({r:0,g:0,b:0})
         if (cameraNum == 1)
             setData({ ...data, Cameras: [{ ...data.Cameras[0], ImageColor: "Control" }, data.Cameras[1], data.Cameras[2]] })
         else if (cameraNum == 2)
@@ -169,10 +161,10 @@ const CameraConfiguration = ({data, setData, saveConfiguration}) => {
             </div>
             <div className="mb-3 row">
                 <label htmlFor="imageColor" className="col-sm-2 col-form-label">Image color</label>
-                <div className="col-sm-4">
-                    <Form.Control type="color" id="imageColor" value={rgbToHex(currentCamera.ImageColor.split(" ")[0].split(',')[0], currentCamera.ImageColor.split(' ')[1].split(',')[0], currentCamera.ImageColor.split(' ')[2].split(',')[0])} onChange={(e) => { changeValues(e.target.value, "imageColor") }} />
-                </div>
-                <Button className="btn-dark" onClick={() => { clearImageColor() }}>Clear</Button>
+                <ButtonGroup>
+                    <Button className="btn-primary" onClick={() => showColorPicker()}>Pick</Button>
+                     <Button className="btn-dark" onClick={() => { clearImageColor() }}>Clear</Button>
+                 </ButtonGroup>
             </div>
             <div className="mb-3 row d-flex align-items-center">
                 <div className="col-sm-1">
@@ -188,6 +180,21 @@ const CameraConfiguration = ({data, setData, saveConfiguration}) => {
             {cameraNum == 3 ? <></> : <Button variant="primary" className=" border btn-primary " onClick={() => { setCameraNum(cameraNum + 1) }} style={{ width: "100px" }}> Next</Button>}
 
         </ButtonGroup>
+        <Modal show={show} onHide={handleClose}>
+            <Modal.Header closeButton>
+                <Modal.Title>Pick a color</Modal.Title>
+            </Modal.Header>
+            <Modal.Body className="text-center">
+                <div style={{marginLeft:"27%"}}>
+                <SketchPicker id="imageColor" color={imageColor} onChangeComplete={(color, e) => { changeValues(color, "imageColor") }} />
+                </div>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="primary" onClick={handleClose} style={{textAlign:"center"}}>
+                    OK
+                </Button>
+            </Modal.Footer>
+        </Modal>
     </Form>
     )
 }
