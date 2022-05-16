@@ -15,6 +15,7 @@ const CameraConfiguration = ({data, setData, saveConfiguration}) => {
         } else {
             setCurrentCamera(data.Cameras[2])
         }
+        
     }, [cameraNum])
 
 
@@ -23,6 +24,25 @@ const CameraConfiguration = ({data, setData, saveConfiguration}) => {
             return "USB Camera"
         else
             return "IP Camera"
+    }
+
+    function componentToHex(c) {
+        var hex = c.toString(16);
+        return hex.length == 1 ? "0" + hex : hex;
+    }
+
+    const rgbToHex = (r, g, b) => '#' + [r, g, b].map(x => {
+        const hex = x.toString(16)
+        return hex.length === 1 ? '0' + hex : hex
+    }).join('')
+
+    function hexToRgb(hex) {
+        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+            r: parseInt(result[1], 16),
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16)
+        } : null;
     }
 
 
@@ -47,13 +67,16 @@ const CameraConfiguration = ({data, setData, saveConfiguration}) => {
                 setCurrentCamera({ ...currentCamera, ContrastLevel: value })
                 break;
             case "imageColor":
+                console.log(hexToRgb(value))
+                let rgb = hexToRgb(value)
+                let color = rgb.r + ", " + rgb.g + ", " + rgb.b
                 if (cameraNum == 1)
-                    setData({ ...data, Cameras: [{ ...data.Cameras[0], ImageColor: value.substring(1) }, data.Cameras[1], data.Cameras[2]] })
+                    setData({ ...data, Cameras: [{ ...data.Cameras[0], ImageColor: color }, data.Cameras[1], data.Cameras[2]] })
                 else if (cameraNum == 2)
-                    setData({ ...data, Cameras: [data.Cameras[0], { ...data.Cameras[1], ImageColor: value.substring(1) }, data.Cameras[2]] })
+                    setData({ ...data, Cameras: [data.Cameras[0], { ...data.Cameras[1], ImageColor: color }, data.Cameras[2]] })
                 else
-                    setData({ ...data, Cameras: [data.Cameras[0], data.Cameras[1], { ...data.Cameras[2], ImageColor: value.substring(1) }] })
-                setCurrentCamera({ ...currentCamera, ImageColor: value.substring(1) })
+                    setData({ ...data, Cameras: [data.Cameras[0], data.Cameras[1], { ...data.Cameras[2], ImageColor: color }] })
+                setCurrentCamera({ ...currentCamera, ImageColor: color })
                 break;
             case "motionDetection":
                 if (cameraNum == 1)
@@ -147,7 +170,7 @@ const CameraConfiguration = ({data, setData, saveConfiguration}) => {
             <div className="mb-3 row">
                 <label htmlFor="imageColor" className="col-sm-2 col-form-label">Image color</label>
                 <div className="col-sm-4">
-                    <Form.Control type="color" id="imageColor" value={"#" + currentCamera.ImageColor.substring(2)} onChange={(e) => { changeValues(e.target.value, "imageColor") }} />
+                    <Form.Control type="color" id="imageColor" value={rgbToHex(currentCamera.ImageColor.split(" ")[0].split(',')[0], currentCamera.ImageColor.split(' ')[1].split(',')[0], currentCamera.ImageColor.split(' ')[2].split(',')[0])} onChange={(e) => { changeValues(e.target.value, "imageColor") }} />
                 </div>
                 <Button className="btn-dark" onClick={() => { clearImageColor() }}>Clear</Button>
             </div>

@@ -78,6 +78,12 @@ const GeneralConfiguration = ({data, setData, saveConfiguration}) => {
             case "serverIPAddress":
                 setData({...data, ServerIP: value})
                 break;
+            case "JSONTime":
+                setData({ ...data, JSONTime: value + ":00" })
+                break;
+            case "MediaTime":
+                setData({ ...data, MediaTime: value + ":00" })
+                break;
             
 
         }
@@ -291,6 +297,49 @@ const GeneralConfiguration = ({data, setData, saveConfiguration}) => {
     }
 
 
+    function changeSyncMode(type, mode) {
+        switch (type) {
+            case 'media':
+              
+                if (mode == 'period') {
+                   
+                    setData({ ...data, MediaTime: "00:00:00", MediaSyncPeriod: 1 })
+                    setDisplayMediaSyncPeriod(1)
+                   
+                    document.getElementById('MediaPeriod').checked = true
+                    document.getElementById('MediaTime').checked = false
+                    
+                    
+                } else {
+                   
+                    setData({ ...data, MediaSyncPeriod: 0 })
+                    document.getElementById('MediaPeriod').checked = false
+                    document.getElementById('MediaTime').checked = true
+                    
+                }
+
+                break
+            case 'JSON':
+                if(mode == 'period') {
+
+                    setData({ ...data, JSONTime: "00:00:00", JSONSyncPeriod: 1 })
+                    setDisplayJSONSyncPeriod(1)
+
+                    document.getElementById('JSONPeriod').checked = true
+                    document.getElementById('JSONTime').checked = false
+
+
+                } else {
+
+                    setData({ ...data, JSONSyncPeriod: 0 })
+                    document.getElementById('JSONPeriod').checked = false
+                    document.getElementById('JSONTime').checked = true
+
+                }
+        }
+
+    }
+
     return (
         <Form style={{ padding: "10px", height: "100%" }}>
 
@@ -371,30 +420,49 @@ const GeneralConfiguration = ({data, setData, saveConfiguration}) => {
                             </div>
                         </div>
                         <div className="mb-3 row">
-                            <label htmlFor="JSONSyncPeriod" className="col-sm-4 col-form-label">Configuration synchronization period</label>
-                            <div className="d-flex align-items-center col-sm-4">
-                                <input type="number" id="JSONSyncPeriod" min="1" step={1} value={displayJSONSyncPeriod} onChange={(e) => { calculateTime(e.target.value, "JSONSyncPeriod") }} />
-                                <DropdownButton id="JSONSyncPeriodUnit" title={JSONSyncUnit} style={{ marginLeft: "10px" }}>
-                                    <Dropdown.Item href="#" value="seconds" onClick={() => { changeUnit("seconds", "JSONSyncPeriod") }}>seconds</Dropdown.Item>
-                                    <Dropdown.Item href="#" value="minutes" onClick={() => { changeUnit("minutes", "JSONSyncPeriod") }}>minutes</Dropdown.Item>
-                                    <Dropdown.Item href="#" value="hours" onClick={() => { changeUnit("hours", "JSONSyncPeriod") }}>hours</Dropdown.Item>
-                                    <Dropdown.Item href="#" value="days" onClick={() => { changeUnit("days", "JSONSyncPeriod") }}>days</Dropdown.Item>
-                                </DropdownButton>
-
-                            </div>
+                            <label htmlFor="JSONSyncPeriod" className="col-sm-4 col-form-label">Synchronize configuration</label>
+                            <Form.Check inline label="after every period of" name="json-every-period" type={'radio'} id={"JSONPeriod"} onChange={() => { changeSyncMode('JSON', 'period') }} checked={data.JSONSyncPeriod != 0} style={{ marginLeft: "10px" }}/>
+                            <Form.Check inline label="every day at" name="json-every-day" type={'radio'} id={"JSONTime" } onChange={() => { changeSyncMode('JSON', 'time') }} checked={data.JSONSyncPeriod == 0} style={{ marginLeft: "13%" }}/>
+                                
+                            
                         </div>
                         <div className="mb-3 row">
-                            <label htmlFor="MediaSyncPeriod" className="col-sm-4 col-form-label">Media synchronization period</label>
-                            <div className="d-flex align-items-center col-sm-4">
-                                <input type="number" id="MediaSyncPeriod" min="1" step={1} value={displayMediaSyncPeriod} onChange={(e) => { calculateTime(e.target.value, "MediaSyncPeriod") }} />
-                                <DropdownButton id="MediaSyncPeriodUnit" title={MediaSyncUnit} style={{ marginLeft: "10px" }}>
+                                    <label className="col-sm-4 col-form-label"> </label>
+                                    <div className="d-flex align-items-center col-sm-4">
+                                <input type="number" id="JSONSyncPeriod" min="1" step={1} value={displayJSONSyncPeriod} onChange={(e) => { calculateTime(e.target.value, "JSONSyncPeriod") }} disabled={data.JSONSyncPeriod == 0}/>
+                                        <DropdownButton id="JSONSyncPeriodUnit" title={JSONSyncUnit} style={{ marginLeft: "10px" }}>
+                                            <Dropdown.Item href="#" value="seconds" onClick={() => { changeUnit("seconds", "JSONSyncPeriod") }}>seconds</Dropdown.Item>
+                                            <Dropdown.Item href="#" value="minutes" onClick={() => { changeUnit("minutes", "JSONSyncPeriod") }}>minutes</Dropdown.Item>
+                                            <Dropdown.Item href="#" value="hours" onClick={() => { changeUnit("hours", "JSONSyncPeriod") }}>hours</Dropdown.Item>
+                                            <Dropdown.Item href="#" value="days" onClick={() => { changeUnit("days", "JSONSyncPeriod") }}>days</Dropdown.Item>
+                                        </DropdownButton>
+                                <input type='time' id="JSONTime" style={{ marginLeft: "10px" }} value={data.JSONTime} disabled={data.JSONSyncPeriod != 0} onChange={(e) => { changeValues(e.target.value, "JSONTime")}}/>
+                                    </div>
+                        </div>
+                            
+                        
+
+                        <div className="mb-3 row">
+                            <label htmlFor="MediaSyncPeriod" className="col-sm-4 col-form-label">Synchronize media </label>
+                            <Form.Check inline label="after every period of" name="media-every-period" id={"MediaPeriod"} type={'radio'} onChange={() => { changeSyncMode('media', 'period') }} checked={data.MediaSyncPeriod != 0} style={{marginLeft:"10px"}}/>
+                            <Form.Check inline label="every day at" name="media-every-day" id={"MediaTime"} type={'radio'} onChange={() => { changeSyncMode('media', 'time') }} checked={data.MediaSyncPeriod == 0} style={{marginLeft:"13%"}}/>
+                            
+                        </div>
+                        <div className="mb-3 row" >
+                            <label className="col-sm-4 col-form-label"> </label>
+                            <span>
+                            <div className="d-flex align-items-center col-sm-7">
+                                <input type="number" id="MediaSyncPeriod" min="1" step={1} value={displayMediaSyncPeriod} onChange={(e) => { calculateTime(e.target.value, "MediaSyncPeriod") }} disabled={data.MediaSyncPeriod == 0}/>
+                                <DropdownButton id="MediaSyncPeriodUnit" title={MediaSyncUnit} style={{ marginLeft: "10px" }} disabled={data.MediaSyncPeriod == 0}>
                                     <Dropdown.Item href="#" value="seconds" onClick={() => { changeUnit("seconds", "MediaSyncPeriod") }}>seconds</Dropdown.Item>
                                     <Dropdown.Item href="#" value="minutes" onClick={() => { changeUnit("minutes", "MediaSyncPeriod") }}>minutes</Dropdown.Item>
                                     <Dropdown.Item href="#" value="hours" onClick={() => { changeUnit("hours", "MediaSyncPeriod") }}>hours</Dropdown.Item>
                                     <Dropdown.Item href="#" value="days" onClick={() => { changeUnit("days", "MediaSyncPeriod") }}>days</Dropdown.Item>
                                 </DropdownButton>
-
+                                    <input type='time' id="MediaSyncTime" style={{ marginLeft: "20px" }} value={data.MediaTime} disabled={data.MediaSyncPeriod != 0} onChange={(e) => {changeValues(e.target.value, "MediaTime") }}/>
                             </div>
+                            
+                            </span>
                         </div>
                     </div>
                     <hr />
