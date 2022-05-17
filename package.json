@@ -1,8 +1,10 @@
 {
   "dependencies": {
     "@types/react-bootstrap-table": "^4.3.11",
+    "js-file-download": "^0.4.12",
     "react-bootstrap-range-slider": "^3.0.4",
     "react-bootstrap-table-next": "^4.0.3",
-    "react-player": "^2.10.0"
+    "react-player": "^2.10.0",
+    "react-time-picker": "^4.5.0"
   }
 }
