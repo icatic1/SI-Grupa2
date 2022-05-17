@@ -70,3 +70,12 @@ code {
 .modal-customw {
     min-width: 90%;
 }
+
+.btn-custom-2 {
+    min-width: 15%;
+    margin-top: 5px
+}
+
+.brd-custom-2 {
+    min-width: 70%;
+}

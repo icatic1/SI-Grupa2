@@ -130,6 +130,19 @@ const FileList = () => {
         console.log(response)
     }
 
+    const handleSync = async () => {
+
+        const response = await fetch('/api/FileUpload/ChangeFileSyncState/' + mac + '/1', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+        const data = await response;
+        console.log(data)
+
+    }
+
     const mystyle = {
         display: "flex",
         alignItems: "center",
@@ -206,8 +219,8 @@ const FileList = () => {
 
             <h1>{terminalId}</h1>
             <Row>
-                <Col className="col-10 ">
-                    <Breadcrumb className="w-100 ">
+                <Col className="brd-custom-2">
+                    <Breadcrumb className="w-100">
                         {crumbs.map((item) =>
                             item.path == lastCrumb.path ?
                                 <Breadcrumb.Item active>{item.name}</Breadcrumb.Item>
@@ -221,8 +234,11 @@ const FileList = () => {
                         )}
                     </Breadcrumb>
                 </Col>
-                <Col className="col-2">
-                    <Button variant="primary" className="w-100 p-2 mt-1" onClick={handleDownload} style={{marginBottom:"5px"}}>Download</Button>
+                <Col className="mt-1">
+                    <Button variant="primary" className="btn-custom-2" onClick={handleDownload} style={{marginBottom:"5px"}}>Download</Button>
+                </Col>
+                <Col className="mt-1">
+                    <Button variant="primary" className="btn-custom-2" onClick={handleSync} style={{ marginBottom: "5px" }}>Synchronize</Button>
                 </Col>
             </Row>
 
