@@ -485,10 +485,12 @@ namespace SIProjectSet1.Controllers
                 var newFile = file.Replace(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent"), "");
                 newFile = Regex.Replace(newFile, @"^\\[a-zA-Z0-9]{1,}\\[a-zA-Z0-9]{1,}\\", "");
                 var fileReturn = archive.CreateEntry(newFile, CompressionLevel.Optimal);
-                using (StreamWriter writer = new StreamWriter(fileReturn.Open()))
-                using (StreamReader reader = new StreamReader(file))
+                 using (var writer = fileReturn.Open())
                 {
-                    writer.Write(reader.ReadToEnd());
+                    using (StreamReader reader = new StreamReader(file))
+                    {
+                        await reader.BaseStream.CopyToAsync(writer);
+                    }
                 }
             }
 
