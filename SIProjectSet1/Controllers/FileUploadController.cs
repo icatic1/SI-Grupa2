@@ -31,6 +31,7 @@ namespace SIProjectSet1.Controllers
         private static Queue<byte[]> queue = new Queue<byte[]>();
         private static Dictionary<String, Queue<byte[]>> dictionary = new Dictionary<String, Queue<byte[]>>();
         private static Dictionary<String, bool> streaming = new Dictionary<String, bool>();
+        static Dictionary<string, bool> fileSync = new Dictionary<string, bool>();
 
         public FileUploadController(ILogger<FileUploadController> logger, IFilesService filesService)
         {
@@ -325,6 +326,30 @@ namespace SIProjectSet1.Controllers
             bool state;
             if(!streaming.TryGetValue(MACAddress, out state)) {
                 streaming[MACAddress] = false;
+            }
+            return Ok(state);
+        }
+
+        [HttpGet]
+        [Route("ChangeFileSyncState/{MACAddress}/{state}")]
+        public IActionResult ChangeFileSyncState(string MACAddress, int state)
+        {
+            if (state != 0 && state != 1) return BadRequest("State not valid!");
+
+            // change the file sync state
+            fileSync[MACAddress] = (state == 1);
+
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("GetFileSyncState/{MACAddress}")]
+        public IActionResult GetFileSyncState(string MACAddress)
+        {
+            bool state;
+            if (!fileSync.TryGetValue(MACAddress, out state))
+            {
+                fileSync[MACAddress] = false;
             }
             return Ok(state);
         }
