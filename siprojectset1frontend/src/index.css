@@ -79,3 +79,7 @@ code {
 .brd-custom-2 {
     min-width: 70%;
 }
+
+.pointer {
+    cursor: pointer;
+}
