@@ -15,7 +15,10 @@ namespace SIProjectSet1.FilesService
         Task<FilesViewModel> GetPathsSorted(String path);
         Task<bool> AddFileDB(FileViewModel fileViewModel);
 
-        Task<List<FileViewModel>> GetPathsSortedNew(String path);
+        Task<List<FileViewModel>> GetPathsSortedNew(String path, String MacAdress);
+
+        Task<String> GetPathForUser(String MacAddress);
+        Task<String> SetPathForUser(String MacAddress, String path);
     }
 
     public class FilesService : IFilesService
@@ -28,7 +31,8 @@ namespace SIProjectSet1.FilesService
             _logger = logger;
             _context = context;
         }
-        public async Task<bool> AddFileDB(FileViewModel fileViewModel) {
+        public async Task<bool> AddFileDB(FileViewModel fileViewModel)
+        {
 
             try
             {
@@ -44,7 +48,8 @@ namespace SIProjectSet1.FilesService
                 await _context.SaveChangesAsync();
                 return true;
             }
-            catch (Exception ex) { 
+            catch (Exception ex)
+            {
                 return false;
             }
         }
@@ -52,37 +57,38 @@ namespace SIProjectSet1.FilesService
         public async Task<FilesViewModel> GetPathsSorted(String path)
         {
 
-                string dirPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent", path);
-                if (!Directory.Exists(dirPath)) return null;
+            string dirPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent", path);
+            if (!Directory.Exists(dirPath)) return null;
 
-                var imagesDir = Directory.GetFiles(dirPath).Where(f => (f.EndsWith(".png") || f.EndsWith(".jpg")));
-                var videosDir = Directory.GetFiles(dirPath).Where(f => f.EndsWith(".mp4"));
-                var filesDir = Directory.GetFiles(dirPath).Where(f => !(f.EndsWith(".mp4") || f.EndsWith(".png") || f.EndsWith(".jpg"))) ;
-                var Dirs = Directory.GetDirectories(dirPath);
-                var array = new ArrayList();
+            var imagesDir = Directory.GetFiles(dirPath).Where(f => (f.EndsWith(".png") || f.EndsWith(".jpg")));
+            var videosDir = Directory.GetFiles(dirPath).Where(f => f.EndsWith(".mp4"));
+            var filesDir = Directory.GetFiles(dirPath).Where(f => !(f.EndsWith(".mp4") || f.EndsWith(".png") || f.EndsWith(".jpg")));
+            var Dirs = Directory.GetDirectories(dirPath);
+            var array = new ArrayList();
 
-                var a = new FilesViewModel()
-                {
+            var a = new FilesViewModel()
+            {
 
-                    images = imagesDir,
-                    videos = videosDir,
-                    files = filesDir,
-                    folders = Dirs
-                };
+                images = imagesDir,
+                videos = videosDir,
+                files = filesDir,
+                folders = Dirs
+            };
 
             return a;
         }
-        public async Task<List<FileViewModel>> GetPathsSortedNew(String path)
+        public async Task<List<FileViewModel>> GetPathsSortedNew(String path, String MacAdress)
         {
 
-            string dirPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent", path ) + "\\";
+            var userPath = await GetPathForUser(MacAdress);
+            string dirPath = Path.Combine(Path.Combine(userPath), path) + "\\";
             if (!Directory.Exists(dirPath)) return null;
-            var files =  await _context.Files.Where( f =>  f.Path.StartsWith(dirPath)).ToListAsync();
+            var files = await _context.Files.Where(f => f.Path.StartsWith(dirPath)).ToListAsync();
 
             var a = path.Split("\\");
             var lastDir = a[a.Length - 1];
 
-           // var files = Directory.GetFiles(dirPath);
+            // var files = Directory.GetFiles(dirPath);
             List<FileViewModel> fileModels = new List<FileViewModel>();
             foreach (var f in files)
             {
@@ -105,7 +111,7 @@ namespace SIProjectSet1.FilesService
                         break;
                     }
                 };
-                for ( var i =0; i < chars.Length; i++)
+                for (var i = 0; i < chars.Length; i++)
                 {
                     if (chars[i] == lastDir)
                     {
@@ -132,8 +138,10 @@ namespace SIProjectSet1.FilesService
                     {
                         for (var j = i + 1; j < chars.Length; j++)
                         {
-                            if( j == i + 1)
-                                croppedPath = croppedPath + "/" + chars[j];
+                            if (j == i + 1)
+                                croppedPath = croppedPath + chars[j];
+                            //croppedPath = croppedPath + "/" + chars[j];
+
                             else
                                 croppedPath = croppedPath + "%5C" + chars[j];
                         }
@@ -168,7 +176,7 @@ namespace SIProjectSet1.FilesService
                 String[] chars = f.Split('\\');
                 var croppedPath = "";
                 var previewPath = "";
- 
+
 
                 for (var i = 0; i < chars.Length; i++)
                 {
@@ -191,7 +199,7 @@ namespace SIProjectSet1.FilesService
                                 croppedPath = croppedPath + "/" + chars[j];
                             else
                                 croppedPath = croppedPath + "%5C" + chars[j];
-                            
+
                         }
                         break;
                     }
@@ -199,14 +207,14 @@ namespace SIProjectSet1.FilesService
 
                 if (valid)
                 {
-                   
+
                     //var obj = { path: image, name: nameOfFile[0], extension: nameOfFile[1], cropped: croppedPath, previewPath: previewPath };
 
                     //////////
                     ///
 
                     var returnFile = new FileViewModel();
-                    returnFile.Name = chars[chars.Length-1];
+                    returnFile.Name = chars[chars.Length - 1];
                     returnFile.Path = f;
                     returnFile.CroppedPath = croppedPath;
                     returnFile.PreviewPath = previewPath;
@@ -220,6 +228,30 @@ namespace SIProjectSet1.FilesService
             return fileModels;
         }
 
+
+        public async Task<String> GetPathForUser(String MacAddress)
+        {
+            var userPath = await _context.UserPaths.Where(o => o.MacAddress == MacAddress).SingleOrDefaultAsync();
+            if (userPath == null) return null;
+            return userPath.Path;
+                
+        }
+
+        public async Task<String> SetPathForUser(String MacAddress, String path)
+        {
+            var userPath = await _context.UserPaths.Where(o => o.MacAddress == MacAddress).SingleOrDefaultAsync();
+            if(userPath == null)
+            {
+                userPath = new Entities.UserPath();
+                userPath.MacAddress = MacAddress;
+                await _context.UserPaths.AddAsync(userPath);
+            }
+            userPath.Path = path;
+            await _context.SaveChangesAsync();
+
+            return userPath.Path;
+
+        }
 
     }
 }

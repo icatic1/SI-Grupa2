@@ -24,6 +24,7 @@ const FileList = () => {
     const [crumbs, setCrumbs] = useState([]);
     const [lastCrumb, setLastCrumb] = useState({});
     const [terminalId, setTerminalId] = useState();
+    const [testImage, setTestImage] = useState();
 
     useEffect(() => {
 
@@ -40,8 +41,7 @@ const FileList = () => {
             if (state == null)
                 state = "/" + mac;
 
-
-            const response1 = await fetch('/api/FileUpload/GetFilesByPathSortedNew' + state,
+            const response1 = await fetch('/api/FileUpload/GetFilesByPathSortedNew' + state + '?MacAddress=' + mac,
                 {
                     method: 'GET',
                     headers: { 'Content-Type': 'application/json' },
@@ -51,8 +51,10 @@ const FileList = () => {
 
             var data1 = await response1.json();
 
+            console.log("data1: " + JSON.stringify(data1));
             await setFilesAndFolders(data1);
 
+            
 
             var crumbsHelper = await state.substr(1).split('%5C');
 
@@ -83,12 +85,11 @@ const FileList = () => {
             });
 
             var data2 = await response2.json();
-
+            console.log("data2: " + data2);
             setTerminalId(data2.terminalID)
 
             await setCrumbs(crumbsHelperArray);
             await setLastCrumb(crumbsHelperArray[crumbsHelperArray.length - 1]);
-
         } catch (e) {
             console.log(e)
         }
@@ -96,10 +97,19 @@ const FileList = () => {
 
     function hideSpinner() {
         document.getElementById('spinner').style.display = 'none';
+
     }
 
     function showSpinner() {
         document.getElementById('spinner').style.display = 'block';
+    }
+
+    async function getStaticFile(file) {
+        file = file.replaceAll('%5C', '\\');
+        
+        setTestImage("/api/FileUpload/GetStaticContent?MacAddress=" + mac + "&path=" + file);
+        
+        return "haha";
     }
 
     const handleOnSelect = (row, isSelect) => {
@@ -128,7 +138,7 @@ const FileList = () => {
             return;
         var formBody = { files: selectedFiles }
 
-        const response = await fetch('/api/FileUpload/DownloadFiles',
+        const response = await fetch('/api/FileUpload/DownloadFiles' + '?MacAddress=' + mac,
             {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -212,6 +222,7 @@ const FileList = () => {
                 setShow(true);
                 console.log(row);
                 setFile(row);
+                getStaticFile(row.croppedPath)
             }
 
         }
@@ -302,10 +313,12 @@ const FileList = () => {
                 <Modal.Body>
                     {file.type === "png" || file.type === "jpg" || file.type == "PNG" ?
                         <div class="d-flex justify-content-center py-4">
-                            <img src={file.previewPath} alt="Random" class="img-responsive" />
+                            <img src={ testImage } alt="Random picture" class="img-responsive" />
+
                         </div> :
                         <div class="d-flex justify-content-center py-4">
-                            <ReactPlayer controls url={file.previewPath} />
+                                <ReactPlayer controls url={ testImage } />
+
                         </div>
                     }
                 </Modal.Body>

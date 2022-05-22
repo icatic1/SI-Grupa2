@@ -22,6 +22,9 @@ namespace SIProjectSet1.Infrastructure
 
         public DbSet<SecurityQuestion> SecurityQuestions { get; set; }
 
+
+        public DbSet<UserPath> UserPaths { get; set; }
+
         public virtual DbSet<JsonConfiguration> JsonConfigurations { get; set; }
         public virtual DbSet<Licence> Licences { get; set; }
         public virtual DbSet<Device> Devices { get; set; }

@@ -30,8 +30,9 @@ namespace SIProjectSet1.Controllers
         private static byte[]? imageBase64ByteArray;
         private static Queue<byte[]> queue = new Queue<byte[]>();
         private static Dictionary<String, Queue<byte[]>> dictionary = new Dictionary<String, Queue<byte[]>>();
-        private static Dictionary<String, bool> streaming = new Dictionary<String, bool>();
+        private static Dictionary<String, Dictionary<int,bool>> streaming = new Dictionary<String, Dictionary<int, bool>>();
         static Dictionary<string, bool> fileSync = new Dictionary<string, bool>();
+        private static Dictionary<String, String> userPathMap = new Dictionary<string, string>();
 
         public FileUploadController(ILogger<FileUploadController> logger, IFilesService filesService)
         {
@@ -90,8 +91,10 @@ namespace SIProjectSet1.Controllers
                     var fileName = contentDisposition.Name.Value;
                     //var MacAddress = contentDisposition.Name.Value;
                     //var saveToPath = Path.Combine(Path.GetTempPath(), fileName);
-                    Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent", fileName));
-                    var saveToPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent", fileName, contentDisposition.FileName.Value);
+                    var a = fileName.Split('\\')[0];
+                    var userPath = await _filesService.GetPathForUser(a);
+                    Directory.CreateDirectory(Path.Combine(Path.Combine(userPath), fileName));
+                    var saveToPath = Path.Combine(Path.Combine(userPath), fileName, contentDisposition.FileName.Value);
 
                     using (var targetStream = System.IO.File.Create(saveToPath))
                     {
@@ -279,9 +282,10 @@ namespace SIProjectSet1.Controllers
         [Route("UploadLargeFile/{MacAddress}")]
         public async Task<IActionResult> ReadLargeFileByMac(String MacAddress)
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent", MacAddress);
+            var userPath = await _filesService.GetPathForUser(MacAddress);
+            string path = Path.Combine(Path.Combine(userPath), MacAddress);
             Directory.CreateDirectory(path);
-            string[] entries = Directory.GetFileSystemEntries(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent", MacAddress), "*", SearchOption.AllDirectories);
+            string[] entries = Directory.GetFileSystemEntries(Path.Combine(Path.Combine(userPath), MacAddress), "*", SearchOption.AllDirectories);
             //var files = Directory.GetFiles(Path.GetDirectoryName(Path.GetFullPath(FileName)));
             return Ok(entries);
         }
@@ -304,13 +308,13 @@ namespace SIProjectSet1.Controllers
         
 
         [HttpGet]
-        [Route("ChangeStreamState/{MACAddress}/{state}")]
-        public async Task<IActionResult> ChangeStreamState(string MACAddress, int state)
+        [Route("ChangeStreamState/{MACAddress}/{state}/{camno}")]
+        public async Task<IActionResult> ChangeStreamState(string MACAddress, int state, int camno)
         {
             if (state != 0 && state != 1) return BadRequest("State not valid!");
 
             // change the stream state
-            streaming[MACAddress] = (state == 1);
+            streaming[MACAddress][camno] = state == 1;
 
             // empty the queue when ending the stream (if possible)
             if (state == 0)
@@ -323,11 +327,28 @@ namespace SIProjectSet1.Controllers
         [Route("GetStreamState/{MACAddress}")]
         public async Task<IActionResult> GetStreamState(string MACAddress)
         {
-            bool state;
-            if(!streaming.TryGetValue(MACAddress, out state)) {
-                streaming[MACAddress] = false;
+            Dictionary<int,bool> streamingState;
+            if(!streaming.TryGetValue(MACAddress, out streamingState)) {
+                streaming[MACAddress] = new Dictionary<int, bool>();
+                streaming[MACAddress].Add(0, false);
+                streaming[MACAddress].Add(1, false);
+                streaming[MACAddress].Add(2, false);
             }
-            return Ok(state);
+
+            bool fileState;
+            if (!fileSync.TryGetValue(MACAddress, out fileState))
+            {
+                fileSync[MACAddress] = false;
+            }
+            var returns = "{ " +
+                "\"streaming\" : [" +
+                "{ \"camno\" : 1, \"state\" : " + streaming[MACAddress][0].ToString().ToLower() + "}, " +
+                "{ \"camno\" : 2, \"state\" : " + streaming[MACAddress][1].ToString().ToLower() + "}, " +
+                "{ \"camno\" : 3, \"state\" : " + streaming[MACAddress][2].ToString().ToLower() + "}" +
+                "], " +
+                "\"filestate\" : " + fileSync[MACAddress].ToString().ToLower() +
+                "}";
+            return Ok(returns);
         }
 
         [HttpGet]
@@ -367,10 +388,10 @@ namespace SIProjectSet1.Controllers
 
         [HttpGet]
         [Route("GetFilesByPathSortedNew/{path}")]
-        public async Task<IActionResult> GetFilesByPathSortedNew(String path)
+        public async Task<IActionResult> GetFilesByPathSortedNew(String path, String MacAddress)
         {
 
-            var a = await _filesService.GetPathsSortedNew(path);
+            var a = await _filesService.GetPathsSortedNew(path, MacAddress);
             if (a != null) return Ok(a);
             return BadRequest(a);
         }
@@ -432,19 +453,21 @@ namespace SIProjectSet1.Controllers
         [HttpPost]
         [Route("DownloadFiles")]
         // Download file from the server
-        public async Task<IActionResult> DownloadFiles([FromBody] JsonElement files)
+        public async Task<IActionResult> DownloadFiles([FromQuery] String MacAddress, [FromBody] JsonElement files)
         {
 
-
+            Console.WriteLine(files);
 
             List<String> filesList = new List<String>();
             files.GetProperty("files").EnumerateArray().ToList().ForEach(f => filesList.Add(f.ToString()));
 
+            var userPath = await _filesService.GetPathForUser(MacAddress);
             var fajlovi = new List<String>();
             var folderi = new List<String>();
             foreach (var file in filesList)
             {
-                var temp = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent", file);
+
+                var temp = Path.Combine(Path.Combine(userPath), file);
                 if (Directory.Exists(temp))
                 {
                     folderi.Add(temp);
@@ -482,7 +505,7 @@ namespace SIProjectSet1.Controllers
 
             foreach (var file in fajlovi)
             {
-                var newFile = file.Replace(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent"), "");
+                var newFile = file.Replace(Path.Combine(userPath), "");
                 newFile = Regex.Replace(newFile, @"^\\[a-zA-Z0-9]{1,}\\[a-zA-Z0-9]{1,}\\", "");
                 var fileReturn = archive.CreateEntry(newFile, CompressionLevel.Optimal);
                  using (var writer = fileReturn.Open())
@@ -512,6 +535,75 @@ namespace SIProjectSet1.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+
+        [HttpGet]
+        [Route("GetStaticContent")]
+        public async Task<IActionResult> GetStaticContent(String path, String MacAddress)
+        {
+            var a = path.Split("\\");
+            var userPath = await _filesService.GetPathForUser(MacAddress);
+            if (userPath == null) return BadRequest();
+            var sadas = Path.Combine(Path.Combine(userPath), Path.Combine(a));
+            Console.WriteLine(sadas);
+            try
+            {
+                var memory = new MemoryStream();
+                using (var stream = new FileStream(sadas, FileMode.Open))
+                {
+                    await stream.CopyToAsync(memory);
+                }
+                memory.Position = 0;
+                //Response.Headers.Add("Content-Disposition", "inline");
+                //return new FileStreamResult(memory, GetContentType(path));
+                return File(memory, GetContentType(path), Path.GetFileName(path));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("There is not a file present for the provided device. ");
+            }
+
+        }
+
+        // Get content type
+        private string GetContentType(string path)
+        {
+            var ext = Path.GetExtension(path).ToLowerInvariant();
+            return MimeTypes.GetMimeType(ext);
+        }
+
+
+
+
+        [HttpGet]
+        [Route("GetPathForUser/{MACAddress}")]
+        public async Task<IActionResult> GetPathForUser(String MACAddress)
+        {
+            var path = await _filesService.GetPathForUser(MACAddress);
+            return path != null ? Ok(path) : NotFound();
+
+        }
+
+        [HttpPost]
+        [Route("SetPathForUser/{MACAddress}")]
+        public async Task<IActionResult> SetPathForUser(String MACAddress, [FromBody] String path)
+        {
+            try
+            {
+                var userPath = await _filesService.SetPathForUser(MACAddress, path);
+                if (userPath == null) throw new Exception();
+                return Ok(path);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+
+
+
     }
+
 
 }

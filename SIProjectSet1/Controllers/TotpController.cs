@@ -69,7 +69,7 @@ namespace SIProjectSet1.Controllers
         public IActionResult GetQr()
         {
             var qrCode = _totpQrGenerator.Generate(
-                "TestCo",
+                "SI Set 1",
                 _userIdentity.Id.ToString(),
                 _userIdentity.AccountSecretKey
             );

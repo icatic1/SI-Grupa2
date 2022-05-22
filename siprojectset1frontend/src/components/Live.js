@@ -42,7 +42,7 @@ const Live = () => {
     }
 
     async function startLive() {
-        var res = await fetch('/api/FileUpload/ChangeStreamState/' + mac + '/1')
+        var res = await fetch('/api/FileUpload/ChangeStreamState/' + mac + '/1/' + num)
 
         if (res.ok) {
             console.log("Start live")
@@ -56,7 +56,7 @@ const Live = () => {
 
     async function endLive() {
 
-        await fetch('/api/FileUpload/ChangeStreamState/' + mac + '/0')
+        await fetch('/api/FileUpload/ChangeStreamState/' + mac + '/0/' + num)
         setImgSrc('https://i.postimg.cc/fW8xkr3p/start-stream.png')
         console.log("End live")
 
