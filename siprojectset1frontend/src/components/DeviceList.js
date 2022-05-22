@@ -84,13 +84,13 @@ const DeviceList = () => {
 
                     <div style={{ textAlign: "center" }}>
                         <span style={{ margin: "5px" }}>
-                            <Button variant="primary" className="btn-bg" onClick={() => { handleClose(); showCamera(1) }}  >Camera 1</Button>
+                            <Button variant="primary" className="btn-bg" onClick={() => { handleClose(); showCamera(0) }}  >Camera 1</Button>
                         </span>
                         <span style={{ margin: "5px" }}>
-                            <Button variant="primary" className="btn-bg" onClick={() => { handleClose(); showCamera(2) }} >Camera 2</Button>
+                            <Button variant="primary" className="btn-bg" onClick={() => { handleClose(); showCamera(1) }} >Camera 2</Button>
                         </span>
                         <span style={{ margin: "5px" }}>
-                            <Button variant="primary" className="btn-bg" onClick={() => { handleClose(); showCamera(3) }} >Camera 3</Button>
+                            <Button variant="primary" className="btn-bg" onClick={() => { handleClose(); showCamera(2) }} >Camera 3</Button>
                         </span>
                     </div>
                 </Modal.Body>

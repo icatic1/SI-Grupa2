@@ -64,13 +64,7 @@ const GeneralConfiguration = ({data, setData, saveConfiguration}) => {
                 setData({...data, OutputValidity: value})
                 break;
             case "mediaPath":
-                setData({...data, MediaPath: value})
-                break;
-            case "exportPath":
-                setData({...data, JSONExportLocation: value})
-                break;
-            case "importPath":
-                setData({ ...data, JSONImportLocation: value })
+                setData({...data, MediaFolderPath: value})
                 break;
             case "serverPort":
                 setData({...data, ServerPort: value})
@@ -404,21 +398,10 @@ const GeneralConfiguration = ({data, setData, saveConfiguration}) => {
                         <div className="mb-3 row">
                             <label htmlFor="mediaPath" className="col-sm-4 col-form-label">Media path</label>
                             <div className="col-sm-7">
-                                <input type="text" className="form-control" id="mediaPath" value={data.MediaPath} onChange={(e) => { changeValues(e.target.value, "mediaPath") }} />
+                                <input type="text" className="form-control" id="mediaPath" value={data.MediaFolderPath} onChange={(e) => { changeValues(e.target.value, "mediaPath") }} />
                             </div>
                         </div>
-                        <div className="mb-3 row">
-                            <label htmlFor="configPath" className="col-sm-4 col-form-label">Configuration import path</label>
-                            <div className="col-sm-7">
-                                <input type="text" className="form-control" id="importPath" value={data.JSONImportLocation} onChange={(e) => { changeValues(e.target.value, "importPath") }} />
-                            </div>
-                        </div>
-                        <div className="mb-3 row">
-                            <label htmlFor="configPath" className="col-sm-4 col-form-label">Configuration export path</label>
-                            <div className="col-sm-7">
-                                <input type="text" className="form-control" id="exportPath" value={data.JSONExportLocation} onChange={(e) => { changeValues(e.target.value, "exportPath") }} />
-                            </div>
-                        </div>
+                       
                         <div className="mb-3 row">
                             <label htmlFor="JSONSyncPeriod" className="col-sm-4 col-form-label">Synchronize configuration</label>
                             <Form.Check inline label="after every period of" name="json-every-period" type={'radio'} id={"JSONPeriod"} onChange={() => { changeSyncMode('JSON', 'period') }} checked={data.JSONSyncPeriod != 0} style={{ marginLeft: "10px" }}/>
