@@ -8,11 +8,17 @@ import DeviceCard from "./DeviceCard";
 const DeviceList = () => {
     const [devices, setDevices] = useState(null)
     const [show, setShow] = useState(false);
+    const [showActivation, setShowActivation] = useState(false);
     const [chosenDevice, setChosenDevice] = useState()
+    const [activationKey, setActivationKey] = useState()
 
     const handleClose = () => { setShow(false); }
+    const handleCloseActivation = () => { setShowActivation(false); }
     const handleShow = () => {
         setShow(true);
+    }
+    const handleShowActivation = () => {
+        setShowActivation(true);
     }
 
     const navigate = useNavigate();
@@ -33,6 +39,7 @@ const DeviceList = () => {
 
             }
         };
+
 
         fetchDevices();
     }, []);
@@ -58,6 +65,21 @@ const DeviceList = () => {
         handleShow()
     }
 
+    async function activateDevice(device) {
+        try {
+
+            const response = await fetch("api/licence/GenerateActivationKey/" + device.macAddress)
+
+            const data = await response.json();
+            setActivationKey(data);
+            handleShowActivation();
+
+        } catch (e) {
+            console.log(e)
+
+        }
+    }
+
     function showCamera(num) {
         navigate("/Live/" + chosenDevice.terminalID + "/" + chosenDevice.macAddress + "/" + num)
     }
@@ -70,7 +92,7 @@ const DeviceList = () => {
                 <Col>
                     <Container className="my-2">
                         {devices?.map((device) => (
-                            <DeviceCard key={device.terminalID} device={device} editConfiguration={editConfiguration} viewCaptures={viewCaptures} cameraOptionsPopup={cameraOptionsPopup} />
+                            <DeviceCard key={device.terminalID} device={device} editConfiguration={editConfiguration} viewCaptures={viewCaptures} cameraOptionsPopup={cameraOptionsPopup} activateDevice={activateDevice} />
                         ))}
                     </Container>
                 </Col>
@@ -91,6 +113,23 @@ const DeviceList = () => {
                         </span>
                         <span style={{ margin: "5px" }}>
                             <Button variant="primary" className="btn-bg" onClick={() => { handleClose(); showCamera(3) }} >Camera 3</Button>
+                        </span>
+                    </div>
+                </Modal.Body>
+                <Modal.Footer>
+                </Modal.Footer>
+            </Modal>
+            <Modal show={showActivation} onHide={handleCloseActivation}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Enter this key into your client app</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+
+
+                    <div style={{ textAlign: "center" }}>
+                        <Modal.Title>Your activation key is: {activationKey}</Modal.Title>
+                        <span style={{ margin: "5px" }}>
+                            <Button variant="primary" className="btn-bg" onClick={() => { navigator.clipboard.writeText(activationKey) }} >Copy to clipboard</Button>
                         </span>
                     </div>
                 </Modal.Body>

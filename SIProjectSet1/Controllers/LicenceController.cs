@@ -5,6 +5,7 @@ using SIProjectSet1.Infrastructure;
 using SIProjectSet1.Entities;
 using System.Collections.Generic;
 using SIProjectSet1.LicenceService;
+using SIProjectSet1.ViewModels;
 
 namespace SnapshotServer.Controllers
 {
@@ -15,11 +16,14 @@ namespace SnapshotServer.Controllers
     {
         private readonly SIProjectSet1Context _context;
         private readonly ILicenceService _licenceService;
+        private readonly IConfiguration _configuration;
+        private static Dictionary<String, String> activationKeys = new Dictionary<String, String>();
 
-        public LicenceController(SIProjectSet1Context context, ILicenceService licenceService)
+        public LicenceController(SIProjectSet1Context context, ILicenceService licenceService, IConfiguration configuration)
         {
             _context = context;
             _licenceService = licenceService;
+            _configuration = configuration;
         }
 
         [HttpGet]
@@ -56,6 +60,7 @@ namespace SnapshotServer.Controllers
         }
 
         [HttpPost]
+
         [Route("AddDevice")]
         public async Task<IActionResult> AddDevice(string MacAddress, string TerminalID)
         {
@@ -78,7 +83,7 @@ namespace SnapshotServer.Controllers
             var licence = await _licenceService.CheckLicence(MacAddress);
             if (!(licence == null) && licence.Licenced)
                 return Ok(licence.Licenced);
-            return BadRequest(licence.Licenced);
+            return BadRequest(licence);
         }
 
         // GET: GetAllLicences/ABCDEFGHIJKL
@@ -91,10 +96,58 @@ namespace SnapshotServer.Controllers
 
         // GET: GetAllLicences/ABCDEFGHIJKL
         [HttpGet("GetAllDevices")]
-        public async Task<ActionResult<List<Device>>> GetAllDevices()
+        public async Task<ActionResult<List<DeviceViewModel>>> GetAllDevices()
         {
             var device = await _licenceService.GetAllDevices();
-            return device == null ? new List<Device>() : device;
+            return device == null ? new List<DeviceViewModel>() : device;
         }
+
+        #region Activation Tokens
+        [HttpGet("ActivateDevice/{MACAddress}")]
+        public async Task<IActionResult> ActivateDevice(String MACAddress, String activationKey)
+        {
+            string activation;
+            if (!activationKeys.TryGetValue(MACAddress, out activation))
+            {
+                return BadRequest("The provided MAC Address has no activation keys associated with it.");
+            }
+
+            if (activation == activationKey)
+            {
+                var response = await _licenceService.GenerateToken(MACAddress, _configuration);
+                return response != null ? Ok(response) : BadRequest("Error occurred!");
+            }
+            else return BadRequest("Invalid activation key!");
+
+        }
+
+        [HttpGet("GenerateActivationKey/{MACAddress}")]
+        public async Task<IActionResult> GenerateActivationKey(String MACAddress)
+        {
+            Random rand = new Random();
+
+            var actiCode = await Task.Run(() =>
+            {
+                var temp = "";
+                for (int i = 0; i < 12; i++)
+                {
+                    temp += rand.Next(10);
+                }
+                return temp;
+            });
+            activationKeys[MACAddress] = actiCode;
+
+            return Ok(actiCode);
+        }
+
+        [HttpGet("GetActivationStatus/{MACAddress}")]
+        public async Task<IActionResult> GetActivationStatus(String MACAddress)
+        {
+            var response = await _licenceService.GetDeviceToken(MACAddress);
+            return Ok(response != null);
+        }
+
+        #endregion
+
     }
 }

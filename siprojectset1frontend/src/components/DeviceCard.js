@@ -1,7 +1,7 @@
 import React from 'react';
-import { Container,  Row, Col,  Dropdown, DropdownButton, Button } from "react-bootstrap";
+import { Container, Row, Col, Dropdown, DropdownButton, Button } from "react-bootstrap";
 
-const DeviceCard = ({ device, editConfiguration, viewCaptures, cameraOptionsPopup }) => {
+const DeviceCard = ({ device, editConfiguration, viewCaptures, cameraOptionsPopup, activateDevice }) => {
 
     return (
         <Container fluid="sm" className="block-example border-bottom border-info" >
@@ -20,17 +20,25 @@ const DeviceCard = ({ device, editConfiguration, viewCaptures, cameraOptionsPopu
 
 
                 <Container style={{ marginBottom: "5px" }}>
-                    <DropdownButton title="Actions" className="float-right pl-0">
-                        <Dropdown.Item onClick={() => { editConfiguration(device) }}> Edit configuration </Dropdown.Item>
-                        <Dropdown.Item onClick={() => { viewCaptures(device) }}> View captures </Dropdown.Item>
-                        <Dropdown.Item onClick={() => { cameraOptionsPopup(device) }}> View cameras </Dropdown.Item>
-                    </DropdownButton>
+
+                    {device.isActivated ? (
+                        <DropdownButton title="Actions" className="float-right pl-0">
+                            <Dropdown.Item onClick={() => { editConfiguration(device) }}> Edit configuration </Dropdown.Item>
+                            <Dropdown.Item onClick={() => { viewCaptures(device) }}> View captures </Dropdown.Item>
+                            <Dropdown.Item onClick={() => { cameraOptionsPopup(device) }}> View cameras </Dropdown.Item>
+                        </DropdownButton>
+                    ) : (
+                        <DropdownButton title="Actions" className="float-right pl-0">
+                            <Dropdown.Item onClick={() => { activateDevice(device) }}> Activate Device </Dropdown.Item>
+                        </DropdownButton>
+                    )}
+
                 </Container>
 
 
             </Row>
 
-        </Container>
+        </Container >
 
     );
 }
