@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SIProjectSet1.FilesService;
 using SIProjectSet1.ViewModels;
 using System.IO;
@@ -559,9 +560,15 @@ namespace SIProjectSet1.Controllers
         {
             try
             {
-                var userPath = await _filesService.SetPathForUser(MACAddress, path);
-                if (userPath == null) throw new Exception();
-                return Ok(path);
+                if (path != null)
+                {
+                    dynamic result = JObject.Parse(path.ToString() ?? "");
+                    string newPath = (string)result.path;
+                    var userPath = await _filesService.SetPathForUser(MACAddress, newPath);
+                    if (userPath == null) throw new Exception();
+                    return Ok(path);
+                }
+                return BadRequest();
             }
             catch (Exception ex)
             {
