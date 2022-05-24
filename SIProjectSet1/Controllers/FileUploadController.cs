@@ -556,7 +556,7 @@ namespace SIProjectSet1.Controllers
 
         [HttpPost]
         [Route("SetPathForUser/{MACAddress}")]
-        public async Task<IActionResult> SetPathForUser(String MACAddress, [FromBody] String path)
+        public async Task<IActionResult> SetPathForUser(String MACAddress, [FromBody] object path)
         {
             try
             {
