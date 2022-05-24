@@ -400,9 +400,9 @@ namespace SIProjectSet1.Controllers
 
             var returns = "{ " +
                 "\"streaming\" : [" +
-                "{ \"camno\" : 1, \"state\" : " + streaming[MACAddress][0].ToString().ToLower() + "\"streamingActive\" : " + streamingActive[MACAddress][0].ToString().ToLower() + "}, " +
-                "{ \"camno\" : 2, \"state\" : " + streaming[MACAddress][1].ToString().ToLower() + "\"streamingActive\" : " + streamingActive[MACAddress][1].ToString().ToLower() + "}, " +
-                "{ \"camno\" : 3, \"state\" : " + streaming[MACAddress][2].ToString().ToLower() + "\"streamingActive\" : " + streamingActive[MACAddress][2].ToString().ToLower() + "}" +
+                "{ \"camno\" : 1, \"state\" : " + streaming[MACAddress][0].ToString().ToLower() + ", \"streamingActive\" : " + streamingActive[MACAddress][0].ToString().ToLower() + "}, " +
+                "{ \"camno\" : 2, \"state\" : " + streaming[MACAddress][1].ToString().ToLower() + ", \"streamingActive\" : " + streamingActive[MACAddress][1].ToString().ToLower() + "}, " +
+                "{ \"camno\" : 3, \"state\" : " + streaming[MACAddress][2].ToString().ToLower() + ", \"streamingActive\" : " + streamingActive[MACAddress][2].ToString().ToLower() + "}" +
                 "], " +
                 "\"filestate\" : " + fileSync[MACAddress].ToString().ToLower() + ", "
                 +"\"fileSyncActive\" : " + fileSyncActive[MACAddress].ToString().ToLower() +
