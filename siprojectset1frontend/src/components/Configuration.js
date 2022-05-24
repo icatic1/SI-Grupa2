@@ -35,6 +35,7 @@ const Configuration = () => {
 
                     data = {
                         TriggerFilePath: "",
+                        FaceDetectionTrigger: false,
                         Regex: "",
                         OutputFolderPath: "",
                         OutputValidity: 1,

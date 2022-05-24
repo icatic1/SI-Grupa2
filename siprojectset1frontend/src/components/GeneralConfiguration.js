@@ -84,7 +84,9 @@ const GeneralConfiguration = ({data, setData, saveConfiguration}) => {
             case "MediaTime":
                 setData({ ...data, MediaTime: value + ":00" })
                 break;
-            
+            case "faceDetectionTrigger":
+                setData({ ...data, FaceDetectionTrigger: !data.FaceDetectionTrigger })
+            break;
 
         }
     }
@@ -354,6 +356,13 @@ const GeneralConfiguration = ({data, setData, saveConfiguration}) => {
                                 <input className="form-control" type="text" id="triggerPath" value={data.TriggerFilePath} onBlur={() => validatePaths(1)} onChange={(e) => { changeValues(e.target.value, "triggerFilePath") }} />
                             </div>
                         </div>
+                        <div className="mb-3 row d-flex align-items-center">
+                            <label className="col-sm-4 col-form-label"></label>
+                            <div className="col-sm-1">
+                                <input type="checkbox" id="faceDetection" checked={data.FaceDetectionTrigger} value={data.FaceDetectionTrigger} onChange={(e) => { changeValues(e.target.value, "faceDetectionTrigger") }} />
+                            </div>
+                            <label htmlFor="faceDetectionLabel" className="col-sm-5 col-form-label">Face detection</label>
+                        </div>
                         <div className="mb-3 row">
                             <label htmlFor="triggerRegex" className="col-sm-4 col-form-label">Trigger regex</label>
                             <div className="col-sm-7">
@@ -436,7 +445,7 @@ const GeneralConfiguration = ({data, setData, saveConfiguration}) => {
                                             <Dropdown.Item href="#" value="hours" onClick={() => { changeUnit("hours", "JSONSyncPeriod") }}>hours</Dropdown.Item>
                                             <Dropdown.Item href="#" value="days" onClick={() => { changeUnit("days", "JSONSyncPeriod") }}>days</Dropdown.Item>
                                         </DropdownButton>
-                                <span style={{ marginLeft: "40px" }}><TimePicker id="JSONTime" locale="bs" value={data.JSONTime} disabled={data.JSONSyncPeriod != 0} onChange={(value) => { changeValues(value, "JSONTime")}}/></span>
+                                <span style={{ marginLeft: "40px" }}><TimePicker id="JSONTime" locale="bs" value={data.JSONTime} disabled={data.JSONSyncPeriod != 0} onChange={(value) => { changeValues(value, "JSONTime") }} clearIcon={null}/></span>
                                     </div>
                         </div>
                             
@@ -445,7 +454,7 @@ const GeneralConfiguration = ({data, setData, saveConfiguration}) => {
                         <div className="mb-3 row">
                             <label htmlFor="MediaSyncPeriod" className="col-sm-4 col-form-label">Synchronize media </label>
                             <Form.Check inline label="after every period of" name="media-every-period" id={"MediaPeriod"} type={'radio'} onChange={() => { changeSyncMode('media', 'period') }} checked={data.MediaSyncPeriod != 0} style={{marginLeft:"10px"}}/>
-                            <Form.Check inline label="every day at" name="media-every-day" id={"MediaTime"} type={'radio'} onChange={() => { changeSyncMode('media', 'time') }} checked={data.MediaSyncPeriod == 0} style={{marginLeft:"15%"}}/>
+                            <Form.Check inline label="every day at" name="media-every-day" id={"MediaTime"} type={'radio'} onChange={() => { changeSyncMode('media', 'time') }} checked={data.MediaSyncPeriod == 0} style={{marginLeft:"15%"}} />
                             
                         </div>
                         <div className="mb-3 row" >
@@ -459,7 +468,7 @@ const GeneralConfiguration = ({data, setData, saveConfiguration}) => {
                                     <Dropdown.Item href="#" value="hours" onClick={() => { changeUnit("hours", "MediaSyncPeriod") }}>hours</Dropdown.Item>
                                     <Dropdown.Item href="#" value="days" onClick={() => { changeUnit("days", "MediaSyncPeriod") }}>days</Dropdown.Item>
                                 </DropdownButton>
-                                <span style={{ marginLeft: "40px" }}> <TimePicker id="MediaSyncTime" locale="bs"  value={data.MediaTime} disabled={data.MediaSyncPeriod != 0} onChange={(value) => {changeValues(value, "MediaTime") }}/></span>
+                                <span style={{ marginLeft: "40px" }}> <TimePicker id="MediaSyncTime" locale="bs" value={data.MediaTime} disabled={data.MediaSyncPeriod != 0} onChange={(value) => { changeValues(value, "MediaTime") }} clearIcon={null}/></span>
                             </div>
                             
                             
