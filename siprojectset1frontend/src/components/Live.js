@@ -85,7 +85,7 @@ const Live = () => {
 
                 <div style={{ background: "white", width: "35%", marginBottom: "0", borderTopLeftRadius: "30px", borderTopRightRadius: "30px", padding: "5px" }}>
                     <h1 style={{ color: "#035296", paddingLeft: "40px", marginBottom: "0", fontSize: "150%" }}>{id}</h1>
-                    <h2 style={{ color: "#035296", paddingLeft: "50px", marginBottom: "0", fontSize: "130%" }}>Camera {num}</h2>
+                <h2 style={{ color: "#035296", paddingLeft: "50px", marginBottom: "0", fontSize: "130%" }}>Camera {(parseInt(num) + 1).toString()}</h2>
                 </div>
                 < img src={imgSrc} style={{ width: "100%", height: "100%", margin: "0", maxHeight: "500px", maxWidth: "960px", borderTopRightRadius: "10px", borderBottomLeftRadius: "10px", borderBottomRightRadius: "10px" }} />
                 <ButtonGroup style={{ float: 'right', marginRight:"1%", marginTop: '10px' }}>
