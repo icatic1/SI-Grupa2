@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Container, Modal, CloseButton, ButtonGroup, Button, Row, Col, Spinner } from "react-bootstrap";
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import BootstrapTable from 'react-bootstrap-table-next';
@@ -14,7 +14,7 @@ const FileList = () => {
     const navigate = useNavigate();
     const { mac } = useParams();
     const fileDownload = require('js-file-download');
-
+    const interval = useRef()
 
 
     const [filesAndFolders, setFilesAndFolders] = useState([]);
@@ -25,6 +25,7 @@ const FileList = () => {
     const [lastCrumb, setLastCrumb] = useState({});
     const [terminalId, setTerminalId] = useState();
     const [testImage, setTestImage] = useState();
+    const [syncing, setSyncing] = useState(false)
 
     useEffect(() => {
 
@@ -48,48 +49,51 @@ const FileList = () => {
                 });
 
 
+            if (response1.Ok) {
+                var data1 = await response1.json();
 
-            var data1 = await response1.json();
-
-            console.log("data1: " + JSON.stringify(data1));
-            await setFilesAndFolders(data1);
-
-            
-
-            var crumbsHelper = await state.substr(1).split('%5C');
+                console.log("data1: " + JSON.stringify(data1));
+                await setFilesAndFolders(data1);
 
 
 
-            var pathHelper = "";
-            var crumbsHelperArray = [];
+                var crumbsHelper = await state.substr(1).split('%5C');
 
-            for (let i = 0; i < crumbsHelper.length; i++) {
-                if (i == 0)
-                    pathHelper = "/" + crumbsHelper[i];
-                else
-                    pathHelper = pathHelper + '%5C' + crumbsHelper[i];
-                crumbsHelperArray.push({
-                    'name': crumbsHelper[i],
-                    'path': pathHelper
-                })
+
+
+                var pathHelper = "";
+                var crumbsHelperArray = [];
+
+                for (let i = 0; i < crumbsHelper.length; i++) {
+                    if (i == 0)
+                        pathHelper = "/" + crumbsHelper[i];
+                    else
+                        pathHelper = pathHelper + '%5C' + crumbsHelper[i];
+                    crumbsHelperArray.push({
+                        'name': crumbsHelper[i],
+                        'path': pathHelper
+                    })
+                }
+
+                var encodedKey = encodeURIComponent("MacAddress");
+                var encodedValue = encodeURIComponent(mac);
+
+                const response2 = await fetch('/api/Licence/GetTerminalAndDebugLog?' + encodedKey + "=" + encodedValue, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                    },
+                });
+
+                var data2 = await response2.json();
+                console.log("data2: " + data2);
+                setTerminalId(data2.terminalID)
+
+                await setCrumbs(crumbsHelperArray);
+                await setLastCrumb(crumbsHelperArray[crumbsHelperArray.length - 1]);
+            } else {
+                setFilesAndFolders([])
             }
-
-            var encodedKey = encodeURIComponent("MacAddress");
-            var encodedValue = encodeURIComponent(mac);
-
-            const response2 = await fetch('/api/Licence/GetTerminalAndDebugLog?' + encodedKey + "=" + encodedValue, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-                },
-            });
-
-            var data2 = await response2.json();
-            console.log("data2: " + data2);
-            setTerminalId(data2.terminalID)
-
-            await setCrumbs(crumbsHelperArray);
-            await setLastCrumb(crumbsHelperArray[crumbsHelperArray.length - 1]);
         } catch (e) {
             console.log(e)
         }
@@ -166,18 +170,22 @@ const FileList = () => {
         });
         const data = await response;
 
-        console.log(data);
+        setSyncing(true)
+        showSpinner()
+        
+        interval.current = setInterval(async () => {
+            const response = await fetch('/api/FileUpload/GetFileSyncActive/' + mac)
+            const data = await response.json()
+            console.log(data)
+            if (!data) {
+                setSyncing(false)
+                fetch('/api/FileUpload/ChangeFileSyncState/' + mac + '/0')
+                fetchMain()
+                hideSpinner()
+                clearInterval(interval.current)
+            }
+        }, 1000)
 
-        sleep(500).then(async () => {
-            const response = await fetch('/api/FileUpload/ChangeFileSyncState/' + mac + '/0', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-            });
-            const data = await response;
-            console.log("uslo");
-        });
 
     }
 
@@ -198,8 +206,8 @@ const FileList = () => {
 
         return (
             <div style={mystyle}>
-                <img style={{ flex: '1', margin: 0 }} src={icon} width="32" height="32" />
-                <p style={{ flex: '10', margin: 0 }} >{cell}</p>
+                <img style={{ flex: '1', margin: 0 }} onMouseOver={{ cursor: "pointer" }} src={icon} width="32" height="32" />
+                <p style={{ flex: '10', margin: 0 }} onMouseOver={{cursor: "pointer"}}>{cell}</p>
             </div>
         )
     }
