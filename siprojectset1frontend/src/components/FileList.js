@@ -49,7 +49,7 @@ const FileList = () => {
                 });
 
 
-            if (response1.Ok) {
+            
                 var data1 = await response1.json();
 
                 console.log("data1: " + JSON.stringify(data1));
@@ -91,9 +91,7 @@ const FileList = () => {
 
                 await setCrumbs(crumbsHelperArray);
                 await setLastCrumb(crumbsHelperArray[crumbsHelperArray.length - 1]);
-            } else {
-                setFilesAndFolders([])
-            }
+          
         } catch (e) {
             console.log(e)
         }
