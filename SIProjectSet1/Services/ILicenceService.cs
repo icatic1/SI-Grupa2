@@ -22,6 +22,7 @@ namespace SIProjectSet1.LicenceService
         Task<List<Licence>> GetAllLicences();
         Task<List<DeviceViewModel>> GetAllDevices();
         Task<Device> GetDevice(String MacAddress);
+        Task<string> DeleteToken(string MacAddress);
         Task<bool> InitialAddDevice(String MacAddress, String Terminal);
         Task<string> GenerateToken(String MacAddress, IConfiguration configuration);
         Task<string> GetDeviceToken(String MacAddress);
@@ -149,6 +150,25 @@ namespace SIProjectSet1.LicenceService
                 if (deviceToken == null) return null;
                 return deviceToken.Token;
             } catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public async Task<string> DeleteToken(string MacAddress)
+        {
+            try
+            {
+                DeviceToken deviceToken = _context.DeviceTokens.FirstOrDefault(deviceToken => deviceToken.MacAddress == MacAddress);
+                while (deviceToken != null)
+                {
+                    _context.DeviceTokens.Remove(deviceToken);
+                    _context.SaveChanges();
+                    deviceToken = _context.DeviceTokens.FirstOrDefault(deviceToken => deviceToken.MacAddress == MacAddress);
+                }
+                return "OK";
+            }
+            catch (Exception ex)
             {
                 return null;
             }

@@ -121,6 +121,13 @@ namespace SnapshotServer.Controllers
 
         }
 
+        [HttpGet("DeactivateDevice/{MACAddress}")]
+        public async Task<IActionResult> DeactivateDevice(string MACAddress)
+        {
+            var response = await _licenceService.DeleteToken(MACAddress);
+            return response != null ? Ok(response) : BadRequest("Error occurred!");
+        }
+
         [HttpGet("GenerateActivationKey/{MACAddress}")]
         public async Task<IActionResult> GenerateActivationKey(String MACAddress)
         {
