@@ -158,6 +158,7 @@ const FileList = () => {
         return new Promise((resolve) => setTimeout(resolve, time));
     }
 
+
     const handleSync = async () => {
 
         const response = await fetch('/api/FileUpload/ChangeFileSyncState/' + mac + '/1', {
@@ -198,7 +199,7 @@ const FileList = () => {
         return (
             <div style={mystyle}>
                 <img style={{ flex: '1', margin: 0 }} onMouseOver={{ cursor: "pointer" }} src={icon} width="32" height="32" />
-                <p style={{ flex: '10', margin: 0 }} onMouseOver={{cursor: "pointer"}}>{cell}</p>
+                <p id={row.name} style={{ flex: '10', margin: 0, textDecoration: "underline" }} onMouseOver={{ cursor: "pointer" }}>{cell}</p>
             </div>
         )
     }
