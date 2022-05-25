@@ -14,7 +14,7 @@ const FileList = () => {
     const navigate = useNavigate();
     const { mac } = useParams();
     const fileDownload = require('js-file-download');
-    const interval = useRef()
+    
 
 
     const [filesAndFolders, setFilesAndFolders] = useState([]);
@@ -25,7 +25,7 @@ const FileList = () => {
     const [lastCrumb, setLastCrumb] = useState({});
     const [terminalId, setTerminalId] = useState();
     const [testImage, setTestImage] = useState();
-    const [syncing, setSyncing] = useState(false)
+    
 
     useEffect(() => {
 
@@ -168,20 +168,13 @@ const FileList = () => {
         });
         const data = await response;
 
-        setSyncing(true)
+        
         showSpinner()
         
-        interval.current = setInterval(async () => {
-            const response = await fetch('/api/FileUpload/GetFileSyncActive/' + mac)
-            const data = await response.json()
-            console.log(data)
-            if (!data) {
-                setSyncing(false)
-                fetch('/api/FileUpload/ChangeFileSyncState/' + mac + '/0')
-                fetchMain()
-                hideSpinner()
-                clearInterval(interval.current)
-            }
+        setTimeout(async () => {
+            await fetch('/api/FileUpload/ChangeFileSyncState/' + mac + '/0')
+            await fetchMain()
+            hideSpinner()
         }, 1000)
 
 

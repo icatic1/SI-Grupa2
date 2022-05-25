@@ -134,7 +134,7 @@ namespace SIProjectSet1.FilesService
 
                 for (var i = 0; i < chars.Length; i++)
                 {
-                    if (chars[i] == "UserContent")
+                    if (chars[i].ToLower() == "usercontent")
                     {
                         for (var j = i + 1; j < chars.Length; j++)
                         {
