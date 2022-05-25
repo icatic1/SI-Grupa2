@@ -14,6 +14,7 @@ const FileList = () => {
     const navigate = useNavigate();
     const { mac } = useParams();
     const fileDownload = require('js-file-download');
+    const [count, setCount] = useState(0);
     
 
 
@@ -158,7 +159,6 @@ const FileList = () => {
         return new Promise((resolve) => setTimeout(resolve, time));
     }
 
-
     const handleSync = async () => {
 
         const response = await fetch('/api/FileUpload/ChangeFileSyncState/' + mac + '/1', {
@@ -187,6 +187,7 @@ const FileList = () => {
         justifyContent: "center",
     };
 
+
     const formatWithIcon = (cell, row) => {
         var icon = "";
         if (row.type == "File folder")
@@ -198,8 +199,8 @@ const FileList = () => {
 
         return (
             <div style={mystyle}>
-                <img style={{ flex: '1', margin: 0 }} onMouseOver={{ cursor: "pointer" }} src={icon} width="32" height="32" />
-                <p id={row.name} style={{ flex: '10', margin: 0, textDecoration: "underline" }} onMouseOver={{ cursor: "pointer" }}>{cell}</p>
+                <img style={{ flex: '1', margin: 0 }} src={icon} width="32" height="32" />
+                <p id={row.tempId} style={{ flex: '10', margin: 0, textDecoration: "underline" }} >{cell}</p>
             </div>
         )
     }
@@ -211,6 +212,7 @@ const FileList = () => {
         onSelect: handleOnSelect,
         onSelectAll: handleOnSelectAll
     };
+
 
     const rowEvents = {
         onDoubleClick: (e, row, rowIndex) => {
@@ -224,11 +226,20 @@ const FileList = () => {
                 setFile(row);
                 getStaticFile(row.croppedPath)
             }
-
+        },
+        onMouseEnter: (e, row, rowIndex) => {
+            // console.log(row.tempId);
+            document.getElementById(row.tempId).style.cursor = 'pointer';
         }
     }
 
     const columns = [
+        {
+            dataField: 'tempId',
+            text: 'ID',
+            sort: true,
+            hidden: true,
+        },
         {
             dataField: 'name',
             text: 'Name',
