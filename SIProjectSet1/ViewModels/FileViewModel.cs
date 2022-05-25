@@ -17,5 +17,6 @@ namespace SIProjectSet1.ViewModels
         public String Path { get; set; }
         public String CroppedPath { get; set; }
         public String PreviewPath { get; set; }
+        public long tempId { get; set; }
     }
 }

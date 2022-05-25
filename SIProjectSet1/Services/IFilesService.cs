@@ -90,6 +90,7 @@ namespace SIProjectSet1.FilesService
 
             // var files = Directory.GetFiles(dirPath);
             List<FileViewModel> fileModels = new List<FileViewModel>();
+            var tempid = 1;
             foreach (var f in files)
             {
 
@@ -163,6 +164,9 @@ namespace SIProjectSet1.FilesService
                     returnFile.Type = nameOfFile[1];
                     returnFile.Date = f.Date;
                     returnFile.Size = new System.IO.FileInfo(f.Path).Length;
+                    returnFile.tempId = tempid;
+                    tempid++;
+                    
 
 
 
@@ -221,6 +225,8 @@ namespace SIProjectSet1.FilesService
                     returnFile.Type = "File folder";
                     returnFile.Date = Directory.GetCreationTime(f);
                     returnFile.Size = Directory.EnumerateFiles(f, "*", SearchOption.AllDirectories).Sum(fileInfo => new FileInfo(fileInfo).Length);
+                    returnFile.tempId = tempid;
+                    tempid++;
                     fileModels.Add(returnFile);
                 }
 
