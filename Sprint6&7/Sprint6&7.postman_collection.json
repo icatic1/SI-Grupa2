@@ -1,0 +1,579 @@
+{
+	"info": {
+		"_postman_id": "d2f77ec3-5657-4ceb-8b7e-84555254fc23",
+		"name": "Sprint 6 i 7",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "18818198"
+	},
+	"item": [
+		{
+			"name": "FileUpload ConnectionCheck",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.be.ok;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/FileUpload/ConnectionCheck",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"FileUpload",
+						"ConnectionCheck"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "FileUpload GetFilesByPathSortedNew",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.be.ok;\r",
+							"});\r",
+							"response = pm.response.json();\r",
+							"pm.test(\"Response has all properties\", function(){\r",
+							"    for(i = 0; i < response.lenght; i++){\r",
+							"        pm.expect(response[i].id).to.be.an(\"string\");\r",
+							"\t\tpm.expect(response[i].name).to.be.an(\"string\");\r",
+							"\t    pm.expect(response[i].date).to.be.an(\"boolean\");\r",
+							"        pm.expect(response[i].type).to.be.an(\"boolean\");\t\r",
+							"        pm.expect(response[i].size).to.be.an(\"Integer\");\t\r",
+							"        pm.expect(response[i].path).to.be.an(\"string\");\t\r",
+							"        pm.expect(response[i].croppedPath).to.be.an(\"string\");\t\r",
+							"        pm.expect(response[i].previewPath).to.be.an(\"string\");\t\r",
+							"    }\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "74D02B90334D",
+							"type": "file",
+							"src": "/C:/Users/johnny/Pictures/Sintra.png"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://sigrupa4-001-site1.ctempurl.com/api/FileUpload/GetFilesByPathSortedNew/74D02B90334D",
+					"protocol": "http",
+					"host": [
+						"sigrupa4-001-site1",
+						"ctempurl",
+						"com"
+					],
+					"path": [
+						"api",
+						"FileUpload",
+						"GetFilesByPathSortedNew",
+						"74D02B90334D"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "FileUpload DownloadFiles",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 500\", function () {\r",
+							"    pm.response.to.have.status(500);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "\"string\"",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7005/api/FileUpload/DownloadFiles",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7005",
+					"path": [
+						"api",
+						"FileUpload",
+						"DownloadFiles"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Licence Connection Check",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.be.ok;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://sigrupa4-001-site1.ctempurl.com/api/Licence/ConnectionCheck",
+					"protocol": "http",
+					"host": [
+						"sigrupa4-001-site1",
+						"ctempurl",
+						"com"
+					],
+					"path": [
+						"api",
+						"Licence",
+						"ConnectionCheck"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Licence Get Terminal And Debug Log",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.be.ok;\r",
+							"});\r",
+							"\r",
+							"response = pm.response.json();\r",
+							"pm.test(\"Response has all properties\", function(){\r",
+							"        pm.expect(response.macAddress).to.be.an(\"string\");\r",
+							"\t\tpm.expect(response.terminalID).to.be.an(\"string\");\r",
+							"\t    pm.expect(response.licenced).to.be.an(\"boolean\");\r",
+							"        pm.expect(response.debugLog).to.be.an(\"boolean\");\t\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:7005/api/Licence/GetTerminalAndDebugLog?MacAddress=74D02B90334D",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7005",
+					"path": [
+						"api",
+						"Licence",
+						"GetTerminalAndDebugLog"
+					],
+					"query": [
+						{
+							"key": "MacAddress",
+							"value": "74D02B90334D"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Licence Get All Licences",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"response = pm.response.json();\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.be.ok;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response has all properties\", function(){\r",
+							"    for(i = 0; i < response.lenght; i++){\r",
+							"        pm.expect(response[i].macAddress).to.be.an(\"string\");\r",
+							"\t\tpm.expect(response[i].terminalID).to.be.an(\"string\");\r",
+							"\t    pm.expect(response[i].licenced).to.be.an(\"boolean\");\r",
+							"        pm.expect(response[i].debugLog).to.be.an(\"boolean\");\t\r",
+							"    }\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://sigrupa4-001-site1.ctempurl.com/api/Licence/GetAllLicences",
+					"protocol": "http",
+					"host": [
+						"sigrupa4-001-site1",
+						"ctempurl",
+						"com"
+					],
+					"path": [
+						"api",
+						"Licence",
+						"GetAllLicences"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Totp tfaCode",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.be.ok;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://sigrupa4-001-site1.ctempurl.com/Totp/tfaCode",
+					"protocol": "http",
+					"host": [
+						"sigrupa4-001-site1",
+						"ctempurl",
+						"com"
+					],
+					"path": [
+						"Totp",
+						"tfaCode"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Totp tfaQR-code",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.be.ok;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://sigrupa4-001-site1.ctempurl.com/Totp/tfaQR-code",
+					"protocol": "http",
+					"host": [
+						"sigrupa4-001-site1",
+						"ctempurl",
+						"com"
+					],
+					"path": [
+						"Totp",
+						"tfaQR-code"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "FileUpload UploadLargeFile",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.be.ok;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "74D02B90334D",
+							"type": "file",
+							"src": "/C:/Users/johnny/Pictures/Sintra.png"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://sigrupa4-001-site1.ctempurl.com/api/FileUpload/UploadLargeFile",
+					"protocol": "http",
+					"host": [
+						"sigrupa4-001-site1",
+						"ctempurl",
+						"com"
+					],
+					"path": [
+						"api",
+						"FileUpload",
+						"UploadLargeFile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "FileUpload UploadLargeFile",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.be.ok;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "",
+							"type": "file",
+							"src": []
+						}
+					]
+				},
+				"url": {
+					"raw": "https://localhost:7005/api/FileUpload/UploadLargeFile/74D02B90334D",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7005",
+					"path": [
+						"api",
+						"FileUpload",
+						"UploadLargeFile",
+						"74D02B90334D"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Licence InitialAddDevice",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.be.ok;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://sigrupa4-001-site1.ctempurl.com/api/Licence/InitialAddDevice?MacAddress=902E16D819A4&TerminalID=DESKTOP-MICM1IC&DebugLog=false",
+					"protocol": "http",
+					"host": [
+						"sigrupa4-001-site1",
+						"ctempurl",
+						"com"
+					],
+					"path": [
+						"api",
+						"Licence",
+						"InitialAddDevice"
+					],
+					"query": [
+						{
+							"key": "MacAddress",
+							"value": "902E16D819A4"
+						},
+						{
+							"key": "TerminalID",
+							"value": "DESKTOP-MICM1IC"
+						},
+						{
+							"key": "DebugLog",
+							"value": "false"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Licence UpdateTerminalAndDebugLog",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.be.ok;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://sigrupa4-001-site1.ctempurl.com/api/Licence/UpdateTerminalAndDebugLog?MacAddress=902E16D819A4&TerminalID=DESKTOP-MICM1IC&DebugLog=false",
+					"protocol": "http",
+					"host": [
+						"sigrupa4-001-site1",
+						"ctempurl",
+						"com"
+					],
+					"path": [
+						"api",
+						"Licence",
+						"UpdateTerminalAndDebugLog"
+					],
+					"query": [
+						{
+							"key": "MacAddress",
+							"value": "902E16D819A4"
+						},
+						{
+							"key": "TerminalID",
+							"value": "DESKTOP-MICM1IC"
+						},
+						{
+							"key": "DebugLog",
+							"value": "false"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Licence",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:7005/api/Licence/74d02b90334d",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7005",
+					"path": [
+						"api",
+						"Licence",
+						"74d02b90334d"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
