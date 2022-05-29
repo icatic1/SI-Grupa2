@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {  Form, Button, ButtonGroup, DropdownButton, Dropdown} from "react-bootstrap";
 import TimePicker from 'react-time-picker';
 
-const GeneralConfiguration = ({data, setData, saveConfiguration}) => {
+const GeneralConfiguration = ({data, setData, saveConfiguration, oldConfiguration}) => {
     const [step, setStep] = useState(1)
     const [displayJSONSyncPeriod, setDisplayJSONSyncPeriod] = useState(null)
     const [displayMediaSyncPeriod, setDisplayMediaSyncPeriod] = useState(null)
@@ -12,9 +12,23 @@ const GeneralConfiguration = ({data, setData, saveConfiguration}) => {
     const [durationUnit, setDurationUnit] = useState("seconds")
     const [displayBurst, setDisplayBurst] = useState(null)
     const [burstUnit, setBurstUnit] = useState("seconds")
+    const [protocol, setProtocol] = useState(data.ServerIP.match(/[a-z]+:\/\//)[0])
+    const [triggerFileCheck, setTriggerFileCheck] = useState()
+    const defaultFolderPath = "h:\\root\\home\\sigrupa4-001\\www\\site1\\wwwroot\\UserContent"
 
     useEffect(()=>{
-        validatePaths()
+        
+        if (data.ServerIP.substring(data.ServerIP.match(/[a-z]+:\/\//)[0].length) == "siset1.ga") {
+            setData({ ...data, MediaFolderPath: defaultFolderPath })
+            
+        }
+        if (data.Regex.length > 0) {
+            setTriggerFileCheck(true)
+          
+        } else {
+            setTriggerFileCheck(false)
+        }
+
         setDisplayJSONSyncPeriod(data.JSONSyncPeriod)
         setDisplayMediaSyncPeriod(data.MediaSyncPeriod)
         setDisplayDuration(data.Duration)
@@ -35,7 +49,7 @@ const GeneralConfiguration = ({data, setData, saveConfiguration}) => {
         if (step != 1)
             return
         if (num == 1 || num == 0) {
-            if (checkPath(data.TriggerFilePath) )
+            if (triggerFileCheck == false || checkPath(data.TriggerFilePath) )
                 document.getElementById("triggerPath").style.backgroundColor = "white";
             else
                 document.getElementById("triggerPath").style.backgroundColor = "#c46868";
@@ -47,6 +61,23 @@ const GeneralConfiguration = ({data, setData, saveConfiguration}) => {
             else
                 document.getElementById("outputPath").style.backgroundColor = "#c46868";
         }
+    }
+
+    function handleCancel() {
+        setData(oldConfiguration)
+        setProtocol(data.ServerIP.match(/[a-z]+:\/\//)[0])
+        
+        if (oldConfiguration.Regex.length > 0) {
+            setTriggerFileCheck(true)
+           
+        } else {
+            setTriggerFileCheck(false)
+        }
+
+        setDisplayJSONSyncPeriod(oldConfiguration.JSONSyncPeriod)
+        setDisplayMediaSyncPeriod(oldConfiguration.MediaSyncPeriod)
+        setDisplayDuration(oldConfiguration.Duration)
+        setDisplayBurst(oldConfiguration.Period)
     }
 
     function changeValues(value, property) {
@@ -64,13 +95,20 @@ const GeneralConfiguration = ({data, setData, saveConfiguration}) => {
                 setData({...data, OutputValidity: value})
                 break;
             case "mediaFolderPath":
-                setData({...data, MediaFolderPath: value})
+                setData({ ...data, MediaFolderPath: value })
                 break;
             case "serverPort":
                 setData({...data, ServerPort: value})
                 break;
             case "serverIPAddress":
-                setData({...data, ServerIP: value})
+                setData({ ...data, ServerIP: protocol+value })
+                if (value == "siset1.ga") {
+                    setData({ ...data, MediaFolderPath: defaultFolderPath })
+                    setData({ ...data, ServerIP: protocol + "siset1.ga" })
+                    document.getElementById('mediaFolderPath').disabled = true
+                } else
+                    document.getElementById('mediaFolderPath').disabled = false
+                    
                 break;
             case "JSONTime":
                 setData({ ...data, JSONTime: value + ":00" })
@@ -85,7 +123,7 @@ const GeneralConfiguration = ({data, setData, saveConfiguration}) => {
         }
     }
 
-
+    
     function calculateTime(value, type) {
         switch (type) {
             case "JSONSyncPeriod":
@@ -336,6 +374,8 @@ const GeneralConfiguration = ({data, setData, saveConfiguration}) => {
 
     }
 
+    
+
     return (
         <Form style={{ padding: "10px", height: "100%" }}>
 
@@ -347,21 +387,28 @@ const GeneralConfiguration = ({data, setData, saveConfiguration}) => {
                         <div className="mb-3 row">
                             <label htmlFor="triggerPath" className="col-sm-4 col-form-label">Trigger file path</label>
                             <div className="col-sm-7">
-                                <input className="form-control" type="text" id="triggerPath" value={data.TriggerFilePath} onBlur={() => validatePaths(1)} onChange={(e) => { changeValues(e.target.value, "triggerFilePath") }} />
+                                <input className="form-control" type="text" id="triggerPath" value={data.TriggerFilePath} onBlur={() => validatePaths(1)} onChange={(e) => { changeValues(e.target.value, "triggerFilePath") }} disabled={triggerFileCheck == false}/>
                             </div>
+                        </div>
+                        <div className="mb-3 row">
+                            <label htmlFor="triggerRegex" className="col-sm-4 col-form-label">Trigger regex</label>
+                            <div className="col-sm-7">
+                                <input type="text" className="form-control" id="triggerRegex" value={data.Regex} onChange={(e) => { changeValues(e.target.value, "regex") }} disabled={triggerFileCheck==false}/>
+                            </div>
+                        </div>
+                        <div className="mb-3 row d-flex align-items-center">
+                            <label className="col-sm-4 col-form-label"></label>
+                            <div className="col-sm-1">
+                                <input type="checkbox" id="triggerFileCheck" checked={triggerFileCheck} onChange={(e) => { setTriggerFileCheck(e.target.checked); if (e.target.checked == false) { setData({ ...data, Regex: "", TriggerFilePath: "" }); document.getElementById("triggerPath").style.backgroundColor = "white"; } }} />
+                            </div>
+                            <label htmlFor="triggerFileCheckLabel" className="col-sm-5 col-form-label">Use trigger file</label>
                         </div>
                         <div className="mb-3 row d-flex align-items-center">
                             <label className="col-sm-4 col-form-label"></label>
                             <div className="col-sm-1">
                                 <input type="checkbox" id="faceDetection" checked={data.FaceDetectionTrigger} value={data.FaceDetectionTrigger} onChange={(e) => { changeValues(e.target.value, "faceDetectionTrigger") }} />
                             </div>
-                            <label htmlFor="faceDetectionLabel" className="col-sm-5 col-form-label">Face detection</label>
-                        </div>
-                        <div className="mb-3 row">
-                            <label htmlFor="triggerRegex" className="col-sm-4 col-form-label">Trigger regex</label>
-                            <div className="col-sm-7">
-                                <input type="text" className="form-control" id="triggerRegex" value={data.Regex} onChange={(e) => { changeValues(e.target.value, "regex") }} />
-                            </div>
+                            <label htmlFor="faceDetectionLabel" className="col-sm-5 col-form-label">Use face detection as a trigger</label>
                         </div>
                         <div className="mb-3 row">
                             <label htmlFor="outputPath" className="col-sm-4 col-form-label">Output folder path</label>
@@ -381,7 +428,7 @@ const GeneralConfiguration = ({data, setData, saveConfiguration}) => {
                     </div>
                     <hr />
                     <ButtonGroup className="float-right pl-0" >
-                        <Button variant="primary" className=" border btn-dark float-left" style={{ width: "80px" }} onClick={saveConfiguration}>Save</Button>
+                        <Button variant="primary" className=" border btn-dark float-left" style={{ width: "80px" }} onClick={()=>saveConfiguration(triggerFileCheck)}>Save</Button>
                         <Button variant="primary" className=" border btn-primary " onClick={() => { setStep(step + 1) }} style={{ width: "100px" }}> Next</Button>
 
                     </ButtonGroup>
@@ -394,8 +441,14 @@ const GeneralConfiguration = ({data, setData, saveConfiguration}) => {
                     <div style={{ height: "60%" }}>
                         <div className="mb-3 row">
                             <label htmlFor="serverIPAddress" className="col-sm-4 col-form-label">Server IP address</label>
-                            <div className="col-sm-5">
-                                <input type="text" className="form-control" id="serverIPAddress" value={data.ServerIP} onChange={(e) => { changeValues(e.target.value, "serverIPAddress") }} />
+                            <div className="col-sm-1">
+                                <DropdownButton id="protocol" title={protocol} >
+                                    <Dropdown.Item href="#" value="https://" onClick={() => { setProtocol("https://"); setData({ ...data, ServerIP: "https://" + data.ServerIP.substring(data.ServerIP.match(/[a-z]+:\/\//)[0].length)}) }}>https://</Dropdown.Item>
+                                    <Dropdown.Item href="#" value="http://" onClick={() => { setProtocol("http://"); setData({ ...data, ServerIP: "http://" + data.ServerIP.substring(data.ServerIP.match(/[a-z]+:\/\//)[0].length)})  }}>http://</Dropdown.Item>
+                                </DropdownButton>
+                                </div>
+                                <div className="col-sm-5">
+                                <input type="text" className="form-control" id="serverIPAddress" value={data.ServerIP.substring(data.ServerIP.match(/[a-z]+:\/\//)[0].length)} onChange={(e) => { changeValues(e.target.value, "serverIPAddress") }} />
                             </div>
                         </div>
                         <div className="mb-3 row">
@@ -407,7 +460,7 @@ const GeneralConfiguration = ({data, setData, saveConfiguration}) => {
                         <div className="mb-3 row">
                             <label htmlFor="mediaFolderPath" className="col-sm-4 col-form-label">Media folder path</label>
                             <div className="col-sm-7">
-                                <input type="text" className="form-control" id="mediaFolderPath" value={data.MediaFolderPath} onChange={(e) => { changeValues(e.target.value, "mediaFolderPath") }} />
+                                <input type="text" className="form-control" id="mediaFolderPath" value={data.MediaFolderPath} onChange={(e) => { changeValues(e.target.value, "mediaFolderPath") }} disabled={data.ServerIP.substring(data.ServerIP.match(/[a-z]+:\/\//)[0].length)=="siset1.ga"}/>
                             </div>
                         </div>
                         <div className="mb-3 row">
@@ -458,7 +511,7 @@ const GeneralConfiguration = ({data, setData, saveConfiguration}) => {
                     </div>
                     <hr />
                     <ButtonGroup className="float-right pl-0" >
-                        <Button variant="primary" className=" border btn-dark float-left" style={{ width: "80px" }} onClick={saveConfiguration}>Save</Button>
+                        <Button variant="primary" className=" border btn-dark float-left" style={{ width: "80px" }} onClick={() => saveConfiguration(triggerFileCheck)}>Save</Button>
                         <Button variant="primary" className=" border btn-primary " onClick={() => { setStep(step - 1) }} style={{ width: "100px" }}> Previous</Button>
                         <Button variant="primary" className=" border btn-primary " onClick={() => { setStep(step + 1) }} style={{ width: "100px" }}> Next</Button>
                     </ButtonGroup>
@@ -507,12 +560,13 @@ const GeneralConfiguration = ({data, setData, saveConfiguration}) => {
                     </div>
                     <hr />
                     <ButtonGroup className="float-right pl-0" >
-                        <Button variant="primary" className=" border btn-dark float-left" style={{ width: "80px" }} onClick={saveConfiguration}>Save</Button>
+                            <Button variant="primary" className=" border btn-dark float-left" style={{ width: "80px" }} onClick={() => saveConfiguration(triggerFileCheck)}>Save</Button>
                         <Button variant="primary" className=" border btn-primary " onClick={() => { setStep(step - 1) }} style={{ width: "100px" }}> Previous</Button>
                     </ButtonGroup>
 
                 </>
             }
+            <Button variant="danger" className="float-left" onClick={handleCancel}>Cancel</Button>
             </Form>
         )
 }

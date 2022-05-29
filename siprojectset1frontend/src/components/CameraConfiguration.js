@@ -4,7 +4,7 @@ import RangeSlider from 'react-bootstrap-range-slider';
 import { SketchPicker } from 'react-color';
 
 
-const CameraConfiguration = ({data, setData, saveConfiguration}) => {
+const CameraConfiguration = ({data, setData, saveConfiguration, oldConfiguration}) => {
     const [cameraNum, setCameraNum] = useState(1)
     const [currentCamera, setCurrentCamera] = useState(data.Cameras[0])
     const [show, setShow] = useState(false)
@@ -25,6 +25,25 @@ const CameraConfiguration = ({data, setData, saveConfiguration}) => {
     }, [cameraNum])
 
     const handleClose = () => { setShow(false); }
+
+    function handleCancel() {
+        setData(oldConfiguration)
+
+        switch (cameraNum) {
+            case 1:
+                setCurrentCamera(oldConfiguration.Cameras[0])
+                setImageColor({ r: oldConfiguration.Cameras[0].ImageColor.split(',')[0], g: oldConfiguration.Cameras[0].ImageColor.split(',')[1], b: oldConfiguration.Cameras[0].ImageColor.split(',')[2] })
+                break
+            case 2:
+                setCurrentCamera(data.Cameras[1])
+                setImageColor({ r: oldConfiguration.Cameras[1].ImageColor.split(',')[0], g: oldConfiguration.Cameras[1].ImageColor.split(',')[1], b: oldConfiguration.Cameras[1].ImageColor.split(',')[2] })
+             break
+            case 3:
+                setCurrentCamera(data.Cameras[2])
+                setImageColor({ r: oldConfiguration.Cameras[2].ImageColor.split(',')[0], g: oldConfiguration.Cameras[2].ImageColor.split(',')[1], b: oldConfiguration.Cameras[2].ImageColor.split(',')[2] })
+            break
+        }
+    }
 
     function showColorPicker() {
         setShow(true)
@@ -195,6 +214,7 @@ const CameraConfiguration = ({data, setData, saveConfiguration}) => {
                 </Button>
             </Modal.Footer>
         </Modal>
+        <Button variant="danger" className="float-left" onClick={handleCancel}>Cancel</Button>
     </Form>
     )
 }

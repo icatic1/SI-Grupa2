@@ -7,6 +7,7 @@ import CameraConfiguration from './CameraConfiguration'
 
 const Configuration = () => {
     const [configuration, setConfiguration] = useState(null)
+    const [oldConfiguration, setOldConfiguration] = useState(null)
     const [step, setStep] = useState(0)
     const [show, setShow] = useState(false)
     const [modal, setModal] = useState({title:"Information", body:""})
@@ -15,7 +16,7 @@ const Configuration = () => {
 
     function checkPath(path) {
         let reg = /^[A-Z,a-z]{1}:\\.+/
-        if (path.match(reg))
+        if (path.match(reg) || path.length == 0)
             return true
 
         return false
@@ -100,7 +101,7 @@ const Configuration = () => {
                 }
 
                 setConfiguration(data);
-
+                setOldConfiguration(data);
                 setStep(1)
                     
                 
@@ -145,11 +146,23 @@ const Configuration = () => {
 
     
 
-    async function saveConfiguration() {
+    async function saveConfiguration(triggerCheck=null) {
         
         if (!(checkPath(configuration.TriggerFilePath) && checkPath(configuration.OutputFolderPath))) {
             handleShow("Error","Make sure you've entered correct trigger file and output paths!")
             return
+        }
+
+        if (triggerCheck != null) {
+            if (configuration.FaceDetectionTrigger == false && triggerCheck == false) {
+                handleShow("Error", "You must set up at least one trigger!")
+                return
+            }
+
+            if (triggerCheck == true && (configuration.Regex.length == 0 || configuration.TriggerFilePath.length == 0)) {
+                handleShow("Error", "You must set trigger file path and regex!")
+                return
+            }
         }
 
         if (configuration.ServerPort.length == 0) 
@@ -162,7 +175,7 @@ const Configuration = () => {
         sendData.OutputFolderPath = sendData.OutputFolderPath.replaceAll('\\', '/')
         sendData.ConnectionStatus = true
 
-        
+        setOldConfiguration(configuration)
 
         try {
 
@@ -206,8 +219,8 @@ const Configuration = () => {
                 </ul>
 
 
-                {step == 1 ? <GeneralConfiguration data={configuration} setData={setConfiguration} saveConfiguration={saveConfiguration}/>
-                    : <CameraConfiguration data={configuration} setData={setConfiguration} saveConfiguration={saveConfiguration}/>}
+                {step == 1 ? <GeneralConfiguration data={configuration} setData={setConfiguration} saveConfiguration={saveConfiguration} oldConfiguration={oldConfiguration} />
+                    : <CameraConfiguration data={configuration} setData={setConfiguration} saveConfiguration={saveConfiguration} oldConfiguration={oldConfiguration}/>}
             </Container>}
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
