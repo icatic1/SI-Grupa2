@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import {  Form, Button, ButtonGroup, DropdownButton, Dropdown} from "react-bootstrap";
 import TimePicker from 'react-time-picker';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
+import Tooltip from 'react-bootstrap/Tooltip'
 
 const GeneralConfiguration = ({data, setData, saveConfiguration, oldConfiguration}) => {
     const [step, setStep] = useState(1)
@@ -12,19 +14,26 @@ const GeneralConfiguration = ({data, setData, saveConfiguration, oldConfiguratio
     const [durationUnit, setDurationUnit] = useState("seconds")
     const [displayBurst, setDisplayBurst] = useState(null)
     const [burstUnit, setBurstUnit] = useState("seconds")
-    const [protocol, setProtocol] = useState(data.ServerIP.match(/[a-z]+:\/\//)[0])
-    const [triggerFileCheck, setTriggerFileCheck] = useState()
+    const [protocol, setProtocol] = useState()
+    const [triggerFileCheck, setTriggerFileCheck] = useState("https://")
     const defaultFolderPath = "h:\\root\\home\\sigrupa4-001\\www\\site1\\wwwroot\\UserContent"
 
     useEffect(()=>{
-        
-        if (data.ServerIP.substring(data.ServerIP.match(/[a-z]+:\/\//)[0].length) == "siset1.ga") {
-            setData({ ...data, MediaFolderPath: defaultFolderPath })
-            
+
+        if (data.ServerIP.match(/[a-z]+:\/\//)) {
+            if (data.ServerIP.substring(data.ServerIP.match(/[a-z]+:\/\//)[0].length) == "siset1.ga") {
+                setData({ ...data, MediaFolderPath: defaultFolderPath })
+                
+            }
         }
+
+        if (data.ServerIP.match(/[a-z]+:\/\//)) {
+            setProtocol(data.ServerIP.match(/[a-z]+:\/\//)[0])
+        }
+
         if (data.Regex.length > 0) {
             setTriggerFileCheck(true)
-          
+
         } else {
             setTriggerFileCheck(false)
         }
@@ -387,13 +396,32 @@ const GeneralConfiguration = ({data, setData, saveConfiguration, oldConfiguratio
                         <div className="mb-3 row">
                             <label htmlFor="triggerPath" className="col-sm-4 col-form-label">Trigger file path</label>
                             <div className="col-sm-7">
-                                <input className="form-control" type="text" id="triggerPath" value={data.TriggerFilePath} onBlur={() => validatePaths(1)} onChange={(e) => { changeValues(e.target.value, "triggerFilePath") }} disabled={triggerFileCheck == false}/>
+                                <OverlayTrigger
+                                    placement={'right'}
+                                    overlay={
+                                        <Tooltip>
+                                            Absolute path to the trigger file on the client's computer.
+                                            Path must be in the following format: <strong>C:\example\example\example.txt</strong>
+                                        </Tooltip>
+                                    }
+                                >
+                                    <input className="form-control" type="text" id="triggerPath" value={data.TriggerFilePath} onBlur={() => validatePaths(1)} onChange={(e) => { changeValues(e.target.value, "triggerFilePath") }} disabled={triggerFileCheck == false} />
+                               </OverlayTrigger>
                             </div>
                         </div>
                         <div className="mb-3 row">
                             <label htmlFor="triggerRegex" className="col-sm-4 col-form-label">Trigger regex</label>
                             <div className="col-sm-7">
-                                <input type="text" className="form-control" id="triggerRegex" value={data.Regex} onChange={(e) => { changeValues(e.target.value, "regex") }} disabled={triggerFileCheck==false}/>
+                                <OverlayTrigger
+                                    placement={'right'}
+                                    overlay={
+                                        <Tooltip>
+                                            Recording will start if new line in trigger file matches this regex.
+                                        </Tooltip>
+                                    }
+                                >
+                                    <input type="text" className="form-control" id="triggerRegex" value={data.Regex} onChange={(e) => { changeValues(e.target.value, "regex") }} disabled={triggerFileCheck == false} />
+                                </OverlayTrigger>
                             </div>
                         </div>
                         <div className="mb-3 row d-flex align-items-center">
@@ -401,26 +429,63 @@ const GeneralConfiguration = ({data, setData, saveConfiguration, oldConfiguratio
                             <div className="col-sm-1">
                                 <input type="checkbox" id="triggerFileCheck" checked={triggerFileCheck} onChange={(e) => { setTriggerFileCheck(e.target.checked); if (e.target.checked == false) { setData({ ...data, Regex: "", TriggerFilePath: "" }); document.getElementById("triggerPath").style.backgroundColor = "white"; } }} />
                             </div>
-                            <label htmlFor="triggerFileCheckLabel" className="col-sm-5 col-form-label">Use trigger file</label>
+                            <OverlayTrigger
+                                placement={'right'}
+                                overlay={
+                                    <Tooltip>
+                                        If this box is checked, recording will be triggered when new lines in trigger file match the defined regex.
+                                    </Tooltip>
+                                }
+                            >
+                                <label htmlFor="triggerFileCheckLabel" className="col-sm-5 col-form-label">Use trigger file</label>
+                            </OverlayTrigger>
                         </div>
                         <div className="mb-3 row d-flex align-items-center">
                             <label className="col-sm-4 col-form-label"></label>
                             <div className="col-sm-1">
                                 <input type="checkbox" id="faceDetection" checked={data.FaceDetectionTrigger} value={data.FaceDetectionTrigger} onChange={(e) => { changeValues(e.target.value, "faceDetectionTrigger") }} />
                             </div>
-                            <label htmlFor="faceDetectionLabel" className="col-sm-5 col-form-label">Use face detection as a trigger</label>
+                            <OverlayTrigger
+                                placement={'right'}
+                                overlay={
+                                    <Tooltip>
+                                        If this box is checked, recording will be triggered when a face is detected.
+                                    </Tooltip>
+                                }
+                            >
+                                <label htmlFor="faceDetectionLabel" className="col-sm-5 col-form-label">Use face detection as a trigger</label>
+                            </OverlayTrigger>
                         </div>
                         <div className="mb-3 row">
                             <label htmlFor="outputPath" className="col-sm-4 col-form-label">Output folder path</label>
                             <div className="col-sm-7">
-                                <input type="text" className="form-control" id="outputPath" value={data.OutputFolderPath} onBlur={() => validatePaths(2)} onChange={(e) => { changeValues(e.target.value, "outputFolderPath") }} />
+                                <OverlayTrigger
+                                    placement={'right'}
+                                    overlay={
+                                        <Tooltip>
+                                            Absolute path to the folder on the client's computer where the recorded images and videos will be saved.
+                                            Path must be in the following format: <strong>C:\example\example\example.txt</strong>
+                                        </Tooltip>
+                                    }
+                                >
+                                    <input type="text" className="form-control" id="outputPath" value={data.OutputFolderPath} onBlur={() => validatePaths(2)} onChange={(e) => { changeValues(e.target.value, "outputFolderPath") }} />
+                                </OverlayTrigger>
                             </div>
                         </div>
                         <div className="mb-3 row">
                             <label htmlFor="outputPath" className="col-sm-4 col-form-label">Keep capture for </label>
 
                             <div className="d-flex align-items-center col-sm-4">
-                                <input type="number" min="1" value={data.OutputValidity} onChange={e => changeValues(e.target.value, "outputValidityDays")} />
+                                <OverlayTrigger
+                                    placement={'right'}
+                                    overlay={
+                                        <Tooltip>
+                                            Images and videos in the defined output folder will be kept on the client's computer for this number of days, after which they will be deleted.
+                                        </Tooltip>
+                                    }
+                                >
+                                    <input type="number" min="1" value={data.OutputValidity} onChange={e => changeValues(e.target.value, "outputValidityDays")} />
+                                 </OverlayTrigger>
 
                                 <span style={{ padding: "10px" }}> days</span>
                             </div>
@@ -447,27 +512,63 @@ const GeneralConfiguration = ({data, setData, saveConfiguration, oldConfiguratio
                                     <Dropdown.Item href="#" value="http://" onClick={() => { setProtocol("http://"); setData({ ...data, ServerIP: "http://" + data.ServerIP.substring(data.ServerIP.match(/[a-z]+:\/\//)[0].length)})  }}>http://</Dropdown.Item>
                                 </DropdownButton>
                                 </div>
-                                <div className="col-sm-5">
-                                <input type="text" className="form-control" id="serverIPAddress" value={data.ServerIP.substring(data.ServerIP.match(/[a-z]+:\/\//)[0].length)} onChange={(e) => { changeValues(e.target.value, "serverIPAddress") }} />
+                            <div className="col-sm-5">
+                                <OverlayTrigger
+                                    placement={'right'}
+                                    overlay={
+                                        <Tooltip>
+                                           IP address of the server where images and videos will be uploaded if the connection is established.
+                                        </Tooltip>
+                                    }
+                                >
+                                    <input type="text" className="form-control" id="serverIPAddress" value={data.ServerIP.substring(data.ServerIP.match(/[a-z]+:\/\//)[0].length)} onChange={(e) => { changeValues(e.target.value, "serverIPAddress") }} />
+                                 </OverlayTrigger>
                             </div>
                         </div>
                         <div className="mb-3 row">
                             <label htmlFor="serverPort" className="col-sm-4 col-form-label">Server Port</label>
                             <div className="col-sm-5">
-                                <input type="number" className="form-control" id="serverPort" min={0} value={data.ServerPort} onChange={(e) => { changeValues(e.target.value, "serverPort") }} />
+                                <OverlayTrigger
+                                    placement={'right'}
+                                    overlay={
+                                        <Tooltip>
+                                            Port on the server where http requests will be sent.
+                                        </Tooltip>
+                                    }
+                                >
+                                    <input type="number" className="form-control" id="serverPort" min={0} value={data.ServerPort} onChange={(e) => { changeValues(e.target.value, "serverPort") }} />
+                                </OverlayTrigger>
                             </div>
                         </div>
                         <div className="mb-3 row">
                             <label htmlFor="mediaFolderPath" className="col-sm-4 col-form-label">Media folder path</label>
                             <div className="col-sm-7">
-                                <input type="text" className="form-control" id="mediaFolderPath" value={data.MediaFolderPath} onChange={(e) => { changeValues(e.target.value, "mediaFolderPath") }} disabled={data.ServerIP.substring(data.ServerIP.match(/[a-z]+:\/\//)[0].length)=="siset1.ga"}/>
+                                <OverlayTrigger
+                                    placement={'right'}
+                                    overlay={
+                                        <Tooltip>
+                                            Absolute path to a folder on the server where user files will be uploaded.
+                                        </Tooltip>
+                                    }
+                                >
+                                    <input type="text" className="form-control" id="mediaFolderPath" value={data.MediaFolderPath} onChange={(e) => { changeValues(e.target.value, "mediaFolderPath") }} disabled={data.ServerIP.substring(data.ServerIP.match(/[a-z]+:\/\//)[0].length) == "siset1.ga"} />
+                                </OverlayTrigger>
                             </div>
                         </div>
                         <div className="mb-3 row">
-                            <label htmlFor="JSONSyncPeriod" className="col-sm-4 col-form-label">Synchronize configuration</label>
-                            <Form.Check inline label="after every period of" name="json-every-period" type={'radio'} id={"JSONPeriod"} onChange={() => { changeSyncMode('JSON', 'period') }} checked={data.JSONSyncPeriod != 0} style={{ marginLeft: "10px" }}/>
-                            <Form.Check inline label="every day at" name="json-every-day" type={'radio'} id={"JSONTime" } onChange={() => { changeSyncMode('JSON', 'time') }} checked={data.JSONSyncPeriod == 0} style={{ marginLeft: "15%" }}/>
-                                
+                            <OverlayTrigger
+                                placement={'right'}
+                                overlay={
+                                    <Tooltip>
+                                        Configuration from the server will be imported to the client app after a period of time or every day at the exact time, if the client app is running.
+                                    </Tooltip>
+                                }
+                            >
+                                <label htmlFor="JSONSyncPeriod" className="col-sm-4 col-form-label">Synchronize configuration</label>
+                            </OverlayTrigger>
+                                <Form.Check inline label="after every period of" name="json-every-period" type={'radio'} id={"JSONPeriod"} onChange={() => { changeSyncMode('JSON', 'period') }} checked={data.JSONSyncPeriod != 0} style={{ marginLeft: "10px" }}/>
+                                <Form.Check inline label="every day at" name="json-every-day" type={'radio'} id={"JSONTime" } onChange={() => { changeSyncMode('JSON', 'time') }} checked={data.JSONSyncPeriod == 0} style={{ marginLeft: "15%" }}/>
+                               
                             
                         </div>
                         <div className="mb-3 row">
@@ -487,7 +588,16 @@ const GeneralConfiguration = ({data, setData, saveConfiguration, oldConfiguratio
                         
 
                         <div className="mb-3 row">
-                            <label htmlFor="MediaSyncPeriod" className="col-sm-4 col-form-label">Synchronize media </label>
+                            <OverlayTrigger
+                                placement={'right'}
+                                overlay={
+                                    <Tooltip>
+                                        Images and videos in the output folder, that aren't on the server, will be uploaded to the server after a period of time or at the exact time.
+                                    </Tooltip>
+                                }
+                            >
+                                <label htmlFor="MediaSyncPeriod" className="col-sm-4 col-form-label">Synchronize media </label>
+                            </OverlayTrigger>
                             <Form.Check inline label="after every period of" name="media-every-period" id={"MediaPeriod"} type={'radio'} onChange={() => { changeSyncMode('media', 'period') }} checked={data.MediaSyncPeriod != 0} style={{marginLeft:"10px"}}/>
                             <Form.Check inline label="every day at" name="media-every-day" id={"MediaTime"} type={'radio'} onChange={() => { changeSyncMode('media', 'time') }} checked={data.MediaSyncPeriod == 0} style={{marginLeft:"15%"}} />
                             
@@ -536,8 +646,17 @@ const GeneralConfiguration = ({data, setData, saveConfiguration, oldConfiguratio
 
                             </div> : <></>}
                             {data.SingleMode == true && data.ImageCapture == true ? <></> :
-                            <div className="mb-3 row">
-                                <label htmlFor="duration" className="col-sm-5 col-form-label">Duration</label>
+                                <div className="mb-3 row">
+                                 <OverlayTrigger
+                                placement={'right'}
+                                overlay={
+                                    <Tooltip>
+                                       Complete duration of a single recording. 
+                                    </Tooltip>
+                                }
+                                >
+                                    <label htmlFor="duration" className="col-sm-5 col-form-label">Duration</label>
+                                </OverlayTrigger>
                                 <input type="number" id="duration" min="1" step={1} value={displayDuration} onChange={(e) => { calculateTime(e.target.value, "duration") }} />
                                 <DropdownButton id="durationUnit" title={durationUnit} style={{ marginLeft: "10px" }}>
                                     <Dropdown.Item href="#" value="seconds" onClick={() => { changeUnit("seconds", "duration") }}>seconds</Dropdown.Item>
@@ -547,8 +666,17 @@ const GeneralConfiguration = ({data, setData, saveConfiguration, oldConfiguratio
                                 </DropdownButton>
                             </div>}
                             {data.SingleMode == false && data.ImageCapture == true ?
-                            <div className="mb-3 row">
-                                <label htmlFor="burstPeriod" className="col-sm-5 col-form-label">Burst period</label>
+                                <div className="mb-3 row">
+                                 <OverlayTrigger
+                                placement={'right'}
+                                overlay={
+                                    <Tooltip>
+                                        The number of images that will be snapped in burst mode is duration/period.
+                                    </Tooltip>
+                                }
+                                >
+                                    <label htmlFor="burstPeriod" className="col-sm-5 col-form-label">Burst period</label>
+                                </OverlayTrigger>
                                 <input type="number" id="burstPeriod" min="1" step={1} value={displayBurst} onChange={(e) => { calculateTime(e.target.value, "burst") }} />
                                 <DropdownButton id="burstUnit" title={burstUnit} style={{ marginLeft: "10px" }}>
                                     <Dropdown.Item href="#" value="seconds" onClick={() => { changeUnit("seconds", "burst") }}>seconds</Dropdown.Item>
