@@ -49,7 +49,6 @@ const Configuration = () => {
                         MediaSyncPeriod: 300,
                         MediaTime: "00:00:00",
                         MediaTicks: 0,
-                        ConnectionStatus: false,
                         ImageCapture: true,
                         SingleMode: true,
                         Duration: 0,
@@ -173,7 +172,7 @@ const Configuration = () => {
         let sendData = {...configuration}
         sendData.TriggerFilePath = sendData.TriggerFilePath.replaceAll('\\', '/')
         sendData.OutputFolderPath = sendData.OutputFolderPath.replaceAll('\\', '/')
-        sendData.ConnectionStatus = true
+        
 
         setOldConfiguration(configuration)
 
