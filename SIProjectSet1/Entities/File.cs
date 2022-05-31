@@ -22,5 +22,7 @@ namespace SIProjectSet1.Entities
         public Double Size { get; set; }
         [Required]
         public String Path { get; set; }
+        public DateTime ExpirationTime { get; set; }
+        public Boolean IsDeleted { get; set; }
     }
 }

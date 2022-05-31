@@ -168,12 +168,9 @@ namespace SIProjectSet1.Controllers
         [Route("UploadLargeFile/{MacAddress}")]
         public async Task<IActionResult> ReadLargeFileByMac(String MacAddress)
         {
-            var userPath = await _filesService.GetPathForUser(MacAddress);
-            string path = Path.Combine(Path.Combine(userPath), MacAddress);
-            Directory.CreateDirectory(path);
-            string[] entries = Directory.GetFileSystemEntries(Path.Combine(Path.Combine(userPath), MacAddress), "*", SearchOption.AllDirectories);
+            
             //var files = Directory.GetFiles(Path.GetDirectoryName(Path.GetFullPath(FileName)));
-            return Ok(entries);
+            return Ok(await _filesService.ReadLargeFileByMac(MacAddress));
         }
         #endregion
 
@@ -722,6 +719,18 @@ namespace SIProjectSet1.Controllers
         }
         #endregion
 
+        #region File Deletion
+
+        [HttpGet]
+        [Route("DeleteFiles/{MACAddress}")]
+        public async Task<IActionResult> DeleteFiles(String MACAddress, int days)
+        {
+            
+            await _filesService.DeleteFiles(MACAddress, days);
+            return Ok();
+        }
+
+        #endregion
 
     }
 

@@ -108,7 +108,7 @@ namespace SnapshotServer.Controllers
                     {
                         await section.Body.CopyToAsync(targetStream);
                     }
-
+                    await UpdateExpirationDates(MacAddress);
                     return Ok("Uspjeh");
                 }
 
@@ -120,7 +120,24 @@ namespace SnapshotServer.Controllers
         }
 
 
+        private async Task<bool> UpdateExpirationDates(String MacAddress)
+        {
+            var files = await _context.Files.Where(f => f.Path.Contains(MacAddress) && !f.IsDeleted).ToListAsync();
+            var json = GetJSON(MacAddress);
+            
+            dynamic stuff = JObject.Parse(json);
 
+            var expirationDate = stuff.OutputValidity.Value;
+
+
+            foreach (var file in files)
+            {
+                file.ExpirationTime = file.Date.AddDays(expirationDate);
+            }
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
 
 
 

@@ -19,6 +19,8 @@ namespace SIProjectSet1.FilesService
 
         Task<String> GetPathForUser(String MacAddress);
         Task<String> SetPathForUser(String MacAddress, String path);
+        Task<bool> DeleteFiles(String MacAddress, int days);
+        Task<List<String>> ReadLargeFileByMac(String MacAddress);
     }
 
     public class FilesService : IFilesService
@@ -85,6 +87,15 @@ namespace SIProjectSet1.FilesService
             if (!Directory.Exists(dirPath)) return null;
             var files = await _context.Files.Where(f => f.Path.StartsWith(dirPath)).ToListAsync();
 
+            foreach (var file in files)
+            {
+                if (file.ExpirationTime < DateTime.Now)
+                {
+                    file.IsDeleted = true;
+                    File.Delete(file.Path);
+                }
+            }
+            await _context.SaveChangesAsync();
             var a = path.Split("\\");
             var lastDir = a[a.Length - 1];
 
@@ -93,6 +104,7 @@ namespace SIProjectSet1.FilesService
             var tempid = 1;
             foreach (var f in files)
             {
+                if (f.IsDeleted) continue;
 
 
                 bool valid = true;
@@ -166,7 +178,7 @@ namespace SIProjectSet1.FilesService
                     returnFile.Size = new System.IO.FileInfo(f.Path).Length;
                     returnFile.tempId = tempid;
                     tempid++;
-                    
+
 
 
 
@@ -234,19 +246,26 @@ namespace SIProjectSet1.FilesService
             return fileModels;
         }
 
+        private async void DeleteFiles(string dirPath)
+        {
+            var files = await _context.Files.Where(f => f.Path.StartsWith(dirPath)).ToListAsync();
+            
+            
+            //string[] entries = Directory.GetFileSystemEntries(dirPath, "*", SearchOption.AllDirectories);
+        }
 
         public async Task<String> GetPathForUser(String MacAddress)
         {
             var userPath = await _context.UserPaths.Where(o => o.MacAddress == MacAddress).SingleOrDefaultAsync();
             if (userPath == null) return null;
             return userPath.Path;
-                
+
         }
 
         public async Task<String> SetPathForUser(String MacAddress, String path)
         {
             var userPath = await _context.UserPaths.Where(o => o.MacAddress == MacAddress).SingleOrDefaultAsync();
-            if(userPath == null)
+            if (userPath == null)
             {
                 userPath = new Entities.UserPath();
                 userPath.MacAddress = MacAddress;
@@ -257,6 +276,43 @@ namespace SIProjectSet1.FilesService
 
             return userPath.Path;
 
+        }
+
+        public async Task<bool> DeleteFiles(String MacAddress, int days)
+        {
+            try
+            {
+                var files = await _context.Files.Where(f => f.Path.Contains(MacAddress) && !f.IsDeleted).ToListAsync();
+                foreach (var file in files)
+                {
+                    file.ExpirationTime = file.Date.AddDays(days);
+                }
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+
+        }
+
+        public async Task<List<String>> ReadLargeFileByMac(String MacAddress)
+        {
+            var userPath = await GetPathForUser(MacAddress);
+            string path = Path.Combine(Path.Combine(userPath), MacAddress);
+            Directory.CreateDirectory(path);
+            string[] entries = Directory.GetFileSystemEntries(Path.Combine(Path.Combine(userPath), MacAddress), "*", SearchOption.AllDirectories);
+            //HashSet<FileDeletedViewModel> notDeleted = new HashSet<FileDeletedViewModel>(new SetPathComparer());
+            var files = await _context.Files.Where(f => f.Path.Contains(MacAddress) && !f.IsDeleted).ToListAsync();
+            List<String> notDeleted = new List<string>();
+
+            foreach (var file in files)
+            {
+                notDeleted.Add(file.Path);
+            }
+
+            return notDeleted;
         }
 
     }
