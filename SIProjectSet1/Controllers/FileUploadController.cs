@@ -148,8 +148,8 @@ namespace SIProjectSet1.Controllers
                     returnFile.Type = nameOfFile[1];
                     returnFile.Date = DateTime.Now;
                     returnFile.Size = new System.IO.FileInfo(saveToPath).Length;
-
-                    return await _filesService.AddFileDB(returnFile) ? Ok("Uspjeh") : BadRequest("Neuspjeh");
+                    
+                    return await _filesService.AddFileDB(returnFile, a) ? Ok("Uspjeh") : BadRequest("Neuspjeh");
                 }
 
                 section = await reader.ReadNextSectionAsync();

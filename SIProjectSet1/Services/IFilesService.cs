@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 using SIProjectSet1.Infrastructure;
 using SIProjectSet1.ViewModels;
 using System;
@@ -13,7 +14,7 @@ namespace SIProjectSet1.FilesService
     public interface IFilesService
     {
         Task<FilesViewModel> GetPathsSorted(String path);
-        Task<bool> AddFileDB(FileViewModel fileViewModel);
+        Task<bool> AddFileDB(FileViewModel fileViewModel, String MacAddress);
 
         Task<List<FileViewModel>> GetPathsSortedNew(String path, String MacAdress);
 
@@ -33,11 +34,19 @@ namespace SIProjectSet1.FilesService
             _logger = logger;
             _context = context;
         }
-        public async Task<bool> AddFileDB(FileViewModel fileViewModel)
+        public async Task<bool> AddFileDB(FileViewModel fileViewModel, String MacAddress)
         {
 
             try
             {
+                var userPath = await GetPathForUser(MacAddress);
+                var json = Path.Combine(Path.Combine(userPath), MacAddress, "configuration.json");
+                var content = System.IO.File.ReadAllText(json);
+
+                dynamic stuff = JObject.Parse(content);
+
+                var expirationDate = stuff.OutputValidity.Value;
+
                 var file = new Entities.File();
 
                 file.Name = fileViewModel.Name;
@@ -45,6 +54,7 @@ namespace SIProjectSet1.FilesService
                 file.Type = fileViewModel.Type;
                 file.Size = fileViewModel.Size;
                 file.Date = fileViewModel.Date;
+                file.ExpirationTime = fileViewModel.Date.AddDays(expirationDate);
 
                 _context.Files.Add(file);
                 await _context.SaveChangesAsync();
