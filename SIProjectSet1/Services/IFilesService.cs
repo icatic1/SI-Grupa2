@@ -41,6 +41,9 @@ namespace SIProjectSet1.FilesService
             {
                 var userPath = await GetPathForUser(MacAddress);
                 var json = Path.Combine(Path.Combine(userPath), MacAddress, "configuration.json");
+
+                var files = await _context.Files.Where(f => f.Path.Equals(fileViewModel.Path)).ToListAsync();
+                if (files.Count > 0) return false;
                 var content = System.IO.File.ReadAllText(json);
 
                 dynamic stuff = JObject.Parse(content);
