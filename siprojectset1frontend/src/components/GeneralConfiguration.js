@@ -127,8 +127,8 @@ const GeneralConfiguration = ({data, setData, saveConfiguration, oldConfiguratio
                 break;
             case "faceDetectionTrigger":
                 setData({ ...data, FaceDetectionTrigger: !data.FaceDetectionTrigger })
-            break;
-
+                break;
+           
         }
     }
 
@@ -480,7 +480,7 @@ const GeneralConfiguration = ({data, setData, saveConfiguration, oldConfiguratio
                                     placement={'right'}
                                     overlay={
                                         <Tooltip>
-                                            Images and videos in the defined output folder will be kept on the client's computer for this number of days, after which they will be deleted.
+                                            Images and videos in the defined output folder will be kept on the client's computer and the server for this number of days, after which they will be deleted.
                                         </Tooltip>
                                     }
                                 >
@@ -619,6 +619,7 @@ const GeneralConfiguration = ({data, setData, saveConfiguration, oldConfiguratio
                             
                         </div>
                     </div>
+                    
                     <hr />
                     <ButtonGroup className="float-right pl-0" >
                         <Button variant="primary" className=" border btn-dark float-left" style={{ width: "80px" }} onClick={() => saveConfiguration(triggerFileCheck)}>Save</Button>
