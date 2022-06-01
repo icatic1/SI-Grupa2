@@ -4,7 +4,7 @@ import TimePicker from 'react-time-picker';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
 import Tooltip from 'react-bootstrap/Tooltip'
 
-const GeneralConfiguration = ({data, setData, saveConfiguration, oldConfiguration, expirationDays, setExpirationDays}) => {
+const GeneralConfiguration = ({data, setData, saveConfiguration, oldConfiguration}) => {
     const [step, setStep] = useState(1)
     const [displayJSONSyncPeriod, setDisplayJSONSyncPeriod] = useState(null)
     const [displayMediaSyncPeriod, setDisplayMediaSyncPeriod] = useState(null)
@@ -128,9 +128,7 @@ const GeneralConfiguration = ({data, setData, saveConfiguration, oldConfiguratio
             case "faceDetectionTrigger":
                 setData({ ...data, FaceDetectionTrigger: !data.FaceDetectionTrigger })
                 break;
-            case "serverValidityDays":
-                setExpirationDays(value)
-                break;
+           
         }
     }
 
@@ -482,7 +480,7 @@ const GeneralConfiguration = ({data, setData, saveConfiguration, oldConfiguratio
                                     placement={'right'}
                                     overlay={
                                         <Tooltip>
-                                            Images and videos in the defined output folder will be kept on the client's computer for this number of days, after which they will be deleted.
+                                            Images and videos in the defined output folder will be kept on the client's computer and the server for this number of days, after which they will be deleted.
                                         </Tooltip>
                                     }
                                 >
@@ -619,24 +617,6 @@ const GeneralConfiguration = ({data, setData, saveConfiguration, oldConfiguratio
                             </div>
                             
                             
-                        </div>
-                        <div className="mb-3 row">
-                            <label htmlFor="serverValidityDays" className="col-sm-4 col-form-label">Keep capture for </label>
-
-                            <div className="d-flex align-items-center col-sm-6">
-                                <OverlayTrigger
-                                    placement={'right'}
-                                    overlay={
-                                        <Tooltip>
-                                            Images and videos will be kept on the server for this number of days, after which they will be deleted.
-                                        </Tooltip>
-                                    }
-                                >
-                                    <input type="number" min="1" value={expirationDays} onChange={e => changeValues(e.target.value, "serverValidityDays")} />
-                                </OverlayTrigger>
-
-                                <span style={{ padding: "10px" }}> days on the server</span>
-                            </div>
                         </div>
                     </div>
                     

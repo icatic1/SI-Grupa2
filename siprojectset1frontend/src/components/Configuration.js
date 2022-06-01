@@ -11,7 +11,7 @@ const Configuration = () => {
     const [step, setStep] = useState(0)
     const [show, setShow] = useState(false)
     const [modal, setModal] = useState({ title: "Information", body: "" })
-    const [expirationDays, setExpirationDays] = useState(1)
+    
 
     const { mac } = useParams();
 
@@ -190,7 +190,7 @@ const Configuration = () => {
 
             let response1 = await fetch('/api/JSONConfiguration/setJSON/?MACAddress=' + mac, options)
 
-            let response2 = await fetch('/api/FileUpload/DeleteFiles/' + mac +'?days=' + expirationDays)
+            let response2 = await fetch('/api/FileUpload/DeleteFiles/' + mac +'?days=' + configuration.OutputValidity)
 
             console.log(response2)
             if (response1.ok && response2.ok) {
@@ -222,7 +222,7 @@ const Configuration = () => {
                 </ul>
 
 
-                {step == 1 ? <GeneralConfiguration data={configuration} setData={setConfiguration} saveConfiguration={saveConfiguration} oldConfiguration={oldConfiguration} expirationDays={expirationDays} setExpirationDays={setExpirationDays}/>
+                {step == 1 ? <GeneralConfiguration data={configuration} setData={setConfiguration} saveConfiguration={saveConfiguration} oldConfiguration={oldConfiguration} />
                     : <CameraConfiguration data={configuration} setData={setConfiguration} saveConfiguration={saveConfiguration} oldConfiguration={oldConfiguration}/>}
             </Container>}
             <Modal show={show} onHide={handleClose}>
