@@ -4,7 +4,7 @@ import TimePicker from 'react-time-picker';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
 import Tooltip from 'react-bootstrap/Tooltip'
 
-const GeneralConfiguration = ({data, setData, saveConfiguration, oldConfiguration}) => {
+const GeneralConfiguration = ({data, setData, saveConfiguration, oldConfiguration, expirationDays, setExpirationDays}) => {
     const [step, setStep] = useState(1)
     const [displayJSONSyncPeriod, setDisplayJSONSyncPeriod] = useState(null)
     const [displayMediaSyncPeriod, setDisplayMediaSyncPeriod] = useState(null)
@@ -127,8 +127,10 @@ const GeneralConfiguration = ({data, setData, saveConfiguration, oldConfiguratio
                 break;
             case "faceDetectionTrigger":
                 setData({ ...data, FaceDetectionTrigger: !data.FaceDetectionTrigger })
-            break;
-
+                break;
+            case "serverValidityDays":
+                setExpirationDays(value)
+                break;
         }
     }
 
@@ -618,7 +620,26 @@ const GeneralConfiguration = ({data, setData, saveConfiguration, oldConfiguratio
                             
                             
                         </div>
+                        <div className="mb-3 row">
+                            <label htmlFor="serverValidityDays" className="col-sm-4 col-form-label">Keep capture for </label>
+
+                            <div className="d-flex align-items-center col-sm-6">
+                                <OverlayTrigger
+                                    placement={'right'}
+                                    overlay={
+                                        <Tooltip>
+                                            Images and videos will be kept on the server for this number of days, after which they will be deleted.
+                                        </Tooltip>
+                                    }
+                                >
+                                    <input type="number" min="1" value={expirationDays} onChange={e => changeValues(e.target.value, "serverValidityDays")} />
+                                </OverlayTrigger>
+
+                                <span style={{ padding: "10px" }}> days on the server</span>
+                            </div>
+                        </div>
                     </div>
+                    
                     <hr />
                     <ButtonGroup className="float-right pl-0" >
                         <Button variant="primary" className=" border btn-dark float-left" style={{ width: "80px" }} onClick={() => saveConfiguration(triggerFileCheck)}>Save</Button>

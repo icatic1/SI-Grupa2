@@ -10,7 +10,8 @@ const Configuration = () => {
     const [oldConfiguration, setOldConfiguration] = useState(null)
     const [step, setStep] = useState(0)
     const [show, setShow] = useState(false)
-    const [modal, setModal] = useState({title:"Information", body:""})
+    const [modal, setModal] = useState({ title: "Information", body: "" })
+    const [expirationDays, setExpirationDays] = useState(1)
 
     const { mac } = useParams();
 
@@ -30,7 +31,7 @@ const Configuration = () => {
 
 
                 var data = await response.json();
-                console.log(data)
+                
 
                 if (data.Cameras == undefined) {
 
@@ -187,9 +188,12 @@ const Configuration = () => {
                 body: a
             }
 
-            let response = await fetch('/api/JSONConfiguration/setJSON/?MACAddress=' + mac, options)
+            let response1 = await fetch('/api/JSONConfiguration/setJSON/?MACAddress=' + mac, options)
 
-            if (response) {
+            let response2 = await fetch('/api/FileUpload/DeleteFiles/' + mac +'?days=' + expirationDays)
+
+            console.log(response2)
+            if (response1.ok && response2.ok) {
                 handleShow("Information","Configuration saved successfully!")
             }
         } catch (e) {
@@ -218,7 +222,7 @@ const Configuration = () => {
                 </ul>
 
 
-                {step == 1 ? <GeneralConfiguration data={configuration} setData={setConfiguration} saveConfiguration={saveConfiguration} oldConfiguration={oldConfiguration} />
+                {step == 1 ? <GeneralConfiguration data={configuration} setData={setConfiguration} saveConfiguration={saveConfiguration} oldConfiguration={oldConfiguration} expirationDays={expirationDays} setExpirationDays={setExpirationDays}/>
                     : <CameraConfiguration data={configuration} setData={setConfiguration} saveConfiguration={saveConfiguration} oldConfiguration={oldConfiguration}/>}
             </Container>}
             <Modal show={show} onHide={handleClose}>
