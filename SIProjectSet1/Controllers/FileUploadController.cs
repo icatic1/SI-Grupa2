@@ -96,8 +96,6 @@ namespace SIProjectSet1.Controllers
 
                     // Get the temporary folder, and combine a random file name with it
                     var fileName = contentDisposition.Name.Value;
-                    //var MacAddress = contentDisposition.Name.Value;
-                    //var saveToPath = Path.Combine(Path.GetTempPath(), fileName);
                     var a = fileName.Split('\\')[0];
                     var userPath = await _filesService.GetPathForUser(a);
                     Directory.CreateDirectory(Path.Combine(Path.Combine(userPath), fileName));
@@ -107,7 +105,6 @@ namespace SIProjectSet1.Controllers
                     {
                         await section.Body.CopyToAsync(targetStream);
                     }
-                    //////////
 
                     String[] chars = saveToPath.Split('\\');
                     var croppedPath = "";
@@ -137,9 +134,8 @@ namespace SIProjectSet1.Controllers
                         }
                     }
                     var nameOfFile = chars[chars.Length - 1].Split('.');
-                    //var obj = { path: image, name: nameOfFile[0], extension: nameOfFile[1], cropped: croppedPath, previewPath: previewPath };
 
-                    //////////
+
                     var returnFile = new FileViewModel();
                     returnFile.Name = nameOfFile[0];
                     returnFile.Path = saveToPath;
@@ -169,7 +165,6 @@ namespace SIProjectSet1.Controllers
         public async Task<IActionResult> ReadLargeFileByMac(String MacAddress)
         {
             
-            //var files = Directory.GetFiles(Path.GetDirectoryName(Path.GetFullPath(FileName)));
             return Ok(await _filesService.ReadLargeFileByMac(MacAddress));
         }
         #endregion
@@ -251,20 +246,7 @@ namespace SIProjectSet1.Controllers
 
                     // Get the temporary folder, and combine a random file name with it
                     var fileName = contentDisposition.Name.Value;
-                    //var MacAddress = contentDisposition.Name.Value;
-                    //var saveToPath = Path.Combine(Path.GetTempPath(), fileName);
-                    //Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent", fileName));
-                    //var saveToPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent", fileName, contentDisposition.FileName.Value);
-
-                    //using (var targetStream = System.IO.File.Create(saveToPath))
-                    //{
-                    //    await section.Body.CopyToAsync(targetStream);
-                    //}
-                    //////////
-                    ///
-
-
-                    //await section.Body.ReadAsync(imageBase64ByteArray, 0, (int)section.Body.Length);
+                   
                     MemoryStream ms = new MemoryStream();
                     await section.Body.CopyToAsync(ms);
                     imageBase64ByteArray = ms.ToArray();
@@ -276,14 +258,6 @@ namespace SIProjectSet1.Controllers
                     _logger.LogInformation("Ok");
                     return Ok();
 
-                    //if (imageBase64ByteArray != null)
-                    //{
-                    //    var data = Encoding.UTF8.GetString(imageBase64ByteArray);
-                    //    data = data.Replace("data:image/png;base64,", "");
-                    //    byte[] imageData = Convert.FromBase64String(data);
-                    //    return Ok();
-                    //}
-                    //return BadRequest("Neki error bio");
 
 
                 }
@@ -304,14 +278,8 @@ namespace SIProjectSet1.Controllers
         public async Task<IActionResult> GetLiveFile(String MACAddress)
         {
             String? data = "";
-            //if (imageBase64ByteArray != null)
-            //{
-                //data = Encoding.UTF8.GetString(imageBase64ByteArray);
-                //data = data.Replace("data:image/png;base64,", "");
-                //byte[] imageData = Convert.FromBase64String(data);
+            
                 return Ok(Convert.ToBase64String(dictionary[MACAddress].Dequeue()));
-            //}
-            //else return BadRequest("Errorcina");
         }
         
         /// <summary>
@@ -487,15 +455,6 @@ namespace SIProjectSet1.Controllers
         #endregion
 
         #region File Fetch
-        [HttpGet]
-        [Route("GetFilesByPathSorted/{path}")]
-        public async Task<IActionResult> GetFilesByPathSorted(String path)
-        {
-
-            var a = await _filesService.GetPathsSorted(path);
-            return Ok(a);
-        }
-
 
         [HttpGet]
         [Route("GetFilesByPathSortedNew/{path}")]
@@ -524,8 +483,6 @@ namespace SIProjectSet1.Controllers
                     await stream.CopyToAsync(memory);
                 }
                 memory.Position = 0;
-                //Response.Headers.Add("Content-Disposition", "inline");
-                //return new FileStreamResult(memory, GetContentType(path));
                 return File(memory, GetContentType(path), Path.GetFileName(path));
             }
             catch (Exception ex)
@@ -576,59 +533,6 @@ namespace SIProjectSet1.Controllers
 
         #endregion
 
-        #region TestRoute
-        [HttpGet]
-        [Route("Tester")]
-        public async Task<IActionResult> Tester()
-        {
-
-            string dirPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent", "Test");
-            if (!Directory.Exists(dirPath)) return null;
-            List<byte[]> lista = new List<byte[]>();
-            var imagesDir = Directory.GetFiles(dirPath);
-            foreach (var image in imagesDir)
-            {
-                try
-                {
-                    var memory = new MemoryStream();
-                    using (var stream = new FileStream(image, FileMode.Open))
-                    {
-                        await stream.CopyToAsync(memory);
-
-                    }
-                    byte[] array = memory.ToArray();
-                    lista.Add(array);
-                    memory.Position = 0;
-
-                }
-                catch (Exception ex)
-                {
-                    return BadRequest("There is not a config file present for the provided device. ");
-                }
-            }
-
-            for (int i = 0; i < 2; i++)
-            {
-                for (int j = 0; j < lista.Count; j++)
-                {
-                    Queue<byte[]> queue;
-                    if(dictionary.TryGetValue("Test", out queue))
-                    {
-                        queue.Enqueue(lista[j]);
-                    } else
-                    {
-                        dictionary["Test"] = new Queue<byte[]>();
-                    }
-                }
-            }
-            while (dictionary["Test"].Count >= 150)
-            {
-                dictionary["Test"].Dequeue();
-            }
-            return Ok();
-
-        }
-        #endregion
 
 
         #region File Download
@@ -673,17 +577,6 @@ namespace SIProjectSet1.Controllers
                 ZipFile
                 .Open(archiveName, ZipArchiveMode.Create);
 
-            //foreach (var file in fajlovi)
-            //{
-            //    var entry =
-            //        archive.CreateEntryFromFile(
-            //            file,
-            //            Path.GetFileName(file),
-            //            CompressionLevel.Optimal
-            //        );
-
-            //    Console.WriteLine($"{entry.FullName} was compressed.");
-            //}
 
             foreach (var file in fajlovi)
             {

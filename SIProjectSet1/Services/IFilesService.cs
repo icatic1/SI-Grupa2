@@ -13,7 +13,6 @@ namespace SIProjectSet1.FilesService
 {
     public interface IFilesService
     {
-        Task<FilesViewModel> GetPathsSorted(String path);
         Task<bool> AddFileDB(FileViewModel fileViewModel, String MacAddress);
 
         Task<List<FileViewModel>> GetPathsSortedNew(String path, String MacAdress);
@@ -69,29 +68,7 @@ namespace SIProjectSet1.FilesService
             }
         }
 
-        public async Task<FilesViewModel> GetPathsSorted(String path)
-        {
 
-            string dirPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserContent", path);
-            if (!Directory.Exists(dirPath)) return null;
-
-            var imagesDir = Directory.GetFiles(dirPath).Where(f => (f.EndsWith(".png") || f.EndsWith(".jpg")));
-            var videosDir = Directory.GetFiles(dirPath).Where(f => f.EndsWith(".mp4"));
-            var filesDir = Directory.GetFiles(dirPath).Where(f => !(f.EndsWith(".mp4") || f.EndsWith(".png") || f.EndsWith(".jpg")));
-            var Dirs = Directory.GetDirectories(dirPath);
-            var array = new ArrayList();
-
-            var a = new FilesViewModel()
-            {
-
-                images = imagesDir,
-                videos = videosDir,
-                files = filesDir,
-                folders = Dirs
-            };
-
-            return a;
-        }
         public async Task<List<FileViewModel>> GetPathsSortedNew(String path, String MacAdress)
         {
 
@@ -105,19 +82,19 @@ namespace SIProjectSet1.FilesService
                 if (file.ExpirationTime < DateTime.Now)
                 {
                     file.IsDeleted = true;
-                    File.Delete(file.Path);
+                    //File.Delete(file.Path);
                 }
             }
             await _context.SaveChangesAsync();
             var a = path.Split("\\");
             var lastDir = a[a.Length - 1];
 
-            // var files = Directory.GetFiles(dirPath);
+
             List<FileViewModel> fileModels = new List<FileViewModel>();
             var tempid = 1;
             foreach (var f in files)
             {
-                if (f.IsDeleted) continue;
+                //if (f.IsDeleted) continue;
 
 
                 bool valid = true;
@@ -166,7 +143,6 @@ namespace SIProjectSet1.FilesService
                         {
                             if (j == i + 1)
                                 croppedPath = croppedPath + chars[j];
-                            //croppedPath = croppedPath + "/" + chars[j];
 
                             else
                                 croppedPath = croppedPath + "%5C" + chars[j];
@@ -178,9 +154,7 @@ namespace SIProjectSet1.FilesService
                 if (valid)
                 {
                     var nameOfFile = chars[chars.Length - 1].Split('.');
-                    //var obj = { path: image, name: nameOfFile[0], extension: nameOfFile[1], cropped: croppedPath, previewPath: previewPath };
 
-                    //////////
                     var returnFile = new FileViewModel();
                     returnFile.Name = nameOfFile[0];
                     returnFile.Path = f.Path;
@@ -237,10 +211,6 @@ namespace SIProjectSet1.FilesService
                 if (valid)
                 {
 
-                    //var obj = { path: image, name: nameOfFile[0], extension: nameOfFile[1], cropped: croppedPath, previewPath: previewPath };
-
-                    //////////
-                    ///
 
                     var returnFile = new FileViewModel();
                     returnFile.Name = chars[chars.Length - 1];
@@ -264,7 +234,6 @@ namespace SIProjectSet1.FilesService
             var files = await _context.Files.Where(f => f.Path.StartsWith(dirPath)).ToListAsync();
             
             
-            //string[] entries = Directory.GetFileSystemEntries(dirPath, "*", SearchOption.AllDirectories);
         }
 
         public async Task<String> GetPathForUser(String MacAddress)
@@ -316,7 +285,6 @@ namespace SIProjectSet1.FilesService
             string path = Path.Combine(Path.Combine(userPath), MacAddress);
             Directory.CreateDirectory(path);
             string[] entries = Directory.GetFileSystemEntries(Path.Combine(Path.Combine(userPath), MacAddress), "*", SearchOption.AllDirectories);
-            //HashSet<FileDeletedViewModel> notDeleted = new HashSet<FileDeletedViewModel>(new SetPathComparer());
             var files = await _context.Files.Where(f => f.Path.Contains(MacAddress) && !f.IsDeleted).ToListAsync();
             List<String> notDeleted = new List<string>();
 
