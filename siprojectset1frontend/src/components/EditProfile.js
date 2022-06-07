@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Form, Button,  Row, Col, Spinner, Modal } from "react-bootstrap";
+import { Container, Form, Button, Row, Col, Spinner, Modal } from "react-bootstrap";
+import { BsXLg } from "react-icons/bs";
 
 import jwt from "jwt-decode";
 
@@ -119,7 +120,7 @@ function EditProfile() {
                     const res = await fetch('api/user/UpdateSecurityQuestion', options)
 
                     if (res.status == 200) {
-                        handleShow("Information", "Your profile information has been saved successfully!")
+                        handleShow("Information", "Your account information has been saved successfully!")
                     } else {
                         handleShow("Error", "There has been an error, please try again.")
                     }
@@ -144,7 +145,9 @@ function EditProfile() {
     }
 
     return (
-        <>
+        <Container style={{paddingBottom:"10px"}}>
+            <h3 style={{ color: "#0275d8" }}>Edit account information</h3>
+            <hr/>
         <Row>
             <Col md={8}>
          
@@ -196,9 +199,10 @@ function EditProfile() {
                 </Container>
             </Col>
         </Row>
-         <Modal show={show} onHide={handleClose}>
-                <Modal.Header closeButton>
+         <Modal show={show} >
+                <Modal.Header closeButton={false}>
                     <Modal.Title>{modal.title}</Modal.Title>
+                    <BsXLg onClick={handleClose} style={{ float: "right", size: "50px", cursor: "pointer" }}></BsXLg>
                 </Modal.Header>
                 <Modal.Body>{modal.body}</Modal.Body>
                 <Modal.Footer>
@@ -207,7 +211,7 @@ function EditProfile() {
                     </Button>
                 </Modal.Footer>
          </Modal>
-        </>
+        </Container>
     )
 };
 

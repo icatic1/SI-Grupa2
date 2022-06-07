@@ -171,6 +171,7 @@ const HomeWrapper = ({ children }) => {
 }
 function App() {
     return (
+        <div className="app">
         <Router>
             <AuthProvider>
             <NavigationHeader />
@@ -193,7 +194,8 @@ function App() {
                     <Route path="*" element={<NotFound/>}/>
                 </Routes>
             </AuthProvider>
-        </Router>)
+            </Router>
+            </div>)
 }
 
 export default App

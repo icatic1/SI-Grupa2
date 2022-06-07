@@ -34,28 +34,31 @@ function Login() {
     };
 
     return (
-        
+        <div>
         <Container className="mx-auto customContainer">
+                <h1 style={{ textAlign: "center", color:"#0275d8"}}>Login</h1>
             <Form noValidate validated={validated} onSubmit={handleSubmit}>
                 <Form.Group className="mb-3" controlId="formBasicEmail">
                     <Form.Label>Email address</Form.Label>
-                    <Form.Control required type="email" placeholder="Enter email" onChange={(e) => setEmail(e.target.value)} />
+                    <Form.Control required type="email" placeholder="Enter your email" onChange={(e) => setEmail(e.target.value)} />
                     <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                 </Form.Group>
 
                 <Form.Group className="mb-3" controlId="formBasicPassword">
                     <Form.Label>Password</Form.Label>
-                    <Form.Control required type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
+                    <Form.Control required type="password" placeholder="Enter your password" onChange={(e) => setPassword(e.target.value)} />
                     <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                 </Form.Group>
                 <Link to={'/ChangePassword'} className="nav-link">Forgot your password?</Link>
-                <p style={{ 'display': 'none', 'color': 'red' }} id="error">Your email or password is incorrect.</p>
-                <Button id="sub_btn" variant="primary" type="submit">
-                    Submit
-                </Button>
+                    <p style={{ 'display': 'none', 'color': 'red' }} id="error">Your email or password is incorrect.</p>
+                    <div style={{ textAlign: "center", paddingTop:"20px" }}>
+                        <Button id="sub_btn" variant="primary btn-md" style={{width:"100%" }} type="submit">
+                            Login
+                        </Button>
+                    </div>
             </Form>
             </Container>
-            
+            </div>
     )
 };
 

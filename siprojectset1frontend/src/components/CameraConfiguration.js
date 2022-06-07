@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Form, Button, ButtonGroup, DropdownButton, Dropdown, Modal } from "react-bootstrap";
 import RangeSlider from 'react-bootstrap-range-slider';
 import { SketchPicker } from 'react-color';
-
+import { BsXLg } from "react-icons/bs";
 
 const CameraConfiguration = ({data, setData, saveConfiguration, oldConfiguration}) => {
     const [cameraNum, setCameraNum] = useState(1)
@@ -138,7 +138,7 @@ const CameraConfiguration = ({data, setData, saveConfiguration, oldConfiguration
     }
 
     return (<Form style={{ padding: "10px", height: "100%"}}>
-        <h2 style={{ color: "#0275d8" }}>Camera {cameraNum}</h2>
+        <h3 style={{ color: "#0275d8" }}>Camera {cameraNum}</h3>
         <hr />
         <div className="mb-3 row">
             <label htmlFor="deviceType" className="col-sm-4 col-form-label">Device Type</label>
@@ -152,7 +152,7 @@ const CameraConfiguration = ({data, setData, saveConfiguration, oldConfiguration
                 <input type="text" className="form-control" id="device" value={currentCamera.Id} readOnly />
             </div>
         </div>
-        <h2 style={{ color: "#0275d8" }}>Video configuration</h2>
+        <h3 style={{ color: "#0275d8" }}>Video configuration</h3>
         <hr />
 
         <div style={{ height: "60%" }}>
@@ -199,9 +199,10 @@ const CameraConfiguration = ({data, setData, saveConfiguration, oldConfiguration
             {cameraNum == 3 ? <></> : <Button variant="primary" className=" border btn-primary " onClick={() => { setCameraNum(cameraNum + 1) }} style={{ width: "100px" }}> Next</Button>}
 
         </ButtonGroup>
-        <Modal show={show} onHide={handleClose}>
-            <Modal.Header closeButton>
+        <Modal show={show} >
+            <Modal.Header closeButton={false}>
                 <Modal.Title>Pick a color</Modal.Title>
+                <BsXLg onClick={handleClose} style={{ float: "right", size: "50px", cursor: "pointer" }}></BsXLg>
             </Modal.Header>
             <Modal.Body className="text-center">
                 <div style={{marginLeft:"27%"}}>

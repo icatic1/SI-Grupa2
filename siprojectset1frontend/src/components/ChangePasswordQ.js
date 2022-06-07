@@ -100,12 +100,12 @@ function ChangePasswordQ() {
 
     return (
         <div id="">
-            <Container className="mx-auto" id="first" style={{ margin:"15px" }}>
-                <Link to={'/ChangePassword'} className="nav-link" id="withoutPad"> Change password home page</Link>
-                <h1 className="headingPass">Change password with security question</h1>
-                <Form onSubmit={handleEmailSubmit} >
+            <Container className="mx-auto customContainerBig" id="first" style={{ margin:"15px" }}>
+               
+                <h4 style={{ color: "white", backgroundColor: "#0275d8", padding: "10px", borderRadius: "10px" }}>Change password with security questions</h4>
+                <Form onSubmit={handleEmailSubmit} style={{ paddingTop: "20px" }}>
                 <Form.Group className="mb-3" controlId="">
-                    <Form.Label ><span style={{ fontWeight: "bold" }}>Please, enter your email:</span></Form.Label>
+                    <Form.Label ><span >Please, enter your email:</span></Form.Label>
                         <Form.Control required type="email" style={{ width: "50%" }} placeholder="Enter your email" onChange={(e) => setEmail(e.target.value)} />
                         <p id="errorEmail" style={{ display: "none", color: "red" }}>User with this email does not exist.</p>
                         <p id="errorQuestion" style={{ display: "none", color: "red" }}>You didn't set your security question, please choose another method.</p>
@@ -117,10 +117,10 @@ function ChangePasswordQ() {
                    
                 </Form>
                 { securityQuestion === null ? <></> : 
-                    <Form onSubmit={handleAnswerSubmit}>
+                    <Form onSubmit={handleAnswerSubmit} style={{paddingTop:"20px"}}>
                         <FormText muted />
                         <Form.Group className="mb-3" controlId="" >
-                            <Form.Label style={{ fontWeight: "bold" }}>Answer your security question:</Form.Label>
+                            <Form.Label style={{fontWeight:"bold"}}>Answer your security question:</Form.Label>
                             <p>{securityQuestion}</p>
                             <Form.Control type="text" style={{width:"50%"} } placeholder="Enter your answer" onChange={(e) => setEnteredAnswer(e.target.value)} />
                             <p id="errorAnswer" style={{ display: "none", color:"red" }}>Your answer is incorrect.</p>
@@ -130,6 +130,7 @@ function ChangePasswordQ() {
                             Submit
                         </Button>
                     </Form>}
+                <Link to={'/ChangePassword'} className="nav-link" id="withoutPad" style={{ color: "#4a4a4a", float:"right" }}> Choose another method</Link>
             </Container>
         </div>
     )

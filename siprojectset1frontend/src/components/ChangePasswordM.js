@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { Container, Form, Button,Modal } from "react-bootstrap";
 import { Link } from 'react-router-dom';
+import { BsXLg } from "react-icons/bs";
 import '../ChangePassword.css';
 
 
@@ -52,7 +53,7 @@ function ChangePasswordM() {
             podaci.Token = data.token
             const a = JSON.stringify(podaci)
 
-            console.log(podaci);
+            
             const options = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -71,8 +72,7 @@ function ChangePasswordM() {
         } catch (e) {
             console.log(e);
             
-            alert("uzbuna");
-            
+      
         }
 
     }
@@ -80,13 +80,13 @@ function ChangePasswordM() {
 
     return (
         <div id="">
-            <Container className="mx-auto" style={{ margin:"15px" }}>
-                <Link to={'/ChangePassword'} className="nav-link" id="withoutPad"> Change password home page</Link>
-                <h1 className="headingPass">Change password with email</h1>
-                <Form onSubmit={handleUserEmail}>
+            <Container className="mx-auto customContainerBig" style={{ margin:"15px" }}>
+                
+                <h4 style={{ color: "white", backgroundColor: "#0275d8", padding: "10px", borderRadius: "10px" }}>Change password with email</h4>
+                <Form onSubmit={handleUserEmail} style={{paddingTop:"20px"}}>
                     <Form.Group className="mb-3" controlId="">
-                        <Form.Label>Enter email:</Form.Label>
-                        <Form.Control type="email" style={{ width: "50%" }} placeholder="Enter email" onChange={(e) => setEmail(e.target.value)}/>
+                        <Form.Label>Email address</Form.Label>
+                        <Form.Control type="email" style={{ width: "50%" }} placeholder="Enter your email" onChange={(e) => setEmail(e.target.value)}/>
                         <Form.Text className="text-muted">
 
                         </Form.Text>
@@ -95,10 +95,12 @@ function ChangePasswordM() {
                         Submit
                     </Button>
                 </Form>
+                <Link to={'/ChangePassword'} className="nav-link" id="withoutPad" style={{ color: "#4a4a4a", float:"right" }}> Choose another method</Link>
             </Container>
-            <Modal show={show} onHide={handleClose}>
-                <Modal.Header closeButton>
+            <Modal show={show} >
+                <Modal.Header closeButton={false}>
                     <Modal.Title>Information</Modal.Title>
+                    <BsXLg onClick={handleClose} style={{ float: "right", size: "50px", cursor: "pointer" }}></BsXLg>
                 </Modal.Header>
                 <Modal.Body>{modal}</Modal.Body>
                 <Modal.Footer>

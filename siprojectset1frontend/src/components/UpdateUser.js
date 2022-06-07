@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Segment, Form, Button, DropdownButton, Dropdown, Row, Col } from "react-bootstrap";
+import { Container, Segment, Form, Button, Modal, Dropdown, Row, Col } from "react-bootstrap";
 import { useLocation, useNavigate } from 'react-router-dom';
+import { BsXLg } from "react-icons/bs";
 
 function UpdateUser() {
     const [loading, setLoading] = useState(false);
@@ -16,14 +17,16 @@ function UpdateUser() {
     const [deletedStatus, setDeletedStatus] = useState(false);
     const [role, setRole] = useState();
     const [roleId, setRoleId] = useState();
+    const [show, setShow] = useState(false)
+    const [modal, setModal] = useState({ title: "Information", body: "" })
 
     // sve role iz baze sa id i name
     const [roles, setRoles] = useState();
 
-    const [show, setShow] = useState(false);
 
-    const handleClose = () => { setShow(false); document.getElementById('form').submit(); }
-    const handleShow = () => {
+    const handleClose = () => { setShow(false); navigate("/GetAll"); window.location.reload(false);}
+    const handleShow = (title, msg) => {
+        setModal({ title: title, body: msg })
         setShow(true);
     }
 
@@ -84,7 +87,14 @@ function UpdateUser() {
                     headers: headers,
                     body: a
                 }
-                fetch('api/user/updateuserinfo', options).then(() => { navigate("/GetAll"); window.location.reload(false); })
+                fetch('api/user/updateuserinfo', options).then((res) => {
+                    if (res.ok) {
+                        handleShow("Information", "The user's information has been updated successfully!")
+                    } else {
+                        handleShow("Error", "There has been an error, please try again.")
+                    }
+                    
+                })
             } catch (e) {
                 console.log(e);
             }
@@ -99,7 +109,9 @@ function UpdateUser() {
     }
 
     return (
-
+        <Container style={{ paddingBottom: "10px" }}>
+            <h3 style={{ color: "#0275d8" }}>Update user information</h3>
+            <hr />
         <Row>
             <Col md={8}>
                 <Container className="mx-auto" >
@@ -144,7 +156,20 @@ function UpdateUser() {
                     </Form>
                 </Container>
             </Col>
-        </Row>
+            <Modal show={show} >
+                <Modal.Header closeButton={false}>
+                    <Modal.Title>{modal.title}</Modal.Title>
+                    <BsXLg onClick={handleClose} style={{ float: "right", size: "50px", cursor: "pointer" }}></BsXLg>
+                </Modal.Header>
+                <Modal.Body>{modal.body}</Modal.Body>
+                <Modal.Footer>
+                    <Button variant="primary" onClick={handleClose}>
+                        OK
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+            </Row>
+        </Container>
     )
 };
 

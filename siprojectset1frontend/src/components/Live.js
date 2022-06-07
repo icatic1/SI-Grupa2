@@ -1,5 +1,5 @@
 ﻿import React, { useState, useEffect, useRef } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { Container, ButtonGroup, Button } from 'react-bootstrap'
 
 const Live = () => {
@@ -82,8 +82,9 @@ const Live = () => {
     return (
     
         <Container style={{ background: "rgba(24, 36, 67, 0.56)", padding: "10%", borderRadius: "20px", marginBottom: "20px" }}>
-
-                <div style={{ background: "white", width: "35%", marginBottom: "0", borderTopLeftRadius: "30px", borderTopRightRadius: "30px", padding: "5px" }}>
+            <Link to="/Devices" style={{ fontSize: "30px", color: "white", paddingBottom: "50px" }}>See all devices</Link>
+            <hr/>
+                <div style={{ background: "white", width: "35%", marginBottom: "0", borderTopLeftRadius: "30px", borderTopRightRadius: "30px", padding: "5px", marginTop:"40px" }}>
                     <h1 style={{ color: "#035296", paddingLeft: "40px", marginBottom: "0", fontSize: "150%" }}>{id}</h1>
                 <h2 style={{ color: "#035296", paddingLeft: "50px", marginBottom: "0", fontSize: "130%" }}>Camera {(parseInt(num) + 1).toString()}</h2>
                 </div>

@@ -1,5 +1,5 @@
 import { Container, Navbar, DropdownButton,Dropdown } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link,useNavigate } from 'react-router-dom';
 import { useContext, useEffect } from 'react';
 import jwt from 'jwt-decode';
 
@@ -8,7 +8,7 @@ import { AuthContext } from "../App"
 function NavigationHeader() {
 
     const { onLogout, token } = useContext(AuthContext)
-
+    const navigate = useNavigate()
     function checkAdmin() {
         if (token === null || token === undefined) {
             return false
@@ -33,13 +33,13 @@ function NavigationHeader() {
                         <ul className="nav navbar-nav">
                             <li><Link to={'/Home'} className="nav-link" style={{ color: "white", fontSize: "20px" }}> Home </Link></li>
                             <li><DropdownButton size="lg" title="Profile">
-                                <Dropdown.Item ><Link to={'/EditProfile'} style={{ color: "black", textAlign:"left", padding: "2px" }} className="nav-link" > Edit Profile </Link></Dropdown.Item>
-                                <Dropdown.Item ><Link to={'/Devices'} style={{ color: "black", textAlign: "left", padding: "2px" }} className="nav-link" > My devices </Link></Dropdown.Item>
+                                <Dropdown.Item onClick={() => navigate('/EditProfile')} style={{ color: "black", textAlign:"left", padding: "2px 10px 2px 10px" }} className="nav-link" > Edit Profile </Dropdown.Item>
+                                <Dropdown.Item onClick={() => navigate('/Devices')} style={{ color: "black", textAlign: "left", padding: "2px 10px 2px 10px" }} className="nav-link" > My devices </Dropdown.Item>
                             </DropdownButton>
                                 </li>
                             {checkAdmin() === true ? <li><DropdownButton size="lg" title="Manage users">
-                                <Dropdown.Item ><Link to={'/AddUser'} className="nav-link" style={{ color: "black", textAlign: "left", padding: "2px" }}> Add user </Link></Dropdown.Item>
-                                <Dropdown.Item ><Link to={'/GetAll'} className="nav-link" style={{ color: "black", textAlign: "left", padding: "2px" }}>All users</Link></Dropdown.Item>
+                                <Dropdown.Item onClick={() => navigate('/AddUser')} className="nav-link" style={{ color: "black", textAlign: "left", padding: "2px 10px 2px 10px" }}> Add user</Dropdown.Item>
+                                <Dropdown.Item onClick={() => navigate('/GetAll')} className="nav-link" style={{ color: "black", textAlign: "left", padding: "2px 10px 2px 10px" }}>All users</Dropdown.Item>
                             </DropdownButton></li> : <></>}
                             
                         </ul>

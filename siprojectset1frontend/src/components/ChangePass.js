@@ -74,11 +74,12 @@ function ChangePass() {
     return (
         <>
             {user === null ? <div></div> :
-                <Container className="mx-auto " style={{ margin:"15px" }}>
+                <Container className="mx-auto customContainer" >
+                    <h2 style={{ color:"#0275d8", paddingBottom:"20px"}}>Reset your password</h2>
                     <Form >
                         <Form.Group className="mb-3" controlId="formBasicEmail">
                             <Form.Label>Email address</Form.Label>
-                            <Form.Control style={{ width: "50%" }} readOnly required type="email" value={user.email} />
+                            <Form.Control style={{ width: "100%" }} readOnly required type="email" value={user.email} />
                             <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                         </Form.Group>
 
@@ -86,14 +87,14 @@ function ChangePass() {
 
                         <Form.Group className="mb-3" controlId="formBasicPassword">
                             <Form.Label>Password</Form.Label>
-                            <Form.Control style={{ width: "50%" }} required type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
+                            <Form.Control style={{ width: "100%" }} required type="password" placeholder="Enter your new password" onChange={(e) => setPassword(e.target.value)} />
                             <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                         </Form.Group>
 
 
-
-                        <Button variant="primary" type="submit" onClick={submitPassword} >
-                            Submit
+                        
+                        <Button variant="primary" type="submit" style={{width:"100%"}} onClick={submitPassword} >
+                            Confirm
                         </Button>
 
                     </Form>

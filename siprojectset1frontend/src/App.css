@@ -83,7 +83,3 @@ input {
     transition: all .4s
 }*/
 
-body, html {
-    height:100%;
-    margin: 0;
-}

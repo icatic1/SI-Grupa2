@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Container, Form, Button, Row, Col, Modal, ButtonGroup } from "react-bootstrap";
+import { Container, Button, Row, Col, Modal, ButtonGroup } from "react-bootstrap";
+import { BsXLg } from "react-icons/bs";
 
 import { useNavigate } from 'react-router-dom';
 
@@ -8,7 +9,7 @@ const UserCard = ({ user, navigation }) => {
 
     const [show, setShow] = useState(false);
 
-    const handleClose = () => { setShow(false); setTimeout(() => { window.location.reload() }, 250) }
+    const handleClose = () => { setShow(false)}
     const handleShow = () => {
         setShow(true);
     }
@@ -25,7 +26,7 @@ const UserCard = ({ user, navigation }) => {
                     method: 'PUT',
                     body: JSON.stringify(user),
                     headers: headers
-                }).then(handleClose());
+                }).then(() => { handleClose(); setTimeout(() => { window.location.reload() }, 250); });
 
             
         } catch (e) {
@@ -71,14 +72,15 @@ const UserCard = ({ user, navigation }) => {
 
             </Row>
 
-            <Modal show={show} onHide={handleClose}>
-                <Modal.Header closeButton>
+            <Modal show={show}>
+                <Modal.Header closeButton={false}>
                     <Modal.Title>Infromation</Modal.Title>
+                    <BsXLg onClick={handleClose} style={{ float: "right", size: "50px", cursor: "pointer" }}></BsXLg>
                 </Modal.Header>
                 <Modal.Body>Are you sure you want to delete the user?</Modal.Body>
                 <Modal.Footer>
                     <Button variant="danger" className="btn-small" onClick={() => { deleteUser(user) }}  >Yes</Button>
-                    <Button variant="secondary" className="btn-small" onClick={() => { handleClose() }} >No</Button>
+                    <Button variant="secondary" className="btn-small" onClick={(e) => { e.preventDefault(); handleClose() }} >No</Button>
                 </Modal.Footer>
             </Modal>
 

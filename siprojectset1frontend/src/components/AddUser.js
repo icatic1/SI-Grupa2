@@ -1,5 +1,6 @@
 ﻿import React, { useEffect, useState } from 'react';
 import { Container, Segment, Form, Button, Modal, Row, Col, Select } from "react-bootstrap";
+import { BsXLg } from "react-icons/bs";
 
 function AddUser() {
 
@@ -30,7 +31,7 @@ function AddUser() {
                         headers: headers
                     });
 
-                console.log(response);
+  
                 const data = await response.json();
 
                 setRoles(data);
@@ -66,7 +67,7 @@ function AddUser() {
             
             let token = 'Bearer ' + localStorage.getItem('token')
             const headers = { 'Accept': 'application/json', 'content-type': 'application/json', 'Authorization': token }
-            console.log("USERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRrrr: "+ JSON.stringify(user));
+
             fetch('api/user/adduser',
                 {
                     method: 'POST',
@@ -89,9 +90,12 @@ function AddUser() {
 
 
     return (
+        <Container style={{paddingBottom:"10px"}}>
+            <h3 style={{ color: "#0275d8" }}>Add a new user</h3>
+            <hr />
         <Row>
             <Col md={8}>
-                <Container className="mx-auto" style={{ paddingLeft: "40px" }}>
+                <Container className="mx-auto" >
                     <Form id="form" noValidate validated={validated} onSubmit={handleSubmit}>
                         <Form.Group className="mb-3" controlId="formBasicEmail">
                             <Form.Label>Email address</Form.Label>
@@ -132,9 +136,10 @@ function AddUser() {
 
                     </Form>
 
-                    <Modal show={show} onHide={handleClose}>
-                        <Modal.Header closeButton>
+                    <Modal show={show}>
+                        <Modal.Header closeButton={false}>
                             <Modal.Title>Information</Modal.Title>
+                            <BsXLg onClick={handleClose} style={{ float: "right", size: "50px", cursor: "pointer" }}></BsXLg>
                         </Modal.Header>
                         <Modal.Body>{modal}</Modal.Body>
                         <Modal.Footer>
@@ -146,7 +151,7 @@ function AddUser() {
                 </Container>
             </Col>
         </Row>
-
+        </Container>
     )
 };
 

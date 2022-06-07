@@ -30,9 +30,7 @@ async function tfaActivate(email) {
     const resp2 = await response1.body;
     const resp3 = await resp2.getReader().read();
     var result = String.fromCharCode.apply(null, resp3.value);
-    
-    console.log("Response u async je: ");
-    console.log(result);
+   
     return result;
 }
 
@@ -90,10 +88,11 @@ function TFA() {
 
 
 
-    console.log(tfaActive);
+    
     if (tfaActive != null && tfaActive == "true") {
         return (
             <Container className="mx-auto customContainer">
+                <h2 style={{ textAlign: "center", color: "#0275d8", paddingBottom:"10px" }}>Two Factor Authentication</h2>
                 <Form noValidate validated={validated} onSubmit={handleGoodSubmit}>
                     <Form.Group className="mb-3" controlId="formCode">
                         <Form.Label>Enter your code</Form.Label>
@@ -101,9 +100,11 @@ function TFA() {
                         <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                     </Form.Group>
                     <p style={{ 'display': 'none', 'color': 'red' }} id="error">Your code is incorrect.</p>
-                    <Button variant="primary" type="submit">
-                        Submit
-                    </Button>
+                    <div style={{ textAlign: "center", paddingTop: "10px" }}>
+                        <Button variant="primary" style={{ width: "100%" }} type="submit">
+                            Submit
+                        </Button>
+                    </div>
                 </Form>
             </Container>
         )
@@ -111,6 +112,7 @@ function TFA() {
         return (
             <div>
                 <Container className="mx-auto customContainer">
+                    <h2 style={{ textAlign: "center", color: "#0275d8", paddingBottom: "10px" }}>Two Factor Authentication</h2>
                     <Spinner id="spinner" animation="border" variant="primary" />
                     <img src={tfaActive} />
                     <br />
@@ -121,9 +123,11 @@ function TFA() {
                             <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                         </Form.Group>
                         <p style={{ 'display': 'none', 'color': 'red' }} id="error">Your code is incorrect.</p>
-                        <Button variant="primary" type="submit">
-                            Submit
-                        </Button>
+                        <div style={{ textAlign: "center", paddingTop: "10px" }}>
+                            <Button variant="primary" style={{ width: "100%" }} type="submit">
+                                Submit
+                            </Button>
+                        </div>
                     </Form>
                 </Container>
             </div>

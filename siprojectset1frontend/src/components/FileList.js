@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Container, Modal, CloseButton, ButtonGroup, Button, Row, Col, Spinner } from "react-bootstrap";
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams, Link } from 'react-router-dom';
 import BootstrapTable from 'react-bootstrap-table-next';
 import ReactPlayer from 'react-player'
 import Breadcrumb from 'react-bootstrap/Breadcrumb'
 import { BsArrowCounterclockwise } from "react-icons/bs";
-
+import { BsXLg } from "react-icons/bs";
 
 
 const FileList = () => {
@@ -28,6 +28,13 @@ const FileList = () => {
     const [testImage, setTestImage] = useState();
     
 
+    useEffect(async () => {
+        const response2 = await fetch("/api/Licence/GetDeviceByMAC?MacAddress=" + mac)
+        var data2 = await response2.json();
+        setTerminalId(data2.terminalID)
+    }, [])
+
+
     useEffect(() => {
 
         fetchMain();
@@ -49,11 +56,14 @@ const FileList = () => {
                     headers: { 'Content-Type': 'application/json' },
                 });
 
+                if (!response1.ok) {
+                    setFilesAndFolders([])
+                    return
+                }
 
             
                 var data1 = await response1.json();
 
-                console.log("data1: " + JSON.stringify(data1));
                 await setFilesAndFolders(data1);
 
 
@@ -76,19 +86,8 @@ const FileList = () => {
                     })
                 }
 
-                var encodedKey = encodeURIComponent("MacAddress");
-                var encodedValue = encodeURIComponent(mac);
-
-                const response2 = await fetch('/api/Licence/GetTerminalAndDebugLog?' + encodedKey + "=" + encodedValue, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-                    },
-                });
-
-                var data2 = await response2.json();
-                console.log("data2: " + data2);
-                setTerminalId(data2.terminalID)
+               
+               
 
                 await setCrumbs(crumbsHelperArray);
                 await setLastCrumb(crumbsHelperArray[crumbsHelperArray.length - 1]);
@@ -238,7 +237,7 @@ const FileList = () => {
             dataField: 'tempId',
             text: 'ID',
             sort: true,
-            hidden: true,
+            hidden: true
         },
         {
             dataField: 'name',
@@ -269,11 +268,11 @@ const FileList = () => {
             <Container fluid className="d-flex justify-content-center">
                 <Spinner id="spinner" animation="border" variant="primary" />
             </Container>
-
-            <h1>{terminalId}</h1>
-            <Row>
-                <Col className="col-md-7 pr-0">
-                    <Breadcrumb className="w-100">
+            <Link to="/Devices" style={{ fontSize: "18px" }}>See all devices</Link>
+            <h2 style={{ backgroundColor:"#0275d8", borderRadius:"20px", color:"white", marginTop:"20px", padding:"5px", width:"30%", textAlign:"center"}}>{terminalId}</h2>
+            <Row className="d-flex align-items-center" style={{margin: "3px 0px 3px 0px"}}>
+                <Col className="col-md-7 justify-content-center" style={{padding:"15px 0 0"}}>
+                    <Breadcrumb className="w-100 justify-content-center" >
                         {crumbs.map((item) =>
                             item.path == lastCrumb.path ?
                                 <Breadcrumb.Item active>{item.name}</Breadcrumb.Item>
@@ -293,10 +292,10 @@ const FileList = () => {
                     <BsArrowCounterclockwise size={30} color={"#0275d8"} onClick={() => { showSpinner(); fetchMain(); }} className="pointer" />
                 </Col>
                 <Col className="col-sm-2 pl-0 pt-1">
-                    <Button variant="primary" className="w-100" onClick={handleDownload} style={{ marginBottom: "5px" }}>Download</Button>
+                    <Button variant="primary" className="w-100" onClick={handleDownload} >Download</Button>
                 </Col>
                 <Col className="col-sm-2  pl-0 pt-1">
-                    <Button variant="primary" className="w-100" onClick={handleSync} style={{ marginBottom: "5px" }}>Synchronize</Button>
+                    <Button variant="primary" className="w-100" onClick={handleSync}>Synchronize</Button>
                 </Col>
             </Row>
 
@@ -307,19 +306,18 @@ const FileList = () => {
                 selectRow={selectRow}
                 rowEvents={rowEvents}
                 bordered={false}
-
             />
             <Modal
                 show={show}
-                onHide={() => setShow(false)}
                 dialogClassName="modal-customw"
 
             >
-                <Modal.Header closeButton>
+                <Modal.Header closeButton={false}>
 
                     <Modal.Title id="example-custom-modal-styling-title">
                         {file.name}
                     </Modal.Title>
+                    <BsXLg onClick={() => setShow(false)} style={{ float: "right", size: "50px", cursor: "pointer" }}></BsXLg>
                 </Modal.Header>
                 <Modal.Body>
                     {file.type === "png" || file.type === "jpg" || file.type == "PNG" ?

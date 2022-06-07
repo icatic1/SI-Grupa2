@@ -87,6 +87,11 @@ const GeneralConfiguration = ({data, setData, saveConfiguration, oldConfiguratio
         setDisplayMediaSyncPeriod(oldConfiguration.MediaSyncPeriod)
         setDisplayDuration(oldConfiguration.Duration)
         setDisplayBurst(oldConfiguration.Period)
+
+        if (step == 1) {
+            document.getElementById("outputPath").style.backgroundColor = "white";
+            document.getElementById("triggerPath").style.backgroundColor = "white";
+        }
     }
 
     function changeValues(value, property) {
@@ -390,7 +395,7 @@ const GeneralConfiguration = ({data, setData, saveConfiguration, oldConfiguratio
 
             {step === 1 ?
                 <div style={{ height: "100%" }}>
-                    <h2 style={{ color: "#0275d8" }}>Device configuration</h2>
+                    <h3 style={{ color: "#0275d8" }}>Device configuration</h3>
                     <hr />
                     <div>
                         <div className="mb-3 row">
@@ -480,7 +485,7 @@ const GeneralConfiguration = ({data, setData, saveConfiguration, oldConfiguratio
                                     placement={'right'}
                                     overlay={
                                         <Tooltip>
-                                            Images and videos in the defined output folder will be kept on the client's computer and the server for this number of days, after which they will be deleted.
+                                            Images and videos in the defined output folder will be kept on the client's computer for this number of days, after which they will be deleted.
                                         </Tooltip>
                                     }
                                 >
@@ -501,7 +506,7 @@ const GeneralConfiguration = ({data, setData, saveConfiguration, oldConfiguratio
                 </div>
 
                 : step === 2 ? <>
-                    <h2 style={{ color: "#0275d8" }}>Server configuration</h2>
+                    <h3 style={{ color: "#0275d8" }}>Server configuration</h3>
                     <hr />
                     <div style={{ height: "60%" }}>
                         <div className="mb-3 row">
@@ -627,7 +632,7 @@ const GeneralConfiguration = ({data, setData, saveConfiguration, oldConfiguratio
                         <Button variant="primary" className=" border btn-primary " onClick={() => { setStep(step + 1) }} style={{ width: "100px" }}> Next</Button>
                     </ButtonGroup>
                 </> : <>
-                    <h2 style={{ color: "#0275d8" }}>Capture configuration</h2>
+                    <h3 style={{ color: "#0275d8" }}>Capture configuration</h3>
                     <hr />
 
                     <div style={{ height: "60%" }}>

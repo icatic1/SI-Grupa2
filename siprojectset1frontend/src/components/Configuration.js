@@ -1,8 +1,9 @@
 import React, { useState, useEffect} from 'react';
 import { Container, Spinner, Form, Button, ButtonGroup, DropdownButton, Dropdown, Modal } from "react-bootstrap";
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import GeneralConfiguration from './GeneralConfiguration'
 import CameraConfiguration from './CameraConfiguration'
+import { BsXLg } from "react-icons/bs";
 
 
 const Configuration = () => {
@@ -11,13 +12,15 @@ const Configuration = () => {
     const [step, setStep] = useState(0)
     const [show, setShow] = useState(false)
     const [modal, setModal] = useState({ title: "Information", body: "" })
-    
+    const [noConfig, setNoConfig] = useState("false")
+    const [terminalID, setTerminalID] = useState()
+    const navigate = useNavigate()
 
     const { mac } = useParams();
 
     function checkPath(path) {
         let reg = /^[A-Z,a-z]{1}:\\.+/
-        if (path.match(reg) || path.length == 0)
+        if (path.match(reg))
             return true
 
         return false
@@ -28,81 +31,30 @@ const Configuration = () => {
             try {
 
                 const response = await fetch("/api/JSONConfiguration/getJSON/" + mac)
-
+               
 
                 var data = await response.json();
                 
-
-                if (data.Cameras == undefined) {
-
-                    data = {
-                        TriggerFilePath: "",
-                        FaceDetectionTrigger: false,
-                        Regex: "",
-                        OutputFolderPath: "",
-                        OutputValidity: 1,
-                        ServerIP: "",
-                        ServerPort: 0,
-                        MediaFolderPath: "",
-                        JSONSyncPeriod: 60,
-                        JSONTime: "00:00:00",
-                        JSONTicks: 0,
-                        MediaSyncPeriod: 300,
-                        MediaTime: "00:00:00",
-                        MediaTicks: 0,
-                        ImageCapture: true,
-                        SingleMode: true,
-                        Duration: 0,
-                        Period: 0
-                    }
-
-                    var camera1 = {
-
-                        Type: 0,
-                        Id: "",
-                        CameraNumber: 0,
-                        Resolution: 0,
-                        ContrastLevel: 0,
-                        ImageColor: "Control",
-                        MotionDetection: false
-                        
-                    }
-
-                    var camera2 = {
-
-                        Type: 0,
-                        Id: "",
-                        CameraNumber: 1,
-                        Resolution: 0,
-                        ContrastLevel: 0,
-                        ImageColor: "Control",
-                        MotionDetection: false
-                    }
-
-                    var camera3 = {
-
-                        Type: 0,
-                        Id: "",
-                        CameraNumber: 2,
-                        Resolution: 0,
-                        ContrastLevel: 0,
-                        ImageColor: "Control",
-                        MotionDetection: false
-
-                    }
-
-
-                    data.Cameras = [camera1, camera2, camera3]
-
+                
+                if (!data.hasOwnProperty("Cameras")) {
+                    hideSpinner()
+                    setNoConfig("true")
+                    handleShow('Error', "")
+                    return
                 } else {
+                    const info = await fetch("/api/Licence/GetDeviceByMAC?MacAddress=" + mac)
+                    var infodata = await info.json()
+                    
+                    setTerminalID(infodata.terminalID)
                     data.TriggerFilePath = data.TriggerFilePath.replaceAll('/', '\\')
                     data.OutputFolderPath = data.OutputFolderPath.replaceAll('/', '\\')
 
-                }
 
-                setConfiguration(data);
-                setOldConfiguration(data);
-                setStep(1)
+
+                    setConfiguration(data);
+                    setOldConfiguration(data);
+                    setStep(1)
+                }
                     
                 
 
@@ -129,14 +81,18 @@ const Configuration = () => {
     }, [step])
 
     useEffect(() => {
-        hideSpinner()
+        if (configuration!=null)
+            hideSpinner()
     }, [configuration])
 
     const handleClose = () => { setShow(false); }
+    
     const handleShow = (title,msg) => {
         setModal({title: title, body: msg})
         setShow(true);
     }
+
+    const goBack = () => {navigate("/Devices")}
 
 
     function hideSpinner() {
@@ -148,7 +104,7 @@ const Configuration = () => {
 
     async function saveConfiguration(triggerCheck=null) {
         
-        if (!(checkPath(configuration.TriggerFilePath) && checkPath(configuration.OutputFolderPath))) {
+        if (!((checkPath(configuration.TriggerFilePath) || configuration.TriggerFilePath.length==0) && checkPath(configuration.OutputFolderPath))) {
             handleShow("Error","Make sure you've entered correct trigger file and output paths!")
             return
         }
@@ -190,10 +146,8 @@ const Configuration = () => {
 
             let response1 = await fetch('/api/JSONConfiguration/setJSON/?MACAddress=' + mac, options)
 
-            let response2 = await fetch('/api/FileUpload/DeleteFiles/' + mac +'?days=' + configuration.OutputValidity)
-
-            console.log(response2)
-            if (response1.ok && response2.ok) {
+          
+            if (response1.ok) {
                 handleShow("Information","Configuration saved successfully!")
             }
         } catch (e) {
@@ -207,11 +161,13 @@ const Configuration = () => {
 
    
     return (
-        <Container style={{height:"100%"}}>
+        <Container style={{ paddingBottom:"10px" }}>
             <Container fluid className="d-flex justify-content-center">
                 <Spinner id="spinner" animation="border" variant="primary" />
             </Container>
             {configuration == null ? <></> : <Container id="forma" style={{ height: "100%" }}>
+                <Link to="/Devices" style={{fontSize : "18px"}}>See all devices</Link>
+                <h2 style={{ backgroundColor:"#0275d8", borderRadius:"20px", color:"white", marginTop:"20px", padding:"5px", width:"30%", textAlign:"center"}}>{terminalID}</h2>
                 <ul className="nav nav-tabs">
                     <li className="nav-item">
                         <a className="nav-link active" href="#" aria-current="page" onClick={() => setStep(1)} id="general">General settings</a>
@@ -225,17 +181,41 @@ const Configuration = () => {
                 {step == 1 ? <GeneralConfiguration data={configuration} setData={setConfiguration} saveConfiguration={saveConfiguration} oldConfiguration={oldConfiguration} />
                     : <CameraConfiguration data={configuration} setData={setConfiguration} saveConfiguration={saveConfiguration} oldConfiguration={oldConfiguration}/>}
             </Container>}
-            <Modal show={show} onHide={handleClose}>
-                <Modal.Header closeButton>
-                    <Modal.Title>{modal.title}</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>{modal.body}</Modal.Body>
-                <Modal.Footer>
-                    <Button variant="primary" onClick={handleClose}>
-                        OK
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+            {noConfig == "true" ?
+                <Modal show={show}>
+                    <Modal.Header closeButton={ false }>
+                        <Modal.Title>{modal.title}</Modal.Title>
+                        <BsXLg onClick={goBack} style={{ float: "right", size: "50px", cursor:"pointer" }}></BsXLg>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <div style={{ textAlign: "center" }}>
+                            <p>There is no configuration file for this device on the server.</p>
+                            <p>Please use the client app to upload one.</p>
+                        </div>
+                    </Modal.Body>
+                    <Modal.Footer>
+                            <Button variant="primary" onClick={goBack}>
+                                Go back
+                            </Button>
+                    </Modal.Footer>
+                </Modal>
+                : <Modal show={show}>
+                    <Modal.Header closeButton={false}>
+                        <Modal.Title>{modal.title}</Modal.Title>
+                        <BsXLg onClick={handleClose} style={{ float: "right", size: "50px", cursor: "pointer" }}></BsXLg>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <div style={{ textAlign: "center" }}>
+                            {modal.body}
+                        </div>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="primary" onClick={handleClose}>
+                            OK
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+                }
         </Container>
     )
 

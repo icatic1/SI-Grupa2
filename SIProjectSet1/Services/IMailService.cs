@@ -30,7 +30,7 @@ namespace SIProjectSet1.UserService
 
             Message.Subject = "SnapShot - Reset password";
 
-            string currentURL = "http://sigrupa4-001-site1.ctempurl.com";
+            string currentURL = "https://siset1.ga";
             Message.Body = "\nReset Password link: " + currentURL + "/ChangePass/" + request.Token;
 
             SmtpClient smtp = new SmtpClient(_mailSettings.Host);
