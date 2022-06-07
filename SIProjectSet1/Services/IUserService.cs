@@ -316,7 +316,7 @@ namespace SIProjectSet1.UserService
                 emailFound = deletedToken.Email;
                 _context.PassTokens.Remove(deletedToken); 
 
-                //obrisat ovaj token !!!!! da se ne bi mogao iskoristiti isti link
+
                 //var obrisan = await _context.PassTokens.Where(o => o.ResetToken == emailToken).SingleOrDefaultAsync();
                 await _context.SaveChangesAsync();
                 return emailFound;
