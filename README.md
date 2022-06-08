@@ -43,6 +43,8 @@ An ASP.NET Core app with React which serves as a storage for devices that captur
 - Controling access rights for all types of users
 - Logging
 
+**Note:** Admin users can also use all of the aforementioned regular user features.
+
 ------------
 ## Documentation
 
