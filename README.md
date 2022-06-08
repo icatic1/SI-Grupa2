@@ -53,8 +53,8 @@ In order to install the app on your server, please use the link bellow that corr
 
 ### One click server setup:
 
-- Windows 10
-- Linux Ubuntu 20.04
+- `Windows 10`
+- `Linux Ubuntu 20.04`
 
 If you have any trouble with the installation, please refer to our [installation guide](https://docs.google.com/document/d/1TrzqUu_w05X0L3bb2tfjRY48pdPEnpBR-CYDOV_qfxQ/edit?usp=sharing "installation guide").
 
