@@ -45,6 +45,8 @@ An ASP.NET Core app with React which serves as a storage for devices that captur
 
 **Note:** Admin users can also use all of the aforementioned regular user features.
 
+------------
+
 ## Installation:
 
 In order to install the app on your server, please use the link bellow that corresponds to your server's OS.
