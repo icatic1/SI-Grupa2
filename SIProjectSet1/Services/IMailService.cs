@@ -35,12 +35,12 @@ namespace SIProjectSet1.UserService
 
             SmtpClient smtp = new SmtpClient(_mailSettings.Host);
 
-            smtp.EnableSsl = true;
+            //smtp.EnableSsl = true;
 
             NetworkCredential cred = new NetworkCredential(_mailSettings.Mail, _mailSettings.Password);
             smtp.UseDefaultCredentials = false;
             smtp.Credentials = cred;
-            smtp.Port = 587;
+            smtp.Port = _mailSettings.Port;
             smtp.Send(Message);
         }
     }
