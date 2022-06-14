@@ -73,9 +73,12 @@ namespace SIProjectSet1.FilesService
         {
 
             var userPath = await GetPathForUser(MacAdress);
-            string dirPath = Path.Combine(Path.Combine(userPath), path) + "\\";
+            string dirPath = Path.Combine(Path.Combine(userPath), path) + "/";
+            dirPath = dirPath.Replace('\\', '/');
+            Console.WriteLine("Dirpath: " + dirPath);
             if (!Directory.Exists(dirPath)) return null;
             var files = await _context.Files.Where(f => f.Path.StartsWith(dirPath)).ToListAsync();
+            Console.WriteLine("[{0}]", string.Join(", ", files));
 
             foreach (var file in files)
             {
@@ -98,7 +101,8 @@ namespace SIProjectSet1.FilesService
 
 
                 bool valid = true;
-                String[] chars = f.Path.Split('\\');
+                String[] chars = f.Path.Split('/');
+                Console.WriteLine("[{0}]", string.Join(", ", chars));
                 var croppedPath = "";
                 var previewPath = "";
                 var folderPath = "";
@@ -114,16 +118,19 @@ namespace SIProjectSet1.FilesService
                         break;
                     }
                 };
+                Console.WriteLine(previewPath);
                 for (var i = 0; i < chars.Length; i++)
                 {
                     if (chars[i] == lastDir)
                     {
+                        Console.WriteLine("Lastdir: " + lastDir);
                         for (var j = i + 1; j < chars.Length; j++)
                         {
 
                             if (j >= i + 2)
                             {
                                 valid = false;
+                                Console.WriteLine("Valid je na false");
                                 break;
                             }
                             else
@@ -150,6 +157,7 @@ namespace SIProjectSet1.FilesService
                         break;
                     }
                 }
+                Console.WriteLine("Cropped path od file: " + croppedPath);
 
                 if (valid)
                 {
@@ -176,11 +184,11 @@ namespace SIProjectSet1.FilesService
             foreach (var f in Dirs)
             {
                 bool valid = true;
-                String[] chars = f.Split('\\');
+                String[] chars = f.Split('/');
                 var croppedPath = "";
                 var previewPath = "";
 
-
+                Console.WriteLine("Directory dio");
                 for (var i = 0; i < chars.Length; i++)
                 {
                     if (chars[i] == "wwwroot")
@@ -192,6 +200,7 @@ namespace SIProjectSet1.FilesService
                         break;
                     }
                 }
+                Console.WriteLine("Preview path od directory: " + previewPath);
                 for (var i = 0; i < chars.Length; i++)
                 {
                     if (chars[i] == "UserContent")
@@ -207,7 +216,7 @@ namespace SIProjectSet1.FilesService
                         break;
                     }
                 }
-
+                Console.WriteLine("Cropped path od directory: " + croppedPath);
                 if (valid)
                 {
 

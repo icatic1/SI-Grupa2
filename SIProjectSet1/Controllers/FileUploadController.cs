@@ -98,8 +98,8 @@ namespace SIProjectSet1.Controllers
                     var fileName = contentDisposition.Name.Value;
                     var a = fileName.Split('\\')[0];
                     var userPath = await _filesService.GetPathForUser(a);
-                    Directory.CreateDirectory(Path.Combine(Path.Combine(userPath), fileName));
-                    var saveToPath = Path.Combine(Path.Combine(userPath), fileName, contentDisposition.FileName.Value);
+                    Directory.CreateDirectory(Path.Combine(Path.Combine(userPath), Path.Combine(fileName.Split('\\'))));
+                    var saveToPath = Path.Combine(Path.Combine(userPath), Path.Combine(fileName.Split('\\')), contentDisposition.FileName.Value);
 
                     using (var targetStream = System.IO.File.Create(saveToPath))
                     {

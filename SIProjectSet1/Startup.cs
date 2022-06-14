@@ -8,6 +8,8 @@ using Microsoft.IdentityModel.Tokens;
 using SIProjectSet1.Settings;
 using SIProjectSet1.LicenceService;
 using SIProjectSet1.FilesService;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Rewrite;
 
 namespace SIProjectSet1
 {
@@ -85,7 +87,8 @@ namespace SIProjectSet1
 
             services.AddCors(options =>
                 options.AddPolicy("MyPolicy",
-                    builder => {
+                    builder =>
+                    {
                         builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
                     }
                 )
@@ -101,7 +104,10 @@ namespace SIProjectSet1
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
             app.UseHttpsRedirection();
 
             app.UseDefaultFiles();
@@ -136,6 +142,7 @@ namespace SIProjectSet1
             {
                 endpoints.MapControllers();
             });
+
 
         }
     }
