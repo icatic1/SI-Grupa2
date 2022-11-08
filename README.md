@@ -7,7 +7,7 @@
 
 
 ## Introduction
-An ASP.NET Core app with React which serves as a storage for devices that capture video content via the [Snapshot app](https://github.com/icatic1/SnapShot "Snapshot app"). There are two types of users of this app - User and Admin.
+An ASP.NET Core app with React which serves as a storage for devices that capture video content via the [Snapshot app](https://github.com/icatic1/SnapShot "Snapshot app"). The final code is on the branch called "final". There are two types of users of this app - User and Admin.
 
 ------------
 
